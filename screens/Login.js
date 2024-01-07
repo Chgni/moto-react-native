@@ -15,6 +15,10 @@ const LoginScreen = ({ navigation }) => {
                     "password": password,
                 });
 
+                if (response.status === 401) {
+                    alert('Identifiants incorrects!');
+                }
+
                 if (response.status === 200 && response.data.token) {
                     alert('Connexion réussie');
                     // Stocke le token ici (sera fait dans une future vidéo)

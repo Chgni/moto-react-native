@@ -6,13 +6,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import HomeScreen from "./screens/Home";
+import FriendsScreen from "./screens/Friends";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
     return (
         <Tab.Navigator>
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Accueil' }}/>
+            <Tab.Screen name="Friends" component={FriendsScreen} options={{ title: 'Amis' }} />
         </Tab.Navigator>
     );
 };
