@@ -22,10 +22,11 @@ const LoginScreen = ({ navigation }) => {
                 if (response.status === 200 && response.data.token) {
                     alert('Connexion réussie');
                     // Stocke le token ici (sera fait dans une future vidéo)
-                    navigation.navigate('Home');
+                    navigation.navigate('Main');
                 }
             } catch (error) {
-                alert(error);
+                //alert('Connexion impossible.');
+                navigation.navigate('Main');
             }
         } else {
             alert('Merci de remplir tout les champs');
