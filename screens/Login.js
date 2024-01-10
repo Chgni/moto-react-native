@@ -1,32 +1,50 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import qs from 'qs';
 
 const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [token, setToken] = useState(null);
+
+    useEffect( () => {
+       const getToken = async () => {
+           const storedToken = await AsyncStorage.getItem('userToken');
+           setToken(storedToken);
+       };
+       getToken();
+    }, []);
 
     const handleSignIn = async () => {
         if (email && password) {
             try {
-                const response = await axios.post('http://10.0.2.2:8000/api/v1/auth/signin', {
-                    "username": email,
-                    "password": password,
+                const response = await axios.post('http://10.0.2.2:8000/api/v1/auth/signin', qs.stringify({
+                    username: email,
+                    password: password,
+                }), {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
                 });
 
                 if (response.status === 401) {
                     alert('Identifiants incorrects!');
                 }
 
-                if (response.status === 200 && response.data.token) {
-                    alert('Connexion réussie');
+                if (response.status === 200) {
+
                     // Stocke le token ici (sera fait dans une future vidéo)
+                    await AsyncStorage.setItem('userToken', response.data['access_token']);
+                    setToken(response.data['access_token']);
                     navigation.navigate('Main');
                 }
             } catch (error) {
-                //alert('Connexion impossible.');
-                navigation.navigate('Main');
+                if( error.response ){
+                    console.log(error.response.data); // => the response payload
+                }
             }
         } else {
             alert('Merci de remplir tout les champs');

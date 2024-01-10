@@ -18,6 +18,7 @@ const RegisterScreen = ({ navigation }) => {
                 });
 
                 if (response.status === 201) {
+                    alert('Inscription réalisée ! Veuillez vous connecter.');
                     navigation.navigate('Connexion');
                 }
             } catch (error) {
