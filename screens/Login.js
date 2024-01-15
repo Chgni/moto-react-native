@@ -8,12 +8,38 @@ const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [token, setToken] = useState(null);
+    const [user, setUser] = useState('null');
+
+    const getUser = async (token) => {
+        try {
+            console.log('login token :');
+            console.log(token);
+            const response = await axios.get('http://10.0.2.2:8000/api/v1/auth/me',{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401) {
+                alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
+            }
+
+            if (response.status === 200) {
+                setUser(response.data);
+                navigation.navigate('Main');
+            }
+        } catch (error) {
+            if( error.response ){
+                console.log('token get user'); // => the response payload
+                console.log(token); // => the response payload
+            }
+        }
+    };
 
     useEffect( () => {
        const getToken = async () => {
            const storedToken = await AsyncStorage.getItem('userToken');
-           setToken(storedToken);
+           await getUser(storedToken);
        };
        getToken();
     }, []);
@@ -38,7 +64,6 @@ const LoginScreen = ({ navigation }) => {
 
                     // Stocke le token ici (sera fait dans une future vidéo)
                     await AsyncStorage.setItem('userToken', response.data['access_token']);
-                    setToken(response.data['access_token']);
                     navigation.navigate('Main');
                 }
             } catch (error) {
