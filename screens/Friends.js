@@ -3,10 +3,10 @@ import { View, Text, Button } from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import {useUser} from "../Guard/WithAuthGuard";
 
 const FriendsScreen = ({ navigation }) => {
-    const [token, setToken] = useState(null);
-    const [user, setUser] = useState(null);
+    const { user, token } = useUser();
     const [friends, setFriends] = useState([]);
     const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
     const [friendRequestsSent, setFriendRequestsSent] = useState([]);
@@ -15,7 +15,8 @@ const FriendsScreen = ({ navigation }) => {
 
     const getFriends = async () => {
         try {
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user.id}/friends`,{
+            console.log('Get friends');
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -26,7 +27,8 @@ const FriendsScreen = ({ navigation }) => {
             }
         } catch (error) {
             if( error.response ){
-                console.log(error.response.data); // => the response payload
+               // console.log(error.response.data); // => the response payload
+                console.log('Cant get friends');
             }
         }
     };
@@ -44,7 +46,8 @@ const FriendsScreen = ({ navigation }) => {
             }
         } catch (error) {
             if( error.response ){
-                console.log(error.response.data); // => the response payload
+                //console.log(error.response.data); // => the response payload
+                console.log('Cant get friends received');
             }
         }
     };
@@ -62,7 +65,8 @@ const FriendsScreen = ({ navigation }) => {
             }
         } catch (error) {
             if( error.response ){
-                console.log(error.response.data); // => the response payload
+                //console.log(error.response.data); // => the response payload
+                console.log('Cant get friends sent');
             }
         }
     };
@@ -71,14 +75,13 @@ const FriendsScreen = ({ navigation }) => {
         if(isFocused) {
             console.log('init friend component');
             getFriends();
-            getFriendsRequestsReceived();
-            getFriendsRequestsSent();
+            //getFriendsRequestsReceived();
+            //getFriendsRequestsSent();
         }
     }, [isFocused]);
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Mon token : {token}</Text>
             <Button title='ajouter un ami'></Button>
             <Text>Mes amis ({friends.length})</Text>
             <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>

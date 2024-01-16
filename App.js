@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from './screens/Login';
+import LogoutScreen from './screens/Logout';
 import RegisterScreen from './screens/Register';
 import HomeScreen from "./screens/Home";
 import FriendsScreen from "./screens/Friends";
@@ -36,6 +37,12 @@ const MainTabs = () => {
                     <Ionicons name="home" size={20}/>
                 ),
             }} />
+            <Tab.Screen name="logout" component={LogoutScreen} options={{ title: 'Déconnexion', headerShown: false,
+                tabBarLabel: 'Déconnexion',
+                tabBarIcon: () => (
+                    <Ionicons name="home" size={20}/>
+                ),
+            }} />
         </Tab.Navigator>
     );
 };
@@ -43,8 +50,9 @@ const MainTabs = () => {
 export default function App() {
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Connexion">
           <Stack.Screen name="Connexion" component={ProtectedLogin} />
+          <Stack.Screen name="Deconnexion" component={LogoutScreen} />
           <Stack.Screen name="Inscription" component={RegisterScreen} />
           <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
         </Stack.Navigator>

@@ -22,7 +22,8 @@ const withAuthGuard = (WrappedComponent) => {
                     const jwt = await AsyncStorage.getItem('userToken');
                     if (!jwt) {
                         // No JWT found, redirect to login
-                        navigation.navigate('Login');
+                        setLoading(false);
+                        navigation.navigate('Connexion');
                     } else {
                         setLoading(false);
                         try {
@@ -38,7 +39,7 @@ const withAuthGuard = (WrappedComponent) => {
 
                             if (response.status === 200) {
                                 setAuthInfo({ user: response.data, token: jwt });
-                                console.log('guard user got');
+                                // console.log('guard user got');
                             }
                         } catch (error) {
                             if( error.response ){
@@ -48,7 +49,7 @@ const withAuthGuard = (WrappedComponent) => {
                     }
                 } catch (error) {
                     console.error(error);
-                    navigation.navigate('Login');
+                    navigation.navigate('Connexion');
                 }
             };
 
