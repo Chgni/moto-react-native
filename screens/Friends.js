@@ -110,7 +110,7 @@ const FriendsScreen = ({ navigation }) => {
             <Dialog
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
-                <SearchFriend></SearchFriend>
+                <SearchFriend currentFriends={friends}></SearchFriend>
             </Dialog>
         </View>
 
