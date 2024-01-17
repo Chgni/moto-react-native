@@ -34,6 +34,27 @@ const SearchFriend = ({ currentFriends }) => {
         }
     };
 
+    const addUser = async (user) => {
+        try {
+            const response = await axios.post(`http://10.0.2.2:8000/api/v1/friends/`,{
+                    target_user_id: user.id
+                },
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.status === 200) {
+
+            }
+        } catch (error) {
+            if( error.response ){
+                // console.log(error.response.data); // => the response payload
+                console.log('Cant get friends');
+            }
+        }
+    }
+
     const updateSearch = (searchString) => {
         setSearch(searchString);
 
@@ -62,7 +83,7 @@ const SearchFriend = ({ currentFriends }) => {
                     }
                   return <View key={friend.id} style={styles.friendWrapper}>
                             <Text style={styles.pseudo}>{friend.username}</Text>
-                            <Button title={"Ajouter"}></Button>
+                            <Button title={"Ajouter"} onPress={ () => addUser(friend)}></Button>
                         </View>
                 }
                 )}
