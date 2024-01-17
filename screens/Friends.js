@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
+
+import {
+    Button,
+    Dialog,
+} from '@rneui/themed';
 
 const FriendsScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -11,7 +16,11 @@ const FriendsScreen = ({ navigation }) => {
     const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
     const [friendRequestsSent, setFriendRequestsSent] = useState([]);
     const isFocused = useIsFocused();
+    const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
 
+    const toggleAddFriendDialog = () => {
+        setVisibleDialog(!visibleDialog);
+    };
 
     const getFriends = async () => {
         try {
@@ -84,8 +93,12 @@ const FriendsScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Button title='ajouter un ami'></Button>
-            <Text>Mes amis ({friends.length})</Text>
+            <View style={styles.friendsContainer}>
+                <Text>Mes amis ({friends.length})</Text>
+                <Button style={styles.addFriendButton} title='Ajouter un ami'
+                    onPress={toggleAddFriendDialog}
+                />
+            </View>
             <ScrollView style={styles.friendsContainer}>
                 {friends.map(friend => (
                     <FriendItem key={friend.id} friend={friend} />
@@ -93,24 +106,42 @@ const FriendsScreen = ({ navigation }) => {
             </ScrollView>
             <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
             <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
+            <Dialog
+                isVisible={visibleDialog}
+                onBackdropPress={toggleAddFriendDialog}>
+
+            </Dialog>
         </View>
+
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: 24,
         display: "flex",
         flexDirection: "column",
-        marginRight: "5px",
-        marginLeft: "5px",
+        marginRight: 5,
+        marginLeft: 5,
         width: "100%"
+    },
+    friendsButtonContainer: {
+        display: "flex",
+        flexDirection: "row",
+        marginRight: 5,
+        marginLeft: 5,
+        width: "100%"
+    },
+    addFriendButton: {
+        maxWidth: 100,
+        marginLeft: 10
     },
     friendsContainer: {
         display: "flex",
         flexDirection: "row",
-        marginRight: "5px",
-        marginLeft: "5px",
-        maxHeight: "250px",
+        marginRight: 5,
+        marginLeft: 5,
+        maxHeight: 250,
     },
     title: {
         fontSize: 24,

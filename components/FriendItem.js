@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import { Card, Button } from '@rneui/themed';
 
 const FriendItem = ({ friend }) => {
