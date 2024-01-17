@@ -4,6 +4,7 @@ import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
+import SearchFriend from "../components/SearchFriend";
 
 import {
     Button,
@@ -109,7 +110,7 @@ const FriendsScreen = ({ navigation }) => {
             <Dialog
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
-
+                <SearchFriend></SearchFriend>
             </Dialog>
         </View>
 
