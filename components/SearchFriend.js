@@ -4,7 +4,7 @@ import {Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 
-const SearchFriend = ({ currentFriends }) => {
+const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
     const { user, token } = useUser();
     const [search, setSearch] = useState("");
     const [friends, setFriends] = useState([]);
@@ -23,8 +23,13 @@ const SearchFriend = ({ currentFriends }) => {
             });
             if (response.status === 200) {
                 setFriends([]);
-                setFriends(response.data.filter(friend =>
-                    !currentFriends.some(currentFriend => currentFriend.id === friend.id)));
+                const friendsFiltered = response.data.filter(friend =>
+                    (!currentFriends.some(currentFriend => currentFriend.id === friend.id)
+                        && !friendReceived.some(currentFriend => currentFriend.id === friend.id)
+                        && !friendSent.some(currentFriend => currentFriend.id === friend.id)));
+                    if (friends.length > 0) {
+                        setFriends(friendsFiltered);
+                    }
             }
         } catch (error) {
             if( error.response ){

@@ -45,18 +45,19 @@ const FriendsScreen = ({ navigation }) => {
 
     const getFriendsRequestsReceived = async () => {
         try {
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user.id}/friends/pending/received`,{
+            console.log('Get friends received');
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_received=true`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-
+            console.log(response.data);
             if (response.status === 200) {
                 setFriendRequestsReceived(response.data)
             }
         } catch (error) {
             if( error.response ){
-                //console.log(error.response.data); // => the response payload
+                // console.log(error.response.data); // => the response payload
                 console.log('Cant get friends received');
             }
         }
@@ -64,33 +65,39 @@ const FriendsScreen = ({ navigation }) => {
 
     const getFriendsRequestsSent = async () => {
         try {
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user.id}/friends/pending/sent`,{
+            console.log('Get friends sent');
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_sent=true`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-
+            console.log(response.data);
             if (response.status === 200) {
                 setFriendRequestsSent(response.data)
             }
         } catch (error) {
             if( error.response ){
-                //console.log(error.response.data); // => the response payload
+                // console.log(error.response.data); // => the response payload
                 console.log('Cant get friends sent');
             }
         }
     };
 
+    const getFriendsAndRequests = async () => {
+        await getFriends();
+        await getFriendsRequestsReceived();
+        await getFriendsRequestsSent();
+    }
+
     useEffect(() => {
         if (isFocused && user && token) {
-            console.log('get friend');
-            getFriends();
-            //getFriendsRequestsReceived();
-            //getFriendsRequestsSent();
+            console.log('get friend start');
+            getFriendsAndRequests()
         } else {
             console.log('Screen not focused or user/token not available');
         }
     }, [isFocused, user, token]);
+
 
     return (
         <View style={styles.container}>
@@ -102,15 +109,25 @@ const FriendsScreen = ({ navigation }) => {
             </View>
             <ScrollView style={styles.friendsContainer}>
                 {friends.map(friend => (
-                    <FriendItem key={friend.id} friend={friend} />
+                    <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
                 ))}
             </ScrollView>
             <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
+            <ScrollView style={styles.friendsContainer}>
+                {friendRequestsReceived.map(friend => (
+                    <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
+                ))}
+            </ScrollView>
             <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
+            <ScrollView style={styles.friendsContainer}>
+                {friendRequestsSent.map(friend => (
+                    <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
+                ))}
+            </ScrollView>
             <Dialog
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
-                <SearchFriend currentFriends={friends}></SearchFriend>
+                <SearchFriend currentFriends={friends} friendReceived={friendRequestsReceived} friendSent={friendRequestsSent}></SearchFriend>
             </Dialog>
         </View>
 
