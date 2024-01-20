@@ -23,11 +23,12 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
             });
             if (response.status === 200) {
                 setFriends([]);
+                console.log(response.data);
                 const friendsFiltered = response.data.filter(friend =>
                     (!currentFriends.some(currentFriend => currentFriend.id === friend.id)
                         && !friendReceived.some(currentFriend => currentFriend.id === friend.id)
                         && !friendSent.some(currentFriend => currentFriend.id === friend.id)));
-                    if (friends.length > 0) {
+                    if (friendsFiltered.length > 0) {
                         setFriends(friendsFiltered);
                     }
             }

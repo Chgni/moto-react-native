@@ -3,7 +3,7 @@ import axios from "axios";
     const getFriends = async (user, token) => {
         try {
             console.log('Get friends');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends`,{
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/friends`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -23,7 +23,7 @@ import axios from "axios";
     const getFriendsRequestsReceived = async (user, token) => {
         try {
             console.log('Get friends received');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_received=true`,{
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/friends?pending_received=true`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -43,7 +43,7 @@ import axios from "axios";
     const getFriendsRequestsSent = async (user, token) => {
         try {
             console.log('Get friends sent');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_sent=true`,{
+            const response = await axios.get(`http://10.0.2.2:8000/api/v1/friends?pending_sent=true`,{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -60,4 +60,35 @@ import axios from "axios";
         }
     };
 
-export {getFriends, getFriendsRequestsReceived, getFriendsRequestsSent};
+const deleteFriend = async (friend, type, token) => {
+    try {
+        console.log(friend);
+        let statusId = 3;
+        if (type === "friend") {
+            statusId = 4;
+        }
+        const response = await axios.patch(`http://10.0.2.2:8000/api/v1/friends/`, {
+                id: friend.friendship_id,
+                status : statusId
+            }
+            , {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        if (response.status === 200) {
+            return true;
+        }
+        if (response.status === 404 || response.status === 400) {
+            return false;
+        }
+
+    } catch (error) {
+        if( error.response ){
+            // console.log(error.response.data); // => the response payload
+            console.log(error.response.data);
+        }
+    }
+}
+
+export {getFriends, getFriendsRequestsReceived, getFriendsRequestsSent, deleteFriend};

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, ActivityIndicator} from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
 import {useUser} from "../Guard/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
@@ -17,25 +17,41 @@ const FriendsScreen = ({ navigation }) => {
     const [friendRequestsSent, setFriendRequestsSent] = useState([]);
     const isFocused = useIsFocused();
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
+    const [loadingFriends, setLoadingFriends] = useState(true); // add friend dialog visible
+    const [loadingFriendsReceived, setLoadingFriendsReceived] = useState(true); // add friend dialog visible
+    const [loadingFriendsSent, setLoadingFriendsSent] = useState(true); // add friend dialog visible
 
     const toggleAddFriendDialog = () => {
         setVisibleDialog(!visibleDialog);
     };
 
     const getFriendsAndRequests = async () => {
+        setLoadingFriends(true);
+        setLoadingFriendsSent(true);
+        setLoadingFriendsReceived(true);
+
         await getFriends(user, token).then(
             (response) => {
-                setFriends(response);
+                if (response) {
+                    setFriends(response);
+                    setLoadingFriends(false);
+                }
             }
         )
         await getFriendsRequestsReceived(user, token).then(
             (response) => {
-                setFriendRequestsReceived(response);
+                if (response) {
+                    setFriendRequestsReceived(response);
+                    setLoadingFriendsReceived(false);
+                }
             }
         )
         await getFriendsRequestsSent(user, token).then(
             (response) => {
-                setFriendRequestsSent(response);
+                if (response) {
+                    setFriendRequestsSent(response);
+                    setLoadingFriendsSent(false);
+                }
             }
         )
     }
@@ -59,19 +75,22 @@ const FriendsScreen = ({ navigation }) => {
                 />
             </View>
             <ScrollView style={styles.friendsContainer}>
-                {friends.map(friend => (
+                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
+                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friends.map(friend => (
                     <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
                 ))}
             </ScrollView>
             <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
             <ScrollView style={styles.friendsContainer}>
-                {friendRequestsReceived.map(friend => (
+                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
+                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsReceived.map(friend => (
                     <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
                 ))}
             </ScrollView>
             <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
             <ScrollView style={styles.friendsContainer}>
-                {friendRequestsSent.map(friend => (
+                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
+                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsSent.map(friend => (
                     <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
                 ))}
             </ScrollView>
