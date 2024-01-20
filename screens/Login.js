@@ -73,7 +73,6 @@ const LoginScreen = ({ navigation }) => {
             }
         } else {
             alert('Merci de remplir tout les champs');
-            return;
         }
 
     };

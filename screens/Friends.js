@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
-import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
 import SearchFriend from "../components/SearchFriend";
-
+import { getFriends, getFriendsRequestsSent, getFriendsRequestsReceived } from "../services/FriendsService";
 import {
     Button,
     Dialog,
@@ -23,70 +22,22 @@ const FriendsScreen = ({ navigation }) => {
         setVisibleDialog(!visibleDialog);
     };
 
-    const getFriends = async () => {
-        try {
-            console.log('Get friends');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends`,{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            console.log(response.data);
-            if (response.status === 200) {
-                setFriends(response.data)
-            }
-        } catch (error) {
-            if( error.response ){
-               // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends');
-            }
-        }
-    };
-
-    const getFriendsRequestsReceived = async () => {
-        try {
-            console.log('Get friends received');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_received=true`,{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            console.log(response.data);
-            if (response.status === 200) {
-                setFriendRequestsReceived(response.data)
-            }
-        } catch (error) {
-            if( error.response ){
-                // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends received');
-            }
-        }
-    };
-
-    const getFriendsRequestsSent = async () => {
-        try {
-            console.log('Get friends sent');
-            const response = await axios.get(`http://10.0.2.2:8000/api/v1/users/${user['id']}/friends?pending_sent=true`,{
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            console.log(response.data);
-            if (response.status === 200) {
-                setFriendRequestsSent(response.data)
-            }
-        } catch (error) {
-            if( error.response ){
-                // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends sent');
-            }
-        }
-    };
-
     const getFriendsAndRequests = async () => {
-        await getFriends();
-        await getFriendsRequestsReceived();
-        await getFriendsRequestsSent();
+        await getFriends(user, token).then(
+            (response) => {
+                setFriends(response);
+            }
+        )
+        await getFriendsRequestsReceived(user, token).then(
+            (response) => {
+                setFriendRequestsReceived(response);
+            }
+        )
+        await getFriendsRequestsSent(user, token).then(
+            (response) => {
+                setFriendRequestsSent(response);
+            }
+        )
     }
 
     useEffect(() => {
