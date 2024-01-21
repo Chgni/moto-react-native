@@ -9,6 +9,8 @@ import {
     Button,
     Dialog,
 } from '@rneui/themed';
+import {Header} from "@rneui/base";
+import SettingHeader from "../components/SettingHeader";
 
 const FriendsScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -74,6 +76,10 @@ const FriendsScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <Header style={styles.headerStyle}
+                centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
+                    rightComponent={<SettingHeader/>}
+            />
             <View style={styles.friendsContainer}>
                 <Text>Mes amis ({friends.length})</Text>
                 <Button style={styles.addFriendButton} title='Ajouter un ami'
@@ -86,15 +92,16 @@ const FriendsScreen = ({ navigation }) => {
                     <FriendItem key={friend.user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
                 ))}
             </ScrollView>
-            <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
             <ScrollView style={styles.friendsContainer}>
+                <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
+
                 {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
                 {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsReceived.map(friend => (
                     <FriendItem key={friend.user.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
                 ))}
             </ScrollView>
-            <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
             <ScrollView style={styles.friendsContainer}>
+                <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
                 {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
                 {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsSent.map(friend => (
                     <FriendItem key={friend.user.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
@@ -113,11 +120,10 @@ const FriendsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 24,
         display: "flex",
-        flexDirection: "column",
-        marginRight: 5,
-        marginLeft: 5
+        flexDirection: "column"
+    },
+    headerStyle: {
     },
     friendsButtonContainer: {
         display: "flex",
@@ -133,8 +139,7 @@ const styles = StyleSheet.create({
     friendsContainer: {
         display: "flex",
         flexDirection: "row",
-        marginRight: 5,
-        marginLeft: 5
+        margin: 10
     },
     title: {
         fontSize: 24,
