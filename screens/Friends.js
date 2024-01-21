@@ -25,6 +25,11 @@ const FriendsScreen = ({ navigation }) => {
         setVisibleDialog(!visibleDialog);
     };
 
+    const toggleAddFriendDialogAndRefresh = () => {
+        setVisibleDialog(!visibleDialog);
+        getFriendsAndRequests()
+    };
+
     const getFriendsAndRequests = async () => {
         console.log("start get friends");
         setLoadingFriends(true);
@@ -99,7 +104,7 @@ const FriendsScreen = ({ navigation }) => {
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
                 <SearchFriend currentFriends={friends} friendReceived={friendRequestsReceived}
-                              friendSent={friendRequestsSent} onAdd={toggleAddFriendDialog}></SearchFriend>
+                              friendSent={friendRequestsSent} onAdd={toggleAddFriendDialogAndRefresh}></SearchFriend>
             </Dialog>
         </View>
 

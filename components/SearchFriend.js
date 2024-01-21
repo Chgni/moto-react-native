@@ -64,7 +64,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
                     Authorization: `Bearer ${token}`
                 }
             });
-            if (response.status === 200) {
+            if (response.status === 201) {
                 onAdd();
             }
         } catch (error) {
