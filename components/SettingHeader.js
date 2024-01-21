@@ -5,8 +5,13 @@ import {Icon} from "@rneui/base";
 const SettingHeader = ({ friend, type, onUpdate }) => {
     const [isVisible, setIsVisible] = useState(false);
 
+    const toggleVisibleSideMenu = () => {
+        setIsVisible(!isVisible);
+        console.log(isVisible);
+    }
+
     return (
-        <Icon name={"settings"} color={"#fff"}/>
+        <Icon name={"settings"} color={"#fff"} onPress={toggleVisibleSideMenu}/>
     );
 };
 
