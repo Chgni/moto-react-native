@@ -77,27 +77,28 @@ const FriendsScreen = ({ navigation }) => {
             <ScrollView style={styles.friendsContainer}>
                 {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
                 {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friends.map(friend => (
-                    <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
+                    <FriendItem key={friend.user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
                 ))}
             </ScrollView>
             <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
             <ScrollView style={styles.friendsContainer}>
                 {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
                 {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsReceived.map(friend => (
-                    <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
+                    <FriendItem key={friend.user.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
                 ))}
             </ScrollView>
             <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
             <ScrollView style={styles.friendsContainer}>
                 {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
                 {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsSent.map(friend => (
-                    <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
+                    <FriendItem key={friend.user.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
                 ))}
             </ScrollView>
             <Dialog
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
-                <SearchFriend currentFriends={friends} friendReceived={friendRequestsReceived} friendSent={friendRequestsSent}></SearchFriend>
+                <SearchFriend currentFriends={friends} friendReceived={friendRequestsReceived}
+                              friendSent={friendRequestsSent} onAdd={toggleAddFriendDialog}></SearchFriend>
             </Dialog>
         </View>
 
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
         marginLeft: 5,
         maxHeight: 250,
+        width: 500
     },
     title: {
         fontSize: 24,

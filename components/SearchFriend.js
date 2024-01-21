@@ -1,13 +1,15 @@
 import React, {useRef, useState} from 'react';
-import {Text, ScrollView, StyleSheet, View} from 'react-native';
+import {Text, ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 
-const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
+const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => {
     const { user, token } = useUser();
     const [search, setSearch] = useState("");
     const [friends, setFriends] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [searchDone, setSearchDone] = useState(false);
 
     const timerRef = useRef(null);
 
@@ -23,20 +25,32 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
             });
             if (response.status === 200) {
                 setFriends([]);
+                console.log("response");
                 console.log(response.data);
-                const friendsFiltered = response.data.filter(friend =>
-                    (!currentFriends.some(currentFriend => currentFriend.id === friend.id)
-                        && !friendReceived.some(currentFriend => currentFriend.id === friend.id)
-                        && !friendSent.some(currentFriend => currentFriend.id === friend.id)));
-                    if (friendsFiltered.length > 0) {
-                        setFriends(friendsFiltered);
+                const friendsFiltered = [];
+
+                for (const friend of response.data) {
+                    console.log(friend);
+                    if ( !(currentFriends.find( (x) => x.user.id === friend.id)
+                        || friendReceived.find( (x) => x.user.id === friend.id)
+                        || friendSent.find( (x) => x.user.id === friend.id))
+
+                    ) {
+                        friendsFiltered.push(friend);
                     }
+                }
+
+                console.log(friendsFiltered);
+
+                setFriends(friendsFiltered);
+                setLoading(false);
+                setSearchDone(true);
+
             }
         } catch (error) {
-            if( error.response ){
-                // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends');
-            }
+            setFriends([]);
+            setLoading(false);
+            setSearchDone(true);
         }
     };
 
@@ -51,7 +65,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
                 }
             });
             if (response.status === 200) {
-
+                onAdd();
             }
         } catch (error) {
             if( error.response ){
@@ -68,9 +82,11 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
             clearTimeout(timerRef.current);
         }
 
-        timerRef.current = setTimeout(() => {
+        timerRef.current = setTimeout(async () => {
             if (searchString && searchString.length > 0 && user) {
-                searchUsers(searchString);
+                setLoading(true);
+                setSearchDone(false);
+                await searchUsers(searchString);
             }
         }, 1500);
     };
@@ -83,6 +99,8 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent }) => {
                 value={search}
             />
             <ScrollView style={styles.friendsContainer}>
+                {loading && <ActivityIndicator size="small" color="#0000ff" />}
+                {searchDone && !loading && friends.length === 0 && <Text>Aucun utilisateur.</Text>}
                 {friends.map(friend => {
                     if (friend.username === user.username) {
                         return null; // skip current user
