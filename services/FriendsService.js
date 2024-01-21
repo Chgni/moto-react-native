@@ -63,9 +63,9 @@ import axios from "axios";
 const deleteFriend = async (friend, type, token) => {
     try {
         console.log(friend);
-        let statusId = 3;
+        let statusId = 2;
         if (type === "friend") {
-            statusId = 4;
+            statusId = 3;
         }
         const response = await axios.patch(`http://10.0.2.2:8000/api/v1/friends/`, {
                 id: friend.friendship_id,
@@ -76,10 +76,9 @@ const deleteFriend = async (friend, type, token) => {
                     Authorization: `Bearer ${token}`
                 }
             });
-        if (response.status === 200) {
+        if (response.status === 204) {
             return true;
-        }
-        if (response.status === 404 || response.status === 400) {
+        }else {
             return false;
         }
 
@@ -91,4 +90,30 @@ const deleteFriend = async (friend, type, token) => {
     }
 }
 
-export {getFriends, getFriendsRequestsReceived, getFriendsRequestsSent, deleteFriend};
+const acceptFriend = async (friend, type, token) => {
+    try {
+        console.log(friend);
+        const response = await axios.patch(`http://10.0.2.2:8000/api/v1/friends/`, {
+                id: friend.friendship_id,
+                status : 1
+            }
+            , {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        if (response.status === 204) {
+            return true;
+        }else {
+            return false;
+        }
+
+    } catch (error) {
+        if( error.response ){
+            // console.log(error.response.data); // => the response payload
+            console.log(error.response.data);
+        }
+    }
+}
+
+export {getFriends, getFriendsRequestsReceived, getFriendsRequestsSent, deleteFriend, acceptFriend};

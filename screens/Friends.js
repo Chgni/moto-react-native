@@ -26,6 +26,7 @@ const FriendsScreen = ({ navigation }) => {
     };
 
     const getFriendsAndRequests = async () => {
+        console.log("start get friends");
         setLoadingFriends(true);
         setLoadingFriendsSent(true);
         setLoadingFriendsReceived(true);
@@ -111,8 +112,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         marginRight: 5,
-        marginLeft: 5,
-        width: "100%"
+        marginLeft: 5
     },
     friendsButtonContainer: {
         display: "flex",
@@ -129,9 +129,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         marginRight: 5,
-        marginLeft: 5,
-        maxHeight: 250,
-        width: 500
+        marginLeft: 5
     },
     title: {
         fontSize: 24,
