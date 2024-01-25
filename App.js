@@ -37,12 +37,6 @@ const MainTabs = () => {
                     <Ionicons name="home" size={20}/>
                 ),
             }} />
-            <Tab.Screen name="logout" component={LogoutScreen} options={{ title: 'Déconnexion', headerShown: false,
-                tabBarLabel: 'Déconnexion',
-                tabBarIcon: () => (
-                    <Ionicons name="home" size={20}/>
-                ),
-            }} />
         </Tab.Navigator>
     );
 };

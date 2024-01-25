@@ -76,10 +76,10 @@ const FriendsScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Header style={styles.headerStyle}
-                centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
-                    rightComponent={<SettingHeader/>}
-            />
+            { user && <Header style={styles.headerStyle}
+                          centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
+                          rightComponent={<SettingHeader/>}
+            /> }
             <View style={styles.friendsContainer}>
                 <Text>Mes amis ({friends.length})</Text>
                 <Button style={styles.addFriendButton} title='Ajouter un ami'

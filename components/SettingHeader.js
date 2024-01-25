@@ -1,17 +1,33 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import {Icon} from "@rneui/base";
+import { Menu, MenuItem } from 'react-native-material-menu';
 
-const SettingHeader = ({ friend, type, onUpdate }) => {
+import { useNavigation } from '@react-navigation/native';
+
+const SettingHeader = () => {
     const [isVisible, setIsVisible] = useState(false);
+
+    const navigation = useNavigation();
 
     const toggleVisibleSideMenu = () => {
         setIsVisible(!isVisible);
         console.log(isVisible);
     }
 
+    const disconnect = () => {
+        navigation.navigate('Deconnexion');
+    }
+
     return (
-        <Icon name={"settings"} color={"#fff"} onPress={toggleVisibleSideMenu}/>
+        <View>
+            <Menu
+                visible={isVisible}
+                anchor={<Icon name={"settings"} color={"#fff"} onPress={toggleVisibleSideMenu}/>}
+                onRequestClose={toggleVisibleSideMenu}>
+                <MenuItem onPress={disconnect}>Déconnexion</MenuItem>
+            </Menu>
+        </View>
     );
 };
 

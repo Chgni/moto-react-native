@@ -67,9 +67,9 @@ const FriendItem = ({ friend, type, onUpdate }) => {
     return (
         <Card style={styles.card}>
             <Text h4>{friend.user.username}</Text>
-            <Button onPress={openMenuActions}>
+            { type !== 'sent' && <Button onPress={openMenuActions}>
                 <Text style={styles.actions}>Actions</Text>
-            </Button>
+            </Button> }
             <BottomSheet modalProps={{}} isVisible={isVisible}>
                 {type !== "received" && list.map((l, i) => (
                     <ListItem
