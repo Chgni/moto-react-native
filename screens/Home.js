@@ -7,6 +7,7 @@ import {Button, Dialog} from "@rneui/themed";
 import FriendItem from "../components/FriendItem";
 import SearchFriend from "../components/SearchFriend";
 import {useIsFocused} from "@react-navigation/native";
+import createTrip from "./CreateTrip";
 
 
 const HomeScreen = ({ navigation }) => {
@@ -22,6 +23,10 @@ const HomeScreen = ({ navigation }) => {
         }
     }, [isFocused, user, token]);
 
+    createTrip( () => {
+        navigation.navigate('CreateTrip');
+    })
+
     return (
         <View style={styles.container}>
             { user && <Header style={styles.headerStyle}
@@ -31,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
             <ScrollView style={styles.friendsContainer}>
                 <Text>Mes itinéraires</Text>
                 <Button style={styles.addFriendButton} title='Ajouter un itinéraire'
-                />
+                onPress={createTrip} />
             </ScrollView>
             <ScrollView style={styles.friendsContainer}>
                 <Text>Itinéraires de mes amis</Text>
