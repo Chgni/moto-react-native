@@ -1,19 +1,28 @@
-import MapView from 'react-native-maps';
+import MapView, { Marker }  from 'react-native-maps';
 import {useUser} from "../Guard/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
+import StepsComponent from "../components/StepsComponent";
 
 const CreateTripScreen = ({ navigation }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [position, setPosition] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [markers, setMarkers] = useState([]);
+    const [routeSteps, setRouteSteps] = useState([]);
 
-    const handlePress = (e) => {
+    const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
-        setSelectedLocation({ latitude, longitude });
-        console.log(selectedLocation);
+        const newMarker = {
+            latitude: latitude,
+            longitude: longitude,
+            order: markers.length+1,
+            key: Math.random().toString()
+        };
+        setMarkers([...markers, newMarker]);
+
+        setRouteSteps([...routeSteps, newMarker]);
     };
 
     useEffect(() => {
@@ -26,15 +35,23 @@ const CreateTripScreen = ({ navigation }) => {
 
     return (
         <View  style={styles.container}>
+            <StepsComponent steps={routeSteps} />
             <MapView style={styles.mapStyle}
-                     onPress={handlePress}
+                     onPress={handleMapPress}
                 initialRegion={{
                     latitude: 43.4496,
                     longitude: 5.2443,
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-            />
+            >
+                {routeSteps.map((marker, index) => (
+                    <Marker
+                        key={index}
+                        coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                    />
+                ))}
+            </MapView>
         </View>
     );
 };
