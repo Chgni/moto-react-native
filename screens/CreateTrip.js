@@ -94,6 +94,8 @@ const CreateTripScreen = ({ navigation }) => {
                     origin={getOrigin()}
                     destination={getDestination()}
                     waypoints={getWaypoints()}
+                    strokeWidth={3}
+                    strokeColor={"blue"}
                     apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs
                 />}
             </MapView>
