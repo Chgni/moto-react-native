@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button} from "@rneui/themed";
+import MapViewDirections from "react-native-maps-directions";
 
 const CreateTripScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -12,6 +13,8 @@ const CreateTripScreen = ({ navigation }) => {
     const [position, setPosition] = useState(null);
     const [markers, setMarkers] = useState([]);
     const [routeSteps, setRouteSteps] = useState([]);
+    const [origin, setOrigin] = useState(null);
+    const [destination, setDestination] = useState(null);
 
     const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -50,6 +53,22 @@ const CreateTripScreen = ({ navigation }) => {
         setMarkers([]);
     };
 
+    const getOrigin = () => {
+        return {latitude: routeSteps[0].latitude, longitude: routeSteps[0].longitude};
+    }
+
+    const getDestination = () => {
+        const step = routeSteps[routeSteps.length - 1];
+        return {latitude: step.latitude, longitude: step.longitude};
+    }
+
+    const getWaypoints = () => {
+        const waypoints = [];
+        routeSteps.slice(1, routeSteps.length - 1).map( (item) => {
+            waypoints.push({latitude: item.latitude, longitude: item.longitude});
+        })
+        return waypoints;
+    }
     return (
         <View  style={styles.container}>
             <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
@@ -71,6 +90,12 @@ const CreateTripScreen = ({ navigation }) => {
                         </View>
                     </Marker>
                 ))}
+                { routeSteps.length >= 2 && <MapViewDirections
+                    origin={getOrigin()}
+                    destination={getDestination()}
+                    waypoints={getWaypoints()}
+                    apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs
+                />}
             </MapView>
             <View>
                 <Button>Créer itinéraire</Button>
