@@ -39,14 +39,14 @@ const StepsComponent = ({ steps, deleteStep }) => {
                 {steps.map((step, index) => (
                     <View style={styles.menuItemWrapper} key={index}>
                         <Text>{step.order}</Text>
-                        <Input style={styles.menuItemText}> {step.latitude}, {step.longitude}</Input>
+                        <Input disabled style={styles.menuItemText}> {step.latitude}, {step.longitude}</Input>
                         <Button style={styles.removeStep} onPress={() => deleteStep(step.order)}>X</Button>
                     </View>
                 ))}
-                {/*steps.length === 0 && <View style={styles.menuItemWrapper}>
+                {steps.length === 0 && <View style={styles.menuItemWrapper}>
                     <Text>1</Text>
-                    <Input style={styles.menuItemText}></Input>
-                </View>*/}
+                    <Input disabled style={styles.menuItemText}></Input>
+                </View>}
             </ScrollView>
         </ScrollView>
     );

@@ -1,31 +1,40 @@
-import React, {useEffect} from 'react';
-import {View, Text, ScrollView, ActivityIndicator, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import {useUser} from "../Guard/WithAuthGuard";
 import {Header} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
-import {Button, Dialog} from "@rneui/themed";
-import FriendItem from "../components/FriendItem";
-import SearchFriend from "../components/SearchFriend";
 import {useIsFocused} from "@react-navigation/native";
-import createTrip from "./CreateTrip";
-
+import { getTrips } from "../services/TripService";
 
 const HomeScreen = ({ navigation }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
-
+    const [trips, setTrips] = useState([]);
+    const [friendTrips, setFriendTrips] = useState([]);
+    const [communityTrips, setCommunityTrips] = useState([]);
+    const [loadingTrips, setLoadingTrips] = useState(true);
+    const [loadingFriendsTrips, setLoadingFriendsTrips] = useState(true);
+    const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
 
     useEffect(() => {
         if (isFocused && user && token) {
             console.log('get friend start');
+            getAllTrips();
         } else {
             console.log('Screen not focused or user/token not available');
         }
     }, [isFocused, user, token]);
 
-    createTrip( () => {
-        navigation.navigate('CreateTrip');
-    })
+    const getAllTrips = async () => {
+        await getTrips(user, token).then(
+            (response) => {
+                if (response) {
+                    setTrips(response);
+                    setLoadingTrips(false);
+                }
+            }
+        )
+    };
 
     return (
         <View style={styles.container}>
@@ -34,16 +43,14 @@ const HomeScreen = ({ navigation }) => {
                     rightComponent={<SettingHeader/>}
             /> }
             <ScrollView style={styles.friendsContainer}>
-                <Text>Mes itinéraires</Text>
-                <Button style={styles.addFriendButton} title='Ajouter un itinéraire'
-                onPress={createTrip} />
+                <Text>Mes itinéraires ({trips.length})</Text>
             </ScrollView>
             <ScrollView style={styles.friendsContainer}>
-                <Text>Itinéraires de mes amis</Text>
+                <Text>Itinéraires de mes amis ({friendTrips.length})</Text>
             </ScrollView>
-            <ScrollView style={styles.friendsContainer}>
+            { /*<ScrollView style={styles.friendsContainer}>
                 <Text>Itinéraires de la communauté</Text>
-            </ScrollView>
+            </ScrollView>  */}
         </View>
     );
 };

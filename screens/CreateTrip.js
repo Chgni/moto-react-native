@@ -4,8 +4,9 @@ import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import StepsComponent from "../components/StepsComponent";
-import {Button} from "@rneui/themed";
+import {Button, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
+import { createTrip } from "../services/TripService";
 
 const CreateTripScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -15,6 +16,9 @@ const CreateTripScreen = ({ navigation }) => {
     const [routeSteps, setRouteSteps] = useState([]);
     const [origin, setOrigin] = useState(null);
     const [destination, setDestination] = useState(null);
+    const [name, setName] = useState(null);
+    const [description, setDescription] = useState(null);
+
 
     const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -28,6 +32,20 @@ const CreateTripScreen = ({ navigation }) => {
 
         setRouteSteps([...routeSteps, newMarker]);
     };
+
+    const onMarkerDragEnd = (e, index) => {
+        const updatedSteps = routeSteps.map((item, i) => {
+            if (item.order === index + 1) { // Assuming index is the array index. If it's the order, use `item.order === index + 1`
+                return {
+                    ...item,
+                    latitude: e.nativeEvent.coordinate.latitude,
+                    longitude: e.nativeEvent.coordinate.longitude,
+                };
+            }
+            return item;
+        });
+        setRouteSteps(updatedSteps);
+    }
 
     useEffect(() => {
         if (isFocused && user && token) {
@@ -69,6 +87,24 @@ const CreateTripScreen = ({ navigation }) => {
         })
         return waypoints;
     }
+
+    const create = async () => {
+        if (name === null || name.toString().trim().length < 3 ||
+            description === null || description.toString().trim().length < 5) {
+            alert("Veuillez renseigner un nom d'itinéraire et une description (min 3 et 5 charactères)");
+        } else {
+            if (routeSteps.length < 2) {
+                alert("Veuillez renseigner au moins deux destinations.");
+            } else {
+                await createTrip(name, description, token).then( (response) => {
+                    if (response) {
+                        //Redirect to modify trip page
+                    }
+                })
+            }
+        }
+    }
+
     return (
         <View  style={styles.container}>
             <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
@@ -83,10 +119,13 @@ const CreateTripScreen = ({ navigation }) => {
             >
                 {routeSteps.map((marker, index) => (
                     <Marker
+                        draggable={true}
+                        onDragEnd={(e) => onMarkerDragEnd(e, index)}
                         key={index}
                         coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                     >
-                        <View>
+                        <View style={styles.customMarker}>
+                            <Text style={styles.markerText}>{marker.order}</Text>
                         </View>
                     </Marker>
                 ))}
@@ -96,11 +135,15 @@ const CreateTripScreen = ({ navigation }) => {
                     waypoints={getWaypoints()}
                     strokeWidth={3}
                     strokeColor={"blue"}
-                    apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs
+                    apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"}
                 />}
             </MapView>
-            <View>
-                <Button>Créer itinéraire</Button>
+            <View style={styles.itineraryInfos}>
+                <View style={styles.itineraryInfosItem}>
+                    <Input placeholder={'Nom de l\'itinéraire'} onChangeText={setName}></Input>
+                    <Input placeholder={'Description'} onChangeText={setDescription}></Input>
+                    <Button onPress={create}>Créer itinéraire</Button>
+                </View>
             </View>
         </View>
     );
@@ -111,9 +154,20 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%"
     },
+    itineraryInfos: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+    },
+    itineraryInfosItem: {
+        marginTop: 10,
+        display: "flex",
+        flexDirection: "column",
+        width: "50%"
+    },
     mapStyle: {
         width: "100%",
-        height: "95%"
+        height: "75%"
     },
     friendsButtonContainer: {
         display: "flex",
@@ -134,6 +188,17 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         marginBottom: 20,
+    },
+    customMarker: {
+        backgroundColor: "#007bff", // Example background color
+        padding: 5,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    markerText: {
+        color: "#fff", // Example text color
+        // Add more styling as needed
     }
 });
 
