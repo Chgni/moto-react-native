@@ -67,7 +67,7 @@ const FriendsScreen = ({ navigation }) => {
     useEffect(() => {
         if (isFocused && user && token) {
             console.log('get friend start');
-            getFriendsAndRequests()
+            getFriendsAndRequests();
         } else {
             console.log('Screen not focused or user/token not available');
         }

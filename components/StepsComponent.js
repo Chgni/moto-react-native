@@ -3,7 +3,7 @@ import {Button, Input} from '@rneui/themed';
 import {useEffect, useState} from "react";
 import Geocoder from 'react-native-geocoding';
 
-const StepsComponent = ({ steps }) => {
+const StepsComponent = ({ steps, deleteStep }) => {
     Geocoder.init("AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs");
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const StepsComponent = ({ steps }) => {
 
     }, [steps]);
 
-    const getReverseGeocoding = (latitude, longitude, stepIndex) => {
+    const getReverseGeocoding = (latitude, longitude, stepIndex) => { //commented for less google api calls
  /*       Geocoder.from(latitude, longitude)
             .then(json => {
                 const address = json.results[0].formatted_address;
@@ -29,11 +29,8 @@ const StepsComponent = ({ steps }) => {
     };
 
     const removeStep = (index) => {
-        steps = [];
-    }
-
-    const reorderSteps = (index) => {
-        steps.splice(index);
+        console.log('remove step');
+        this.props.deleteStep(index);
     }
 
     return (
@@ -42,14 +39,14 @@ const StepsComponent = ({ steps }) => {
                 {steps.map((step, index) => (
                     <View style={styles.menuItemWrapper} key={index}>
                         <Text>{step.order}</Text>
-                        <Input style={styles.menuItemText}>{step.address}</Input>
-                        <Button style={styles.removeStep}>X</Button>
+                        <Input style={styles.menuItemText}> {step.latitude}, {step.longitude}</Input>
+                        <Button style={styles.removeStep} onPress={() => deleteStep(step.order)}>X</Button>
                     </View>
                 ))}
-                {steps.length === 0 && <View style={styles.menuItemWrapper}>
+                {/*steps.length === 0 && <View style={styles.menuItemWrapper}>
                     <Text>1</Text>
                     <Input style={styles.menuItemText}></Input>
-                </View>}
+                </View>*/}
             </ScrollView>
         </ScrollView>
     );
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
     menuItemWrapper: {
         display: "flex",
         flexDirection: "row",
+        alignItems: "center",
         width: 250
     },
     menuItem: {

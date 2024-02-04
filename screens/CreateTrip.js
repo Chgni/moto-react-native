@@ -4,6 +4,7 @@ import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import StepsComponent from "../components/StepsComponent";
+import {Button} from "@rneui/themed";
 
 const CreateTripScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -17,7 +18,7 @@ const CreateTripScreen = ({ navigation }) => {
         const newMarker = {
             latitude: latitude,
             longitude: longitude,
-            order: markers.length+1,
+            order: routeSteps.length+1,
             key: Math.random().toString()
         };
         setMarkers([...markers, newMarker]);
@@ -30,12 +31,28 @@ const CreateTripScreen = ({ navigation }) => {
 
         } else {
             console.log('Screen not focused or user/token not available');
+            setMarkers([]);
+            setRouteSteps([]);
         }
     }, [isFocused, user, token]);
 
+    const deleteStep = (index) => {
+        console.log('remove step');
+        const filterRouteSteps = routeSteps.filter((currentStep, i) => i !== (index-1));
+        // re order steps
+        const updatedSteps = filterRouteSteps.map((item, i) => ({
+            ...item,
+            order: i + 1, // Starting order from 2
+        }));
+
+        console.log(updatedSteps);
+        setRouteSteps(updatedSteps);
+        setMarkers([]);
+    };
+
     return (
         <View  style={styles.container}>
-            <StepsComponent steps={routeSteps} />
+            <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
             <MapView style={styles.mapStyle}
                      onPress={handleMapPress}
                 initialRegion={{
@@ -49,9 +66,15 @@ const CreateTripScreen = ({ navigation }) => {
                     <Marker
                         key={index}
                         coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-                    />
+                    >
+                        <View>
+                        </View>
+                    </Marker>
                 ))}
             </MapView>
+            <View>
+                <Button>Créer itinéraire</Button>
+            </View>
         </View>
     );
 };
@@ -63,7 +86,7 @@ const styles = StyleSheet.create({
     },
     mapStyle: {
         width: "100%",
-        height: "100%"
+        height: "95%"
     },
     friendsButtonContainer: {
         display: "flex",

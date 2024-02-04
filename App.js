@@ -36,13 +36,13 @@ const MainTabs = () => {
             <Tab.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ title: 'Créer', headerShown: false,
                 tabBarLabel: 'Créer',
                 tabBarIcon: () => (
-                    <Ionicons name="home" size={20}/>
+                    <Ionicons name="map" size={20}/>
                 ),
             }} />
             <Tab.Screen name="Friends" component={ProtectedFriends} options={{ title: 'Amis', headerShown: false,
                 tabBarLabel: 'Amis',
                 tabBarIcon: () => (
-                    <Ionicons name="home" size={20}/>
+                    <Ionicons name="people-circle-outline" size={20}/>
                 ),
             }} />
         </Tab.Navigator>
