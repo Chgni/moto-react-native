@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {useUser} from "../Guard/WithAuthGuard";
 import {Header, Tab, TabView, Text} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
@@ -44,6 +44,12 @@ const HomeScreen = ({ navigation }) => {
         navigation.navigate('CreateTrip');
     }
 
+    const goToTripPage = (id) => {
+        navigation.navigate('CreateTrip', {
+            tripId: id
+        });
+    }
+
     return (
         <View style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -56,10 +62,10 @@ const HomeScreen = ({ navigation }) => {
                     <ScrollView style={{ padding: 10}}>
                         { !loadingTrips && trips.map(trip => (
                             <>
-                                <View key={trip.id} style={styles.tripCard}>
+                                <TouchableOpacity key={trip.id} onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
                                     <Text h4>{trip.name}</Text>
                                     <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
-                                </View>
+                                </TouchableOpacity>
                             </>
                         ))}
                     </ScrollView>

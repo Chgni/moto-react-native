@@ -19,6 +19,25 @@ const getTrips = async (user, token) => {
     }
 };
 
+const getTripsById = async (user, token) => {
+    try {
+        console.log('Get Trips');
+        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes?owned=true&joined=true`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+            return response.data;
+        }
+    } catch (error) {
+        if( error.response ){
+            // console.log(error.response.data); // => the response payload
+            console.log('Cant get trips');
+        }
+    }
+};
+
 
 const createTrip = async (name, description, token) => {
         try {

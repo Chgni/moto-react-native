@@ -9,7 +9,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { createTrip } from "../services/TripService";
 import {Tab, TabView} from "@rneui/base";
 
-const CreateTripScreen = ({ navigation }) => {
+const CreateTripScreen = ({ route }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [position, setPosition] = useState(null);
@@ -47,7 +47,10 @@ const CreateTripScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (isFocused && user && token) {
-
+            if (route.params) {
+                const { tripId } = route.params;
+                console.log(tripId);
+            }
         } else {
             console.log('Screen not focused or user/token not available');
             setRouteSteps([]);
