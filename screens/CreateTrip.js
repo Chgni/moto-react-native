@@ -1,8 +1,8 @@
-import MapView, { Marker }  from 'react-native-maps';
+import MapView, {Marker, UrlTile} from 'react-native-maps';
 import {useUser} from "../Guard/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {ScrollView, StyleSheet, Text, View, Image} from "react-native";
+import {ScrollView, StyleSheet, Text, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
@@ -142,11 +142,11 @@ const CreateTripScreen = ({ navigation }) => {
                                 waypoints={getWaypoints()}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
-                                apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"}
+                                apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //
                             />}
                         </MapView>
                         <View style={styles.saveTripButton}>
-                            <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                            <Button onPress={create} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                                 <Icon
                                     name='save-outline'
                                     type='ionicon'
@@ -161,7 +161,10 @@ const CreateTripScreen = ({ navigation }) => {
                     <Text h1>Favorite</Text>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    <Text h1>Cart</Text>
+                    <View style={styles.itineraryInfosItem}>
+                        <Input placeholder={'Nom de l\'itinéraire'} onChangeText={setName}></Input>
+                        <TextInput style={styles.itineraryInfosTextArea} multiline={true} placeholder={'Description'} onChangeText={setDescription}></TextInput>
+                    </View>
                 </TabView.Item>
             </TabView>
 
@@ -197,7 +200,15 @@ const styles = StyleSheet.create({
         marginTop: 10,
         display: "flex",
         flexDirection: "column",
-        width: "50%"
+        width: "100%",
+        padding: 10
+    },
+    itineraryInfosTextArea: {
+        backgroundColor: 'lightgray',
+        width: "100%",
+        borderRadius: 15,
+        height: 150,
+        padding: 10
     },
     friendsButtonContainer: {
         display: "flex",

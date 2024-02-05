@@ -34,7 +34,7 @@ const StepsComponent = ({ steps, deleteStep }) => {
     }
 
     return (
-        <ScrollView horizontal style={styles.menu}>
+        <ScrollView style={styles.menu}>
             <ScrollView style={styles.menuItem}>
                 {steps.map((step, index) => (
                     <View style={styles.menuItemWrapper} key={index}>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        width: 250
+        width: 250,
     },
     menuItem: {
         display: "flex",
