@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from './screens/Login';
@@ -39,12 +39,6 @@ const MainTabs = () => {
                     <Ionicons name="people-circle-outline" size={30}/>
                 ),
             }} />
-            <Tab.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ title: 'Créer', headerShown: false,
-                tabBarLabel: 'Créer',
-                tabBarIcon: () => (
-                    <Ionicons name="map" size={30}/>
-                ),
-            }} />
         </Tab.Navigator>
     );
 };
@@ -57,6 +51,7 @@ export default function App() {
           <Stack.Screen name="Deconnexion" component={LogoutScreen} />
           <Stack.Screen name="Inscription" component={RegisterScreen} />
           <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
   );

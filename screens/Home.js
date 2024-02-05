@@ -28,6 +28,7 @@ const HomeScreen = ({ navigation }) => {
     }, [isFocused, user, token]);
 
     const getAllTrips = async () => {
+        setLoadingTrips(true);
         await getTrips(user, token).then(
             (response) => {
                 if (response) {
@@ -39,6 +40,10 @@ const HomeScreen = ({ navigation }) => {
         )
     };
 
+    const goToCreatePage = () => {
+        navigation.navigate('CreateTrip');
+    }
+
     return (
         <View style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -49,13 +54,13 @@ const HomeScreen = ({ navigation }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
-                        {trips.map(trip => (
-                            <View>
+                        { !loadingTrips && trips.map(trip => (
+                            <>
                                 <View key={trip.id} style={styles.tripCard}>
                                     <Text h4>{trip.name}</Text>
                                     <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
                                 </View>
-                            </View>
+                            </>
                         ))}
                     </ScrollView>
                 </TabView.Item>
@@ -67,7 +72,7 @@ const HomeScreen = ({ navigation }) => {
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
-                <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                <Button onPress={goToCreatePage} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                     <Icon
                         name='add-outline'
                         type='ionicon'
@@ -98,7 +103,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        paddingTop: 15
+        paddingTop: 15,
+        backgroundColor: "#fff"
     },
     tripCard: {
         display: "flex",

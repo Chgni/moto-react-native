@@ -4,21 +4,21 @@ import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import StepsComponent from "../components/StepsComponent";
-import {Button, Input} from "@rneui/themed";
+import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
 import { createTrip } from "../services/TripService";
+import {Tab, TabView} from "@rneui/base";
 
 const CreateTripScreen = ({ navigation }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [position, setPosition] = useState(null);
-    const [markers, setMarkers] = useState([]);
     const [routeSteps, setRouteSteps] = useState([]);
     const [origin, setOrigin] = useState(null);
     const [destination, setDestination] = useState(null);
     const [name, setName] = useState(null);
     const [description, setDescription] = useState(null);
-
+    const [index, setIndex] = React.useState(0);
 
     const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -28,8 +28,6 @@ const CreateTripScreen = ({ navigation }) => {
             order: routeSteps.length+1,
             key: Math.random().toString()
         };
-        setMarkers([...markers, newMarker]);
-
         setRouteSteps([...routeSteps, newMarker]);
     };
 
@@ -52,7 +50,6 @@ const CreateTripScreen = ({ navigation }) => {
 
         } else {
             console.log('Screen not focused or user/token not available');
-            setMarkers([]);
             setRouteSteps([]);
         }
     }, [isFocused, user, token]);
@@ -68,7 +65,6 @@ const CreateTripScreen = ({ navigation }) => {
 
         console.log(updatedSteps);
         setRouteSteps(updatedSteps);
-        setMarkers([]);
     };
 
     const getOrigin = () => {
@@ -107,56 +103,91 @@ const CreateTripScreen = ({ navigation }) => {
 
     return (
         <View  style={styles.container}>
-            <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
-            <MapView style={styles.mapStyle}
-                     onPress={handleMapPress}
-                initialRegion={{
-                    latitude: 43.4496,
-                    longitude: 5.2443,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
-            >
-                {routeSteps.map((marker, index) => (
-                    <Marker
-                        draggable={true}
-                        onDragEnd={(e) => onMarkerDragEnd(e, index)}
-                        key={index}
-                        coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-                    >
-                        <View style={styles.customMarker}>
-                            <Text style={styles.markerText}>{marker.order}</Text>
+            <Tab value={index} onChange={setIndex} dense>
+                <Tab.Item>Itinéraires</Tab.Item>
+                <Tab.Item>Participants</Tab.Item>
+                <Tab.Item>Détails</Tab.Item>
+            </Tab>
+            <TabView value={index} onChange={setIndex} animationType="spring">
+                <TabView.Item style={{ width: '100%' }}>
+                    <View style={{ width: '100%', height: '100%' }}>
+                        <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
+                        <MapView style={styles.mapStyle}
+                                 onPress={handleMapPress}
+                                 initialRegion={{
+                                     latitude: 43.4496,
+                                     longitude: 5.2443,
+                                     latitudeDelta: 0.0922,
+                                     longitudeDelta: 0.0421,
+                                 }}
+                        >
+                            {routeSteps.map((marker, i) => (
+                                <Marker
+                                    draggable={true}
+                                    onDragEnd={(e) => onMarkerDragEnd(e, i)}
+                                    key={i}
+                                    coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                                >
+                                    <View style={styles.customMarker}>
+                                        <Text style={styles.markerText}>{marker.order}</Text>
+                                    </View>
+                                </Marker>
+                            ))}
+                            { routeSteps.length >= 2 && <MapViewDirections
+                                origin={getOrigin()}
+                                destination={getDestination()}
+                                waypoints={getWaypoints()}
+                                strokeWidth={3}
+                                strokeColor={"blue"}
+                                apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"}
+                            />}
+                        </MapView>
+                        <View style={styles.saveTripButton}>
+                            <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                                <Icon
+                                    name='save-outline'
+                                    type='ionicon'
+                                    color='#fff'
+                                    size={50}
+                                />
+                            </Button>
                         </View>
-                    </Marker>
-                ))}
-                { routeSteps.length >= 2 && <MapViewDirections
-                    origin={getOrigin()}
-                    destination={getDestination()}
-                    waypoints={getWaypoints()}
-                    strokeWidth={3}
-                    strokeColor={"blue"}
-                    apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"}
-                />}
-            </MapView>
-            <View style={styles.itineraryInfos}>
+                    </View>
+                </TabView.Item>
+                <TabView.Item style={{ width: '100%' }}>
+                    <Text h1>Favorite</Text>
+                </TabView.Item>
+                <TabView.Item style={{width: '100%' }}>
+                    <Text h1>Cart</Text>
+                </TabView.Item>
+            </TabView>
+
+            {/*<View style={styles.itineraryInfos}>
                 <View style={styles.itineraryInfosItem}>
                     <Input placeholder={'Nom de l\'itinéraire'} onChangeText={setName}></Input>
                     <Input placeholder={'Description'} onChangeText={setDescription}></Input>
                     <Button onPress={create}>Créer itinéraire</Button>
                 </View>
-            </View>
+            </View>*/}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        height: "100%"
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        paddingTop: 20,
+        backgroundColor: "#fff"
     },
     itineraryInfos: {
         display: "flex",
         flexDirection: "column",
+        width: "100%",
+    },
+    mapStyle: {
+        height: "100%",
         width: "100%",
     },
     itineraryInfosItem: {
@@ -164,10 +195,6 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         width: "50%"
-    },
-    mapStyle: {
-        width: "100%",
-        height: "75%"
     },
     friendsButtonContainer: {
         display: "flex",
@@ -179,6 +206,12 @@ const styles = StyleSheet.create({
     addFriendButton: {
         maxWidth: 100,
         marginLeft: 10
+    },
+    saveTripButton: {
+        position: "absolute",
+        right: 10,
+        bottom: 20,
+        borderRadius: 50
     },
     friendsContainer: {
         display: "flex",
