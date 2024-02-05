@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet, ActivityIndicator} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
 import {useUser} from "../Guard/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
@@ -9,7 +9,7 @@ import {
     Button,
     Dialog,
 } from '@rneui/themed';
-import {Header} from "@rneui/base";
+import {Header, Tab, TabView} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
 
 const FriendsScreen = ({ navigation }) => {
@@ -22,6 +22,7 @@ const FriendsScreen = ({ navigation }) => {
     const [loadingFriends, setLoadingFriends] = useState(true); // add friend dialog visible
     const [loadingFriendsReceived, setLoadingFriendsReceived] = useState(true); // add friend dialog visible
     const [loadingFriendsSent, setLoadingFriendsSent] = useState(true); // add friend dialog visible
+    const [index, setIndex] = React.useState(0);
 
     const toggleAddFriendDialog = () => {
         setVisibleDialog(!visibleDialog);
@@ -80,33 +81,32 @@ const FriendsScreen = ({ navigation }) => {
                           centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
                           rightComponent={<SettingHeader/>}
             /> */}
-            <View style={styles.friendsContainer}>
-                <Text>Mes amis ({friends.length})</Text>
-                <Button style={styles.addFriendButton} title='Ajouter un ami'
-                    onPress={toggleAddFriendDialog}
-                />
-            </View>
-            <ScrollView style={styles.friendsContainer}>
-                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
-                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friends.map(friend => (
-                    <FriendItem key={friend.user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
-                ))}
-            </ScrollView>
-            <ScrollView style={styles.friendsContainer}>
-                <Text>Demandes d'amis reçues ({friendRequestsReceived.length})</Text>
+            <Tab value={index} onChange={setIndex} dense>
+                <Tab.Item>Amis</Tab.Item>
+                <Tab.Item>Invitations envoyées</Tab.Item>
+                <Tab.Item>Invitations reçues</Tab.Item>
+            </Tab>
+            <TabView value={index} onChange={setIndex} animationType="spring">
+                <TabView.Item style={{ width: '100%' }}>
+                    <ScrollView style={{ padding: 10}}>
+                        <View style={styles.addFriendButton}>
+                            <Button title='Ajouter un ami' buttonStyle={{ borderRadius: 30}}
+                                    onPress={toggleAddFriendDialog}
+                            />
+                        </View>
+                        {friends.map(friend => (
+                            <FriendItem key={friend.user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
+                        ))}
+                    </ScrollView>
+                </TabView.Item>
+                <TabView.Item style={{ width: '100%' }}>
+                    <Text h1>Favorite</Text>
+                </TabView.Item>
+                <TabView.Item style={{width: '100%' }}>
+                    <Text h1>Cart</Text>
+                </TabView.Item>
+            </TabView>
 
-                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
-                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsReceived.map(friend => (
-                    <FriendItem key={friend.user.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests}/>
-                ))}
-            </ScrollView>
-            <ScrollView style={styles.friendsContainer}>
-                <Text>Demandes d'amis envoyées ({friendRequestsSent.length})</Text>
-                {loadingFriends && loadingFriendsReceived && loadingFriendsSent && <ActivityIndicator size="small" color="#0000ff" />}
-                {!loadingFriends && !loadingFriendsReceived && !loadingFriendsSent && friendRequestsSent.map(friend => (
-                    <FriendItem key={friend.user.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests}/>
-                ))}
-            </ScrollView>
             <Dialog
                 isVisible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
@@ -121,7 +121,10 @@ const FriendsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        height: "100%",
+        paddingTop: 15,
+        backgroundColor: "#fff"
     },
     headerStyle: {
     },
@@ -133,8 +136,11 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     addFriendButton: {
-        maxWidth: 100,
-        marginLeft: 10
+        display: "flex",
+        alignSelf: "center",
+        maxWidth: 250,
+        marginLeft: 10,
+        marginBottom: 10
     },
     friendsContainer: {
         display: "flex",

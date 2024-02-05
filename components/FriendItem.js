@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { Card, Button, BottomSheet } from '@rneui/themed';
 import {ListItem} from "@rneui/base";
 import {useUser} from "../Guard/WithAuthGuard";
@@ -65,36 +65,34 @@ const FriendItem = ({ friend, type, onUpdate }) => {
     }
 
     return (
-        <Card style={styles.card}>
-            <Text h4>{friend.user.username}</Text>
-            { type !== 'sent' && <Button onPress={openMenuActions}>
-                <Text style={styles.actions}>Actions</Text>
-            </Button> }
-            <BottomSheet modalProps={{}} isVisible={isVisible}>
-                {type !== "received" && list.map((l, i) => (
-                    <ListItem
-                        key={i}
-                        containerStyle={l.containerStyle}
-                        onPress={l.onPress}
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                ))}
-                {type === "received" && listReceived.map((l, i) => (
-                    <ListItem
-                        key={i}
-                        containerStyle={l.containerStyle}
-                        onPress={l.onPress}
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                ))}
-            </BottomSheet>
-        </Card>
+            <TouchableOpacity style={styles.tripCard} onPress={openMenuActions}>
+                <Text h4>{friend.user.username}</Text>
+                <BottomSheet modalProps={{}} isVisible={isVisible}>
+                    {type !== "received" && list.map((l, i) => (
+                        <ListItem
+                            key={i}
+                            containerStyle={l.containerStyle}
+                            onPress={l.onPress}
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+                            </ListItem.Content>
+                        </ListItem>
+                    ))}
+                    {type === "received" && listReceived.map((l, i) => (
+                        <ListItem
+                            key={i}
+                            containerStyle={l.containerStyle}
+                            onPress={l.onPress}
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+                            </ListItem.Content>
+                        </ListItem>
+                    ))}
+                </BottomSheet>
+            </TouchableOpacity>
+
     );
 };
 
@@ -109,7 +107,19 @@ const styles = StyleSheet.create({
     },
     actions: {
         color: "#fff"
-    }
+    },
+    tripCard: {
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: 'lightgray',
+        justifyContent: "center",
+        width: "100%",
+        borderRadius: 15,
+        height: 70,
+        padding: 10,
+        marginTop: 5,
+        marginBottom: 5
+    },
 });
 
 export default FriendItem;
