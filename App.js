@@ -30,19 +30,19 @@ const MainTabs = () => {
                 title: 'Accueil', headerShown: false,
                 tabBarLabel: 'Accueil',
                 tabBarIcon: () => (
-                    <Ionicons name="home" size={20}/>
+                    <Ionicons name="home" size={30}/>
                 ),
             }}/>
-            <Tab.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ title: 'Créer', headerShown: false,
-                tabBarLabel: 'Créer',
-                tabBarIcon: () => (
-                    <Ionicons name="map" size={20}/>
-                ),
-            }} />
             <Tab.Screen name="Friends" component={ProtectedFriends} options={{ title: 'Amis', headerShown: false,
                 tabBarLabel: 'Amis',
                 tabBarIcon: () => (
-                    <Ionicons name="people-circle-outline" size={20}/>
+                    <Ionicons name="people-circle-outline" size={30}/>
+                ),
+            }} />
+            <Tab.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ title: 'Créer', headerShown: false,
+                tabBarLabel: 'Créer',
+                tabBarIcon: () => (
+                    <Ionicons name="map" size={30}/>
                 ),
             }} />
         </Tab.Navigator>

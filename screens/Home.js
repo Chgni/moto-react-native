@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 import {useUser} from "../Guard/WithAuthGuard";
-import {Header} from "@rneui/base";
+import {Header, Tab, TabView, Text} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
 import {useIsFocused} from "@react-navigation/native";
 import { getTrips } from "../services/TripService";
+import {Button, Icon} from '@rneui/themed';
 
 const HomeScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -15,6 +16,7 @@ const HomeScreen = ({ navigation }) => {
     const [loadingTrips, setLoadingTrips] = useState(true);
     const [loadingFriendsTrips, setLoadingFriendsTrips] = useState(true);
     const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
+    const [index, setIndex] = React.useState(0);
 
     useEffect(() => {
         if (isFocused && user && token) {
@@ -30,6 +32,7 @@ const HomeScreen = ({ navigation }) => {
             (response) => {
                 if (response) {
                     setTrips(response);
+                    console.log(response);
                     setLoadingTrips(false);
                 }
             }
@@ -38,7 +41,35 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            { user && <Header style={styles.headerStyle}
+            <Tab value={index} onChange={setIndex} dense>
+                <Tab.Item>Mes trajets</Tab.Item>
+                <Tab.Item>Trajets rejoints</Tab.Item>
+                <Tab.Item>Trajets publics</Tab.Item>
+            </Tab>
+            <TabView value={index} onChange={setIndex} animationType="spring">
+                <TabView.Item style={{ width: '100%' }}>
+                    <View style={{ padding: 10}}>
+                        <Text h1>Recent</Text>
+                    </View>
+                </TabView.Item>
+                <TabView.Item style={{ width: '100%' }}>
+                    <Text h1>Favorite</Text>
+                </TabView.Item>
+                <TabView.Item style={{width: '100%' }}>
+                    <Text h1>Cart</Text>
+                </TabView.Item>
+            </TabView>
+            <View style={styles.addTripButton}>
+                <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                    <Icon
+                        name='add-outline'
+                        type='ionicon'
+                        color='#fff'
+                        size={60}
+                    />
+                </Button>
+            </View>
+            {/* user && <Header style={styles.headerStyle}
                     centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
                     rightComponent={<SettingHeader/>}
             /> }
@@ -58,7 +89,9 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        height: "100%",
+        paddingTop: 15
     },
     headerStyle: {
     },
@@ -69,9 +102,14 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         width: "100%"
     },
+    addTripButton: {
+        position: "absolute",
+        right: 20,
+        bottom: 20,
+        borderRadius: 50
+    },
     addFriendButton: {
-        maxWidth: 100,
-        marginLeft: 10
+        width: 10,
     },
     friendsContainer: {
         display: "flex",
