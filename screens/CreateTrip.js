@@ -130,7 +130,9 @@ const CreateTripScreen = ({ navigation }) => {
                                 >
                                     <View>
                                         <Image source={require('../assets/mapmarker.png')} style={{height: 35, width:35 }} />
-                                        <View style={styles.customMarker}></View>
+                                        <View style={styles.customMarker}>
+                                            <Text style={styles.markerText}>{marker.order}</Text>
+                                        </View>
                                     </View>
                                 </Marker>
                             ))}
@@ -224,10 +226,17 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     customMarker: {
-
+        position: "absolute",
+        top: 0,
+        left: 8,
+        backgroundColor: "red",
+        padding: 2,
+        width: 18,
+        borderRadius: 20
     },
     markerText: {
-        color: "#fff", // Example text color
+        color: "#fff",
+        fontWeight: "bold"
         // Add more styling as needed
     }
 });
