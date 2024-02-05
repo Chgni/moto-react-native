@@ -48,9 +48,16 @@ const HomeScreen = ({ navigation }) => {
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
-                    <View style={{ padding: 10}}>
-                        <Text h1>Recent</Text>
-                    </View>
+                    <ScrollView style={{ padding: 10}}>
+                        {trips.map(trip => (
+                            <View>
+                                <View key={trip.id} style={styles.tripCard}>
+                                    <Text h4>{trip.name}</Text>
+                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
+                                </View>
+                            </View>
+                        ))}
+                    </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <Text h1>Favorite</Text>
@@ -93,6 +100,18 @@ const styles = StyleSheet.create({
         height: "100%",
         paddingTop: 15
     },
+    tripCard: {
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: 'lightgray',
+        justifyContent: "center",
+        width: "100%",
+        borderRadius: 15,
+        height: 70,
+        padding: 10,
+        marginTop: 5,
+        marginBottom: 5
+    },
     headerStyle: {
     },
     friendsButtonContainer: {
@@ -104,7 +123,7 @@ const styles = StyleSheet.create({
     },
     addTripButton: {
         position: "absolute",
-        right: 20,
+        right: 10,
         bottom: 20,
         borderRadius: 50
     },
