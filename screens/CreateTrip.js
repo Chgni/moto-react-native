@@ -2,7 +2,7 @@ import MapView, { Marker }  from 'react-native-maps';
 import {useUser} from "../Guard/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {ScrollView, StyleSheet, Text, View} from "react-native";
+import {ScrollView, StyleSheet, Text, View, Image} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
@@ -128,8 +128,9 @@ const CreateTripScreen = ({ navigation }) => {
                                     key={i}
                                     coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                                 >
-                                    <View style={styles.customMarker}>
-                                        <Text style={styles.markerText}>{marker.order}</Text>
+                                    <View>
+                                        <Image source={require('../assets/mapmarker.png')} style={{height: 35, width:35 }} />
+                                        <View style={styles.customMarker}></View>
                                     </View>
                                 </Marker>
                             ))}
@@ -223,11 +224,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     customMarker: {
-        backgroundColor: "#007bff", // Example background color
-        padding: 5,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+
     },
     markerText: {
         color: "#fff", // Example text color
