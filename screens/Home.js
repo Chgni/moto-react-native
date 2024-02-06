@@ -61,12 +61,12 @@ const HomeScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
                         { !loadingTrips && trips.map(trip => (
-                            <>
-                                <TouchableOpacity key={trip.id} onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
+                            <View key={trip.id}>
+                                <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
                                     <Text h4>{trip.name}</Text>
                                     <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
                                 </TouchableOpacity>
-                            </>
+                            </View>
                         ))}
                     </ScrollView>
                 </TabView.Item>

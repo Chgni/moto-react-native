@@ -2,12 +2,12 @@ import MapView, {Marker, UrlTile} from 'react-native-maps';
 import {useUser} from "../Guard/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {ScrollView, StyleSheet, Text, View, Image, TextInput} from "react-native";
+import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
 import { createTrip } from "../services/TripService";
-import {Tab, TabView} from "@rneui/base";
+import {Tab, TabView, Text} from "@rneui/base";
 
 const CreateTripScreen = ({ route }) => {
     const { user, token } = useUser();
@@ -47,10 +47,10 @@ const CreateTripScreen = ({ route }) => {
 
     useEffect(() => {
         if (isFocused && user && token) {
-            if (route.params) {
+/*            if (route.params) {
                 const { tripId } = route.params;
                 console.log(tripId);
-            }
+            }*/
         } else {
             console.log('Screen not focused or user/token not available');
             setRouteSteps([]);
@@ -161,7 +161,9 @@ const CreateTripScreen = ({ route }) => {
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <Text h1>Favorite</Text>
+                    <View style={styles.friendSection}>
+                        <Text h4>Veuillez d'abord créer l'itinéraire.</Text>
+                    </View>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
                     <View style={styles.itineraryInfosItem}>
@@ -194,6 +196,13 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         width: "100%",
+    },
+    friendSection: {
+        display: "flex",
+        width: '100%',
+        height: '100%',
+        justifyContent: "center",
+        alignItems: "center",
     },
     mapStyle: {
         height: "100%",
