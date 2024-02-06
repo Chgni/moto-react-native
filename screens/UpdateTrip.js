@@ -6,19 +6,55 @@ import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
-import { createTrip } from "../services/TripService";
+import { getTripById } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
+import {getFriends} from "../services/FriendsService";
 
 const UpdateTripScreen = ({ route }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
-    const [position, setPosition] = useState(null);
     const [routeSteps, setRouteSteps] = useState([]);
-    const [origin, setOrigin] = useState(null);
-    const [destination, setDestination] = useState(null);
     const [name, setName] = useState(null);
     const [description, setDescription] = useState(null);
     const [index, setIndex] = React.useState(0);
+    const [trip, setTrip] = useState({});
+    const [friends, setFriends] = useState([]);
+    const [ableToUpdate, setAbleToUpdate] = useState(false);
+
+
+    useEffect(() => {
+        if (isFocused && user && token && route.params) {
+            const { tripId } = route.params;
+            getTrip(tripId);
+
+            /*
+            getFriends(user, token).then(
+                (response) => {
+                    if (response) {
+                        setFriends(response);
+
+                    }
+                }
+            )*/
+        } else {
+            console.log('Screen not focused or user/token not available');
+            setRouteSteps([]);
+        }
+    }, [isFocused, user, token]);
+
+    const getTrip = async (tripId) => {
+        await getTripById(tripId, user, token).then(
+            (response) => {
+                //trip = response;
+                setTrip(response);
+                if (trip.owner_id === user.id) {
+                    setAbleToUpdate(true);
+                    setName(trip.name);
+                    setDescription(trip.description);
+                }
+            }
+        )
+    }
 
     const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -45,18 +81,6 @@ const UpdateTripScreen = ({ route }) => {
         setRouteSteps(updatedSteps);
     }
 
-    useEffect(() => {
-        if (isFocused && user && token) {
-                        if (route.params) {
-                            const { tripId } = route.params;
-                            console.log(tripId);
-                        }
-        } else {
-            console.log('Screen not focused or user/token not available');
-            setRouteSteps([]);
-        }
-    }, [isFocused, user, token]);
-
     const deleteStep = (index) => {
         console.log('remove step');
         const filterRouteSteps = routeSteps.filter((currentStep, i) => i !== (index-1));
@@ -69,6 +93,20 @@ const UpdateTripScreen = ({ route }) => {
         console.log(updatedSteps);
         setRouteSteps(updatedSteps);
     };
+
+    const getDetails = () => {
+        if (ableToUpdate) {
+            return (<View style={styles.itineraryInfosItem}>
+                <Text h3>{trip.name}</Text>
+                <Text h4>{trip.description}</Text>
+            </View>);
+        }else {
+            return (<View style={styles.itineraryInfosItem}>
+                <Input onChangeText={setName}></Input>
+                <TextInput style={styles.itineraryInfosTextArea} multiline={true} onChangeText={setDescription}></TextInput>
+            </View>);
+        }
+    }
 
     const getOrigin = () => {
         return {latitude: routeSteps[0].latitude, longitude: routeSteps[0].longitude};
@@ -87,23 +125,6 @@ const UpdateTripScreen = ({ route }) => {
         return waypoints;
     }
 
-    const create = async () => {
-        if (name === null || name.toString().trim().length < 3 ||
-            description === null || description.toString().trim().length < 5) {
-            alert("Veuillez renseigner un nom d'itinéraire et une description (min 3 et 5 charactères)");
-        } else {
-            if (routeSteps.length < 2) {
-                alert("Veuillez renseigner au moins deux destinations.");
-            } else {
-                await createTrip(name, description, token).then( (response) => {
-                    if (response) {
-                        //Redirect to modify trip page
-                    }
-                })
-            }
-        }
-    }
-
     return (
         <View  style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -111,7 +132,7 @@ const UpdateTripScreen = ({ route }) => {
                 <Tab.Item>Participants</Tab.Item>
                 <Tab.Item>Détails</Tab.Item>
             </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
+            <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
                         <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
@@ -149,7 +170,7 @@ const UpdateTripScreen = ({ route }) => {
                             />}
                         </MapView>
                         <View style={styles.saveTripButton}>
-                            <Button onPress={create} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                            <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                                 <Icon
                                     name='save-outline'
                                     type='ionicon'
@@ -161,25 +182,11 @@ const UpdateTripScreen = ({ route }) => {
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <View style={styles.friendSection}>
-                        <Text h4>test recup.</Text>
-                    </View>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    <View style={styles.itineraryInfosItem}>
-                        <Input placeholder={'Nom de l\'itinéraire'} onChangeText={setName}></Input>
-                        <TextInput style={styles.itineraryInfosTextArea} multiline={true} placeholder={'Description'} onChangeText={setDescription}></TextInput>
-                    </View>
+                    {getDetails()}
                 </TabView.Item>
             </TabView>
-
-            {/*<View style={styles.itineraryInfos}>
-                <View style={styles.itineraryInfosItem}>
-                    <Input placeholder={'Nom de l\'itinéraire'} onChangeText={setName}></Input>
-                    <Input placeholder={'Description'} onChangeText={setDescription}></Input>
-                    <Button onPress={create}>Créer itinéraire</Button>
-                </View>
-            </View>*/}
         </View>
     );
 };

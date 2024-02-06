@@ -25,19 +25,11 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
             });
             if (response.status === 200) {
                 setFriends([]);
-                console.log("response");
-                console.log(response.data);
-
-                console.log("currentfriends");
-                console.log(currentFriends);
                 const friendsFiltered = [];
 
                 for (const friend of response.data) {
                     friendsFiltered.push(friend);
                 }
-
-                console.log(friendsFiltered);
-
                 setFriends(friendsFiltered);
                 setLoading(false);
                 setSearchDone(true);

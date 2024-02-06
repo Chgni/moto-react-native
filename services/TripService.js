@@ -19,10 +19,10 @@ const getTrips = async (user, token) => {
     }
 };
 
-const getTripsById = async (user, token) => {
+const getTripById = async (id, user, token) => {
     try {
         console.log('Get Trips');
-        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes?owned=true&joined=true`,{
+        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes/${id}`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -67,4 +67,4 @@ const createTrip = async (name, description, token) => {
 
 };
 
-export {createTrip, getTrips};
+export {createTrip, getTrips, getTripById};

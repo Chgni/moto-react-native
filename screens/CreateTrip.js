@@ -111,7 +111,7 @@ const CreateTripScreen = ({ route }) => {
                 <Tab.Item>Participants</Tab.Item>
                 <Tab.Item>Détails</Tab.Item>
             </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
+            <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
                         <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
