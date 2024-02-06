@@ -27,17 +27,13 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
                 setFriends([]);
                 console.log("response");
                 console.log(response.data);
+
+                console.log("currentfriends");
+                console.log(currentFriends);
                 const friendsFiltered = [];
 
                 for (const friend of response.data) {
-                    console.log(friend);
-                    if ( !(currentFriends.find( (x) => x.user.id === friend.id)
-                        || friendReceived.find( (x) => x.user.id === friend.id)
-                        || friendSent.find( (x) => x.user.id === friend.id))
-
-                    ) {
-                        friendsFiltered.push(friend);
-                    }
+                    friendsFiltered.push(friend);
                 }
 
                 console.log(friendsFiltered);

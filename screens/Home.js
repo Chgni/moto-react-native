@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
     }
 
     const goToTripPage = (id) => {
-        navigation.navigate('CreateTrip', {
+        navigation.navigate('UpdateTrip', {
             tripId: id
         });
     }

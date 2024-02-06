@@ -14,7 +14,6 @@ import axios from "axios";
             }
         } catch (error) {
             if( error.response ){
-                // console.log(error.response.data); // => the response payload
                 console.log('Cant get friends');
             }
         }
@@ -68,7 +67,7 @@ const deleteFriend = async (friend, type, token) => {
             statusId = 3;
         }
         const response = await axios.patch(`http://10.0.2.2:8000/api/v1/friends/`, {
-                id: friend.friendship_id,
+                id: friend.id,
                 status : statusId
             }
             , {
@@ -94,7 +93,7 @@ const acceptFriend = async (friend, type, token) => {
     try {
         console.log(friend);
         const response = await axios.patch(`http://10.0.2.2:8000/api/v1/friends/`, {
-                id: friend.friendship_id,
+                id: friend.id,
                 status : 1
             }
             , {

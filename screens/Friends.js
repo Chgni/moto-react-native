@@ -59,6 +59,7 @@ const FriendsScreen = ({ navigation }) => {
             (response) => {
                 if (response) {
                     setFriendRequestsSent(response);
+                    console.log(friendRequestsSent);
                     setLoadingFriendsSent(false);
                 }
             }
@@ -95,15 +96,23 @@ const FriendsScreen = ({ navigation }) => {
                             />
                         </View>
                         {friends.map(friend => (
-                            <FriendItem key={friend.user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
-                        ))}
+                             <FriendItem key={friend.target_user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
+                        )) }
                     </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <Text h1>Favorite</Text>
+                    <ScrollView style={{ padding: 10}}>
+                        {friendRequestsSent.map(friend => (
+                            <FriendItem key={friend.target_user.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests} />
+                        )) }
+                    </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    <Text h1>Cart</Text>
+                    <ScrollView style={{ padding: 10}}>
+                        {friendRequestsReceived.map(friend => (
+                            <FriendItem key={friend.requesting_user.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests} />
+                        )) }
+                    </ScrollView>
                 </TabView.Item>
             </TabView>
 

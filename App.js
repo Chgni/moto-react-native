@@ -9,6 +9,7 @@ import RegisterScreen from './screens/Register';
 import HomeScreen from "./screens/Home";
 import FriendsScreen from "./screens/Friends";
 import CreateTripScreen from "./screens/CreateTrip";
+import UpdateTripScreen from "./screens/UpdateTrip";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ const ProtectedLogin = withAuthGuard(LoginScreen);
 const ProtectedHome = withAuthGuard(HomeScreen);
 const ProtectedFriends = withAuthGuard(FriendsScreen);
 const ProtectedCreateTrip = withAuthGuard(CreateTripScreen);
+const ProtectedUpdateTrip = withAuthGuard(UpdateTripScreen);
 
 
 const MainTabs = () => {
@@ -52,6 +54,7 @@ export default function App() {
           <Stack.Screen name="Inscription" component={RegisterScreen} />
           <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
           <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
+          <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
   );
