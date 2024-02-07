@@ -147,6 +147,11 @@ const UpdateTripScreen = ({ route }) => {
             });
     }
 
+    const toggleAddFriendDialogAndRefresh = () => {
+        setVisibleDialog(!visibleDialog);
+        getTrip(trip.id);
+    };
+
     return (
         <View  style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -224,7 +229,7 @@ const UpdateTripScreen = ({ route }) => {
                         <Dialog
                             isVisible={visibleDialog}
                             onBackdropPress={toggleAddFriendDialog}>
-                            <SearchFriendTrip currentFriends={friends} onAdd={ () => {console.log("ddd")}}></SearchFriendTrip>
+                            <SearchFriendTrip currentFriends={friends} route_id={trip.id} onAdd={toggleAddFriendDialogAndRefresh}></SearchFriendTrip>
                         </Dialog>
                         { /* routeSteps.map((marker, i) => (
 

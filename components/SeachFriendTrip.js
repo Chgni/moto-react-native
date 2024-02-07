@@ -4,7 +4,7 @@ import {Text, Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 
-const SearchFriendTrip = ({ currentFriends, onAdd }) => {
+const SearchFriendTrip = ({ currentFriends, route_id,onAdd }) => {
     const { user, token } = useUser();
     const [search, setSearch] = useState("");
     const [friends, setFriends] = useState([]);
@@ -14,8 +14,10 @@ const SearchFriendTrip = ({ currentFriends, onAdd }) => {
 
     const addUser = async (user) => {
         try {
-            const response = await axios.post(`http://10.0.2.2:8000/api/v1/friends/`,{
-                    target_user_id: user.id
+            console.log(user.target_user.id);
+            console.log(route_id);
+            const response = await axios.post(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,{
+                    id: user.target_user.id
                 },
                 {
                     headers: {
@@ -34,7 +36,6 @@ const SearchFriendTrip = ({ currentFriends, onAdd }) => {
     }
 
     const updateSearch = (searchString) => {
-        console.log(searchString);
         setSearch(searchString);
         if (searchString.length === 0) {
             setFriends([]);
