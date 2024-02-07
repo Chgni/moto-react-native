@@ -75,12 +75,12 @@ const updateTrip = async (route_id, steps, token) => {
         filteredSteps.push(filtered);
     }
     try {
-        console.log("filter");
+        //console.log("filter");
         console.log(route_id);
         console.log(filteredSteps);
-        const response = await axios.put(`http://10.0.2.2:8000/api/v1/routes/${route_id}/waypoints`, {
+        const response = await axios.put(`http://10.0.2.2:8000/api/v1/routes/${route_id}/waypoints/`,
             filteredSteps
-        }, {headers: {
+        , {headers: {
                 Authorization: `Bearer ${token}`
             }});
 
@@ -92,12 +92,12 @@ const updateTrip = async (route_id, steps, token) => {
             alert('Erreur de base de données');
         }
 
-        if (response.status === 201) {
-            return response.data;
+        if (response.status === 200) {
+            return response;
         }
     } catch (error) {
         if( error.response ){
-            console.log(error.response.data); // => the response payload
+            console.log(error); // => the response payload
         }
     }
 

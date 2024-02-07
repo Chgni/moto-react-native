@@ -143,7 +143,7 @@ const UpdateTripScreen = ({ route }) => {
     const update = async (route_id) => {
         await updateTrip(route_id, routeSteps, token).then(
             (response) => {
-                alert(response.data);
+                //snackbar
             });
     }
 

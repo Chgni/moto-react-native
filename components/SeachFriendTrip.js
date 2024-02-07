@@ -14,7 +14,7 @@ const SearchFriendTrip = ({ currentFriends, route_id,onAdd }) => {
 
     const addUser = async (user) => {
         try {
-            console.log(user.target_user.id);
+            console.log(user);
             console.log(route_id);
             const response = await axios.post(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,{
                     id: user.target_user.id
