@@ -147,7 +147,7 @@ const UpdateTripScreen = ({ route }) => {
                 <Tab.Item>Participants</Tab.Item>
                 <Tab.Item>Détails</Tab.Item>
             </Tab>
-            { isFocused && user && token && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
+            { isFocused && user && token && Object.keys(trip).length > 0 && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
                         <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
@@ -196,7 +196,31 @@ const UpdateTripScreen = ({ route }) => {
                         </View>
                     </View>
                 </TabView.Item>
-                <TabView.Item style={{ width: '100%' }}>
+                <TabView.Item style={{ width: '100%', padding: 15 }}>
+
+                    <View>
+                        <View>
+                            <Text h3>Propriétaire</Text>
+                        </View>
+                        <View style={styles.friendCard}>
+                            <View style={{
+                                flexDirection: "row",
+                                justifyContent: "start",
+                                alignItems: "center"}}>
+                                <Text style={{paddingEnd: 10}} h4>{trip.owner.username}</Text>
+                            </View>
+                        </View>
+                        <View>
+                            <Text h3>Invités</Text>
+                            <Button h3>Ajouter</Button>
+                        </View>
+                        { /* routeSteps.map((marker, i) => (
+
+                        )) */}
+                    </View>
+
+
+
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
                     <View style={styles.itineraryInfosItem}>
@@ -221,6 +245,16 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         width: "100%",
+    },
+    friendCard: {
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: 'lightgray',
+        justifyContent: "center",
+        width: "100%",
+        borderRadius: 15,
+        height: 70,
+        padding: 10,
     },
     friendSection: {
         display: "flex",
