@@ -6,7 +6,7 @@ import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
-import { getTripById } from "../services/TripService";
+import { getTripById, updateTrip } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
 import {getFriends} from "../services/FriendsService";
 
@@ -47,6 +47,14 @@ const UpdateTripScreen = ({ route }) => {
             (response) => {
                 //trip = response;
                 setTrip(response);
+                let waypoints = response.waypoints;
+                for (const waypoint of waypoints) {
+                    waypoint.latitude = parseFloat(waypoint.latitude);
+                    waypoint.longitude = parseFloat(waypoint.longitude);
+                }
+                setRouteSteps(response.waypoints);
+                console.log("trip");
+                console.log(trip);
                 if (trip.owner_id === user.id) {
                     setAbleToUpdate(true);
                     setName(trip.name);
@@ -125,6 +133,13 @@ const UpdateTripScreen = ({ route }) => {
         return waypoints;
     }
 
+    const update = async (route_id) => {
+        await updateTrip(route_id, routeSteps, token).then(
+            (response) => {
+                alert(response.data);
+            });
+    }
+
     return (
         <View  style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -132,7 +147,7 @@ const UpdateTripScreen = ({ route }) => {
                 <Tab.Item>Participants</Tab.Item>
                 <Tab.Item>Détails</Tab.Item>
             </Tab>
-            <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
+            { isFocused && user && token && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
                         <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
@@ -170,23 +185,26 @@ const UpdateTripScreen = ({ route }) => {
                             />}
                         </MapView>
                         <View style={styles.saveTripButton}>
-                            <Button buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                            { trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                                 <Icon
                                     name='save-outline'
                                     type='ionicon'
                                     color='#fff'
                                     size={50}
                                 />
-                            </Button>
+                            </Button> }
                         </View>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    {getDetails()}
+                    <View style={styles.itineraryInfosItem}>
+                        <Text h3>{trip.name}</Text>
+                        <Text h4>{trip.description}</Text>
+                    </View>
                 </TabView.Item>
-            </TabView>
+            </TabView>}
         </View>
     );
 };

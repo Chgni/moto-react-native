@@ -67,4 +67,40 @@ const createTrip = async (name, description, token) => {
 
 };
 
-export {createTrip, getTrips, getTripById};
+const updateTrip = async (route_id, steps, token) => {
+    const filteredSteps = [];
+    for (let step of steps) {
+        const filtered = {latitude: parseFloat(step.latitude.toFixed(5)),
+            longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step"};
+        filteredSteps.push(filtered);
+    }
+    try {
+        console.log("filter");
+        console.log(route_id);
+        console.log(filteredSteps);
+        const response = await axios.put(`http://10.0.2.2:8000/api/v1/routes/${route_id}/waypoints`, {
+            filteredSteps
+        }, {headers: {
+                Authorization: `Bearer ${token}`
+            }});
+
+        if (response.status === 404) {
+            alert('Impossible de faire la mise a jour.');
+        }
+
+        if (response.status === 500) {
+            alert('Erreur de base de données');
+        }
+
+        if (response.status === 201) {
+            return response.data;
+        }
+    } catch (error) {
+        if( error.response ){
+            console.log(error.response.data); // => the response payload
+        }
+    }
+
+};
+
+export {createTrip, getTrips, getTripById, updateTrip};
