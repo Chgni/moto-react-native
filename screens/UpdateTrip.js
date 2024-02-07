@@ -4,11 +4,12 @@ import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
-import {Button, Icon, Input} from "@rneui/themed";
+import {Button, Dialog, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
 import { getTripById, updateTrip } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
 import {getFriends} from "../services/FriendsService";
+import SearchFriendTrip from "../components/SeachFriendTrip";
 
 const UpdateTripScreen = ({ route }) => {
     const { user, token } = useUser();
@@ -20,27 +21,33 @@ const UpdateTripScreen = ({ route }) => {
     const [trip, setTrip] = useState({});
     const [friends, setFriends] = useState([]);
     const [ableToUpdate, setAbleToUpdate] = useState(false);
+    const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
 
 
     useEffect(() => {
         if (isFocused && user && token && route.params) {
             const { tripId } = route.params;
             getTrip(tripId);
-
-            /*
-            getFriends(user, token).then(
-                (response) => {
-                    if (response) {
-                        setFriends(response);
-
-                    }
-                }
-            )*/
+            getFriendsForCurrentUser();
         } else {
             console.log('Screen not focused or user/token not available');
             setRouteSteps([]);
         }
     }, [isFocused, user, token]);
+
+    const toggleAddFriendDialog = () => {
+        setVisibleDialog(!visibleDialog);
+    };
+
+    const getFriendsForCurrentUser = async () => {
+        await getFriends(user, token).then(
+            (response) => {
+                if (response) {
+                    setFriends(response);
+                }
+            }
+        )
+    }
 
     const getTrip = async (tripId) => {
         await getTripById(tripId, user, token).then(
@@ -212,8 +219,13 @@ const UpdateTripScreen = ({ route }) => {
                         </View>
                         <View>
                             <Text h3>Invités</Text>
-                            <Button h3>Ajouter</Button>
+                            <Button h3 onPress={toggleAddFriendDialog}>Ajouter</Button>
                         </View>
+                        <Dialog
+                            isVisible={visibleDialog}
+                            onBackdropPress={toggleAddFriendDialog}>
+                            <SearchFriendTrip currentFriends={friends} onAdd={ () => {console.log("ddd")}}></SearchFriendTrip>
+                        </Dialog>
                         { /* routeSteps.map((marker, i) => (
 
                         )) */}
