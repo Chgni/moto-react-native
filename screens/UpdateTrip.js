@@ -73,6 +73,9 @@ const UpdateTripScreen = ({ route }) => {
     }
 
     const handleMapPress = (e) => {
+        if (trip.owner_id !== user.id) {
+            return;
+        }
         const { latitude, longitude } = e.nativeEvent.coordinate;
         const newMarker = {
             latitude: latitude,
@@ -187,7 +190,8 @@ const UpdateTripScreen = ({ route }) => {
             { isFocused && user && token && Object.keys(trip).length > 0 && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
-                        <StepsComponent steps={routeSteps} deleteStep={deleteStep}/>
+                        <StepsComponent steps={routeSteps} tripOwner={trip.owner_id} currentUser={user.id} deleteStep={deleteStep}/>
+
                         <MapView style={styles.mapStyle}
                                  onPress={handleMapPress}
                                  initialRegion={{
@@ -199,7 +203,7 @@ const UpdateTripScreen = ({ route }) => {
                         >
                             {routeSteps.map((marker, i) => (
                                 <Marker
-                                    draggable={true}
+                                    draggable={trip.owner_id === user.id}
                                     onDragEnd={(e) => onMarkerDragEnd(e, i)}
                                     key={i}
                                     coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
@@ -221,6 +225,7 @@ const UpdateTripScreen = ({ route }) => {
                                 apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //
                             />}
                         </MapView>
+
                         <View style={styles.saveTripButton}>
                             { trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                                 <Icon
@@ -250,7 +255,7 @@ const UpdateTripScreen = ({ route }) => {
                         <View>
                             <View style={{paddingBottom: 10}}>
                                 <Text h3>Invités</Text>
-                                <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button>
+                                { trip.owner_id === user.id && <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button> }
                             </View>
                             {trip.members.map(member => {
                                     return <TouchableOpacity key={member.id} style={styles.friendCard}>
@@ -259,8 +264,8 @@ const UpdateTripScreen = ({ route }) => {
                                             justifyContent: "space-between",
                                             alignItems: "center"}}>
                                             <Text style={{paddingEnd: 10}} h4>{member.username}</Text>
-                                            <Button color="error" radius={"sm"} type="solid"
-                                             onPress={ () => removeFriend(trip.id, member.id)}>Retirer</Button>
+                                            { trip.owner_id === user.id && <Button color="error" radius={"sm"} type="solid"
+                                             onPress={ () => removeFriend(trip.id, member.id)}>Retirer</Button> }
                                         </View>
                                     </TouchableOpacity>
                                 }

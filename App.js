@@ -14,6 +14,7 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import { Ionicons } from '@expo/vector-icons';
 import withAuthGuard from "./Guard/WithAuthGuard";
+import logout from "./screens/Logout";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -53,7 +54,7 @@ export default function App() {
           <Stack.Screen name="Deconnexion" component={LogoutScreen} />
           <Stack.Screen name="Inscription" component={RegisterScreen} />
           <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
+          <Stack.Screen name="CreateTrip" component={logout} options={{ headerShown: false }} />
           <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

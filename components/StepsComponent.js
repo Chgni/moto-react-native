@@ -3,7 +3,7 @@ import {Button, Input} from '@rneui/themed';
 import {useEffect, useState} from "react";
 import Geocoder from 'react-native-geocoding';
 
-const StepsComponent = ({ steps, deleteStep }) => {
+const StepsComponent = ({ steps, deleteStep, tripOwner, currentUser }) => {
     Geocoder.init("AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs");
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const StepsComponent = ({ steps, deleteStep }) => {
                     <View style={styles.menuItemWrapper} key={index}>
                         <Text>{step.order}</Text>
                         <Input disabled style={styles.menuItemText}> {step.latitude}, {step.longitude}</Input>
-                        <Button style={styles.removeStep} onPress={() => deleteStep(step.order)}>X</Button>
+                        { tripOwner === currentUser && <Button radius={"sm"} style={styles.removeStep} onPress={() => deleteStep(step.order)}>X</Button> }
                     </View>
                 ))}
                 {steps.length === 0 && <View style={styles.menuItemWrapper}>
