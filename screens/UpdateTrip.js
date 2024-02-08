@@ -10,6 +10,7 @@ import { getTripById, updateTrip } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
 import {getFriends} from "../services/FriendsService";
 import SearchFriendTrip from "../components/SeachFriendTrip";
+import axios from "axios";
 
 const UpdateTripScreen = ({ route }) => {
     const { user, token } = useUser();
@@ -152,6 +153,29 @@ const UpdateTripScreen = ({ route }) => {
         getTrip(trip.id);
     };
 
+    const removeFriend = async (route_id, friendId) => {
+        try {
+            console.log(route_id);
+            console.log(friendId);
+            const response = await axios.delete(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,{
+                    id: friendId
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+            if (response.status === 201) {
+                await getTrip(route_id);
+            }
+        } catch (error) {
+            if( error.response ){
+                // console.log(error.response.data); // => the response payload
+                console.log('Cant get friends');
+            }
+        }
+    }
+
     return (
         <View  style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -225,15 +249,17 @@ const UpdateTripScreen = ({ route }) => {
                         <View>
                             <View style={{paddingBottom: 10}}>
                                 <Text h3>Invités</Text>
-                                <Button onPress={toggleAddFriendDialog}>Ajouter</Button>
+                                <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button>
                             </View>
                             {trip.members.map(member => {
                                     return <TouchableOpacity key={member.id} style={styles.friendCard}>
                                         <View style={{
                                             flexDirection: "row",
-                                            justifyContent: "start",
+                                            justifyContent: "space-between",
                                             alignItems: "center"}}>
                                             <Text style={{paddingEnd: 10}} h4>{member.username}</Text>
+                                            <Button color="error" radius={"sm"} type="solid"
+                                             onPress={ () => removeFriend(trip.id, member.id)}>Retirer</Button>
                                         </View>
                                     </TouchableOpacity>
                                 }
@@ -242,7 +268,8 @@ const UpdateTripScreen = ({ route }) => {
                         <Dialog
                             isVisible={visibleDialog}
                             onBackdropPress={toggleAddFriendDialog}>
-                            <SearchFriendTrip currentFriends={friends} route_id={trip.id} onAdd={toggleAddFriendDialogAndRefresh}></SearchFriendTrip>
+                            <SearchFriendTrip currentFriends={friends} route_id={trip.id} onAdd={toggleAddFriendDialogAndRefresh}
+                            members={trip.members}></SearchFriendTrip>
                         </Dialog>
                         { /* routeSteps.map((marker, i) => (
 

@@ -1,10 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React, {forwardRef, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Text, Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
 import {useUser} from "../Guard/WithAuthGuard";
 
-const SearchFriendTrip = ({ currentFriends, route_id,onAdd }) => {
+const SearchFriendTrip = ({ currentFriends, route_id, onAdd, members }) => {
     const { user, token } = useUser();
     const [search, setSearch] = useState("");
     const [friends, setFriends] = useState([]);
@@ -42,7 +42,20 @@ const SearchFriendTrip = ({ currentFriends, route_id,onAdd }) => {
             return;
         }
 
-        const searchResult = currentFriends.filter(item =>
+        const filteredMembers = [];
+        for (const member of members) {
+            filteredMembers.push(member.id);
+        }
+
+        const friendsAbleToAdd = [];
+        for (const friend of currentFriends) {
+            if (!filteredMembers.includes(friend.target_user.id)) {
+                friendsAbleToAdd.push(friend);
+            }
+        }
+
+
+        const searchResult = friendsAbleToAdd.filter(item =>
             item.target_user.username.toLowerCase().includes(searchString.toLowerCase())
         );
         setFriends(searchResult);
@@ -56,7 +69,8 @@ const SearchFriendTrip = ({ currentFriends, route_id,onAdd }) => {
                 value={search}
             />
             <ScrollView style={styles.friendsContainer}>
-                {friends.length === 0 && <Text>Aucun utilisateur.</Text>}
+                {search.length === 0 && <Text>Veuillez effectuer une recherche.</Text>}
+                {friends.length === 0 && search.length > 0 && <Text>Aucun utilisateur.</Text>}
                 {friends.map(friend => {
                         if (friend.username === user.username) {
                             return null; // skip current user
