@@ -9,7 +9,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { createTrip } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
 
-const CreateTripScreen = ({ route }) => {
+const CreateTripScreen = ({ route, navigation}) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [position, setPosition] = useState(null);
@@ -96,9 +96,11 @@ const CreateTripScreen = ({ route }) => {
                 alert("Veuillez renseigner au moins deux destinations.");
             } else {
                 await createTrip(name, description, token).then( (response) => {
-                    if (response) {
-                        //Redirect to modify trip page
-                    }
+                        console.log("response CREATION OK");
+                        console.log(response);
+                        navigation.navigate('UpdateTrip', {
+                            tripId: response.id
+                        });
                 })
             }
         }

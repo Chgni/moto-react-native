@@ -69,7 +69,8 @@ const FriendItem = ({ friend, type, onUpdate }) => {
 
     return (
             <TouchableOpacity style={styles.tripCard} onPress={() => openMenuActions(type)}>
-                { type === 'friend' && <Text h4>{friend.target_user.username}</Text>}
+                { type === 'friend' && friend.current_user === 'requesting' && <Text h4>{friend.target_user.username}</Text>}
+                { type === 'friend' && friend.current_user === 'target' && <Text h4>{friend.requesting_user.username}</Text>}
                 { type === 'sent' && <Text h4>{friend.target_user.username}</Text>}
                 { type === 'received' && <Text h4>{friend.requesting_user.username}</Text>}
                 <BottomSheet modalProps={{}} isVisible={isVisible}>

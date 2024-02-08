@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {useUser} from "../Guard/WithAuthGuard";
 import {Header, Tab, TabView, Text} from "@rneui/base";
-import SettingHeader from "../components/SettingHeader";
 import {useIsFocused} from "@react-navigation/native";
-import {getTrips, getTripsJoined, getTripsOwned} from "../services/TripService";
+import { getTripsJoined, getTripsOwned} from "../services/TripService";
 import {Button, Icon} from '@rneui/themed';
 
 const HomeScreen = ({ navigation }) => {
@@ -33,6 +32,7 @@ const HomeScreen = ({ navigation }) => {
         await getTripsOwned(user, token).then(
             (response) => {
                 if (response) {
+                    console.log(response);
                     setTrips(response);
                     setLoadingTrips(false);
                 }
@@ -71,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
                             <View key={trip.id}>
                                 <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
                                     <Text h4>{trip.name}</Text>
-                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
+                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De {trip.owner.username}</Text>
                                 </TouchableOpacity>
                             </View>
                         ))}
@@ -83,7 +83,7 @@ const HomeScreen = ({ navigation }) => {
                             <View key={trip.id}>
                                 <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
                                     <Text h4>{trip.name}</Text>
-                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
+                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De {trip.owner.username}</Text>
                                 </TouchableOpacity>
                             </View>
                         ))}

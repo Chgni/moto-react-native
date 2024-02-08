@@ -43,6 +43,7 @@ const FriendsScreen = ({ navigation }) => {
             (response) => {
                 if (response) {
                     setFriends(response);
+                    console.log(response);
                     setLoadingFriends(false);
                 }
             }
@@ -59,7 +60,6 @@ const FriendsScreen = ({ navigation }) => {
             (response) => {
                 if (response) {
                     setFriendRequestsSent(response);
-                    console.log(friendRequestsSent);
                     setLoadingFriendsSent(false);
                 }
             }
@@ -96,21 +96,21 @@ const FriendsScreen = ({ navigation }) => {
                             />
                         </View>
                         {friends.map(friend => (
-                             <FriendItem key={friend.target_user.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
+                             <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={getFriendsAndRequests} />
                         )) }
                     </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
                         {friendRequestsSent.map(friend => (
-                            <FriendItem key={friend.target_user.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests} />
+                            <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests} />
                         )) }
                     </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
                         {friendRequestsReceived.map(friend => (
-                            <FriendItem key={friend.requesting_user.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests} />
+                            <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests} />
                         )) }
                     </ScrollView>
                 </TabView.Item>

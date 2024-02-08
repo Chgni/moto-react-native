@@ -75,6 +75,7 @@ const createTrip = async (name, description, token) => {
             }
 
             if (response.status === 201) {
+                return response.data;
                 //OK, create snack bar ?
             }
         } catch (error) {
