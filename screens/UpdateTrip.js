@@ -2,7 +2,7 @@ import MapView, {Marker, UrlTile} from 'react-native-maps';
 import {useUser} from "../Guard/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
+import {ScrollView, StyleSheet, View, Image, TextInput, TouchableOpacity} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Dialog, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
@@ -223,8 +223,21 @@ const UpdateTripScreen = ({ route }) => {
                             </View>
                         </View>
                         <View>
-                            <Text h3>Invités</Text>
-                            <Button h3 onPress={toggleAddFriendDialog}>Ajouter</Button>
+                            <View style={{paddingBottom: 10}}>
+                                <Text h3>Invités</Text>
+                                <Button onPress={toggleAddFriendDialog}>Ajouter</Button>
+                            </View>
+                            {trip.members.map(member => {
+                                    return <TouchableOpacity key={member.id} style={styles.friendCard}>
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "start",
+                                            alignItems: "center"}}>
+                                            <Text style={{paddingEnd: 10}} h4>{member.username}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                            )}
                         </View>
                         <Dialog
                             isVisible={visibleDialog}
