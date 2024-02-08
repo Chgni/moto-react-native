@@ -157,15 +157,16 @@ const UpdateTripScreen = ({ route }) => {
         try {
             console.log(route_id);
             console.log(friendId);
-            const response = await axios.delete(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,{
-                    id: friendId
-                },
+            console.log(token);
+            const response = await axios.delete(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
+                    }, data: {
+                        id: friendId
                     }
                 });
-            if (response.status === 201) {
+            if (response.status === 204) {
                 await getTrip(route_id);
             }
         } catch (error) {
