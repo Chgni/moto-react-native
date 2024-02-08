@@ -1,9 +1,27 @@
 import axios from "axios";
 
-const getTrips = async (user, token) => {
+const getTripsOwned = async (user, token) => {
     try {
         console.log('Get Trips');
-        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes?owned=true&joined=true`,{
+        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes?owned=true&joined=false`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+            return response.data;
+        }
+    } catch (error) {
+        if( error.response ){
+            // console.log(error.response.data); // => the response payload
+            console.log('Cant get trips');
+        }
+    }
+};
+const getTripsJoined = async (user, token) => {
+    try {
+        console.log('Get Trips');
+        const response = await axios.get(`http://10.0.2.2:8000/api/v1/routes?owned=false&joined=true`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -103,4 +121,4 @@ const updateTrip = async (route_id, steps, token) => {
 
 };
 
-export {createTrip, getTrips, getTripById, updateTrip};
+export {createTrip, getTripsOwned, getTripById, updateTrip, getTripsJoined};

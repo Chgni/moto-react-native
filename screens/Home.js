@@ -4,17 +4,17 @@ import {useUser} from "../Guard/WithAuthGuard";
 import {Header, Tab, TabView, Text} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
 import {useIsFocused} from "@react-navigation/native";
-import { getTrips } from "../services/TripService";
+import {getTrips, getTripsJoined, getTripsOwned} from "../services/TripService";
 import {Button, Icon} from '@rneui/themed';
 
 const HomeScreen = ({ navigation }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [trips, setTrips] = useState([]);
-    const [friendTrips, setFriendTrips] = useState([]);
+    const [joinedTrips, setJoinedTrips] = useState([]);
     const [communityTrips, setCommunityTrips] = useState([]);
     const [loadingTrips, setLoadingTrips] = useState(true);
-    const [loadingFriendsTrips, setLoadingFriendsTrips] = useState(true);
+    const [loadingJoinedTrips, setLoadingJoinedTrips] = useState(true);
     const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
     const [index, setIndex] = React.useState(0);
 
@@ -29,12 +29,20 @@ const HomeScreen = ({ navigation }) => {
 
     const getAllTrips = async () => {
         setLoadingTrips(true);
-        await getTrips(user, token).then(
+        setLoadingJoinedTrips(true);
+        await getTripsOwned(user, token).then(
             (response) => {
                 if (response) {
                     setTrips(response);
-                    console.log(response);
                     setLoadingTrips(false);
+                }
+            }
+        )
+        await getTripsJoined(user, token).then(
+            (response) => {
+                if (response) {
+                    setJoinedTrips(response);
+                    setLoadingJoinedTrips(false);
                 }
             }
         )
@@ -55,7 +63,6 @@ const HomeScreen = ({ navigation }) => {
             <Tab value={index} onChange={setIndex} dense>
                 <Tab.Item>Mes trajets</Tab.Item>
                 <Tab.Item>Trajets rejoints</Tab.Item>
-                <Tab.Item>Trajets publics</Tab.Item>
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
@@ -71,10 +78,16 @@ const HomeScreen = ({ navigation }) => {
                     </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <Text h1>Favorite</Text>
-                </TabView.Item>
-                <TabView.Item style={{width: '100%' }}>
-                    <Text h1>Cart</Text>
+                    <ScrollView style={{ padding: 10}}>
+                        { !loadingJoinedTrips && joinedTrips.map(trip => (
+                            <View key={trip.id}>
+                                <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
+                                    <Text h4>{trip.name}</Text>
+                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De moi</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </ScrollView>
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
