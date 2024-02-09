@@ -95,7 +95,7 @@ const CreateTripScreen = ({ route, navigation}) => {
             if (routeSteps.length < 2) {
                 alert("Veuillez renseigner au moins deux destinations.");
             } else {
-                await createTrip(name, description, token).then( (response) => {
+                await createTrip(name, description, token, routeSteps).then( (response) => {
                         console.log("response CREATION OK");
                         console.log(response);
                         navigation.navigate('UpdateTrip', {

@@ -57,11 +57,18 @@ const getTripById = async (id, user, token) => {
 };
 
 
-const createTrip = async (name, description, token) => {
+const createTrip = async (name, description, token, steps) => {
+    const filteredSteps = [];
+    for (let step of steps) {
+        const filtered = {latitude: parseFloat(step.latitude.toFixed(5)),
+            longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step"};
+        filteredSteps.push(filtered);
+    }
         try {
             const response = await axios.post('http://10.0.2.2:8000/api/v1/routes/', {
                 name: name,
                 description: description,
+                waypoints: filteredSteps
             }, {headers: {
                     Authorization: `Bearer ${token}`
                 }});

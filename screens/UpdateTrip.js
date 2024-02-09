@@ -61,8 +61,6 @@ const UpdateTripScreen = ({ route }) => {
                     waypoint.longitude = parseFloat(waypoint.longitude);
                 }
                 setRouteSteps(response.waypoints);
-                console.log("trip");
-                console.log(trip);
                 if (trip.owner_id === user.id) {
                     setAbleToUpdate(true);
                     setName(trip.name);
