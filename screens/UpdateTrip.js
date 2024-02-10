@@ -135,6 +135,7 @@ const UpdateTripScreen = ({ route }) => {
     }
 
     const getWaypoints = () => {
+        console.log("get waypoints");
         const waypoints = [];
         routeSteps.slice(1, routeSteps.length - 1).map( (item) => {
             waypoints.push({latitude: item.latitude, longitude: item.longitude});
@@ -159,7 +160,7 @@ const UpdateTripScreen = ({ route }) => {
             console.log(route_id);
             console.log(friendId);
             console.log(token);
-            const response = await axios.delete(`http://10.0.2.2:8000/api/v1/routes/${route_id}/members`,
+            const response = await axios.delete(`http://82.65.153.125:8888/api/v0.1/routes/${route_id}/members`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -185,7 +186,7 @@ const UpdateTripScreen = ({ route }) => {
                 <Tab.Item>Participants</Tab.Item>
                 <Tab.Item>Détails</Tab.Item>
             </Tab>
-            { isFocused && user && token && Object.keys(trip).length > 0 && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
+            { isFocused && user && token && trip && Object.keys(trip).length > 0 && <TabView value={index} onChange={setIndex} disableSwipe={true} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={{ width: '100%', height: '100%' }}>
                         <StepsComponent steps={routeSteps} tripOwner={trip.owner_id} currentUser={user.id} deleteStep={deleteStep}/>
@@ -214,7 +215,7 @@ const UpdateTripScreen = ({ route }) => {
                                     </View>
                                 </Marker>
                             ))}
-                            { routeSteps.length >= 2 && <MapViewDirections
+                            { trip && routeSteps.length >= 2 && <MapViewDirections
                                 origin={getOrigin()}
                                 destination={getDestination()}
                                 waypoints={getWaypoints()}
@@ -225,7 +226,7 @@ const UpdateTripScreen = ({ route }) => {
                         </MapView>
 
                         <View style={styles.saveTripButton}>
-                            { trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                            { trip && trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                                 <Icon
                                     name='save-outline'
                                     type='ionicon'
@@ -247,13 +248,13 @@ const UpdateTripScreen = ({ route }) => {
                                 flexDirection: "row",
                                 justifyContent: "start",
                                 alignItems: "center"}}>
-                                <Text style={{paddingEnd: 10}} h4>{trip.owner.username}</Text>
+                                { trip && <Text style={{paddingEnd: 10}} h4>{trip.owner.username}</Text>}
                             </View>
                         </View>
                         <View>
                             <View style={{paddingBottom: 10}}>
                                 <Text h3>Invités</Text>
-                                { trip.owner_id === user.id && <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button> }
+                                { trip && trip.owner_id === user.id && <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button> }
                             </View>
                             {trip.members.map(member => {
                                     return <TouchableOpacity key={member.id} style={styles.friendCard}>
@@ -262,7 +263,7 @@ const UpdateTripScreen = ({ route }) => {
                                             justifyContent: "space-between",
                                             alignItems: "center"}}>
                                             <Text style={{paddingEnd: 10}} h4>{member.username}</Text>
-                                            { trip.owner_id === user.id && <Button color="error" radius={"sm"} type="solid"
+                                            { trip && trip.owner_id === user.id && <Button color="error" radius={"sm"} type="solid"
                                              onPress={ () => removeFriend(trip.id, member.id)}>Retirer</Button> }
                                         </View>
                                     </TouchableOpacity>

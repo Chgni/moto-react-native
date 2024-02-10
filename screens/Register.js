@@ -11,7 +11,7 @@ const RegisterScreen = ({ navigation }) => {
     const handleSignIn = async () => {
         if (email && password && username) {
             try {
-                const response = await axios.post('http://10.0.2.2:8000/api/v1/auth/signup', {
+                const response = await axios.post('http://82.65.153.125:8888/api/v0.1/auth/signup', {
                     username: username,
                     email: email,
                     password: password
@@ -54,10 +54,10 @@ const RegisterScreen = ({ navigation }) => {
                 title="Inscription"
                 onPress={handleSignIn}
             />
-            <Button
-                title="Se connecter"
+            <Text
+                style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Connexion')}
-            />
+            >Déjà inscrit ? Connectez-vous</Text>
         </View>
     );
 };

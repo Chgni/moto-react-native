@@ -27,7 +27,7 @@ const withAuthGuard = (WrappedComponent) => {
                     } else {
                         setLoading(false);
                         try {
-                            const response = await axios.get('http://10.0.2.2:8000/api/v1/auth/me',{
+                            const response = await axios.get('http://82.65.153.125:8888/api/v0.1/auth/me',{
                                 headers: {
                                     Authorization: `Bearer ${jwt}`
                                 }

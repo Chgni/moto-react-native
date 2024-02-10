@@ -14,7 +14,7 @@ const LoginScreen = ({ navigation }) => {
         try {
             console.log('login token :');
             console.log(token);
-            const response = await axios.get('http://10.0.2.2:8000/api/v1/auth/me',{
+            const response = await axios.get('http://82.65.153.125:8888/api/v0.1/auth/me',{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -47,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
     const handleSignIn = async () => {
         if (email && password) {
             try {
-                const response = await axios.post('http://10.0.2.2:8000/api/v1/auth/signin', qs.stringify({
+                const response = await axios.post('http://82.65.153.125:8888/api/v0.1/auth/signin', qs.stringify({
                     username: email,
                     password: password,
                 }), {
@@ -95,10 +95,10 @@ const LoginScreen = ({ navigation }) => {
                 title="Connexion"
                 onPress={handleSignIn}
             />
-            <Button
-                title="S'inscrire"
+            <Text
+                style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Inscription')}
-            />
+            >Pas encore inscrit ? Inscrivez-vous</Text>
         </View>
     );
 };

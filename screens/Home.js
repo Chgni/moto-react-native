@@ -19,7 +19,6 @@ const HomeScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (isFocused && user && token) {
-            console.log('get friend start');
             getAllTrips();
         } else {
             console.log('Screen not focused or user/token not available');
