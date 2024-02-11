@@ -3,14 +3,23 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import qs from 'qs';
+import {Snackbar} from "react-native-paper";
+import {useIsFocused} from "@react-navigation/native";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, route }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState('null');
+    const [visible, setVisible] = React.useState(false);
+    const isFocused = useIsFocused();
+
+    const onToggleSnackBar = () => setVisible(!visible);
+
+    const onDismissSnackBar = () => setVisible(false);
 
     const getUser = async (token) => {
+
         try {
             console.log('login token :');
             console.log(token);
@@ -37,12 +46,18 @@ const LoginScreen = ({ navigation }) => {
     };
 
     useEffect( () => {
+        if (isFocused && route.params) {
+            const { createdAccount } = route.params;
+            if (createdAccount) {
+                setVisible(true);
+            }
+        }
        const getToken = async () => {
            const storedToken = await AsyncStorage.getItem('userToken');
            await getUser(storedToken);
        };
        getToken();
-    }, []);
+    }, [isFocused]);
 
     const handleSignIn = async () => {
         if (email && password) {
@@ -99,6 +114,13 @@ const LoginScreen = ({ navigation }) => {
                 style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Inscription')}
             >Pas encore inscrit ? Inscrivez-vous</Text>
+
+            <Snackbar
+                visible={visible}
+                duration={5000}
+                onDismiss={onDismissSnackBar}>
+                Compte créé ! Veuillez-vous connecter.
+            </Snackbar>
         </View>
     );
 };

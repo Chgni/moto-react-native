@@ -8,11 +8,6 @@ const RegisterScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [visible, setVisible] = React.useState(false);
-
-    const onToggleSnackBar = () => setVisible(!visible);
-
-    const onDismissSnackBar = () => setVisible(false);
 
     const handleSignIn = async () => {
         if (email && password && username) {
@@ -24,8 +19,9 @@ const RegisterScreen = ({ navigation }) => {
                 });
 
                 if (response.status === 201) {
-                    alert('Inscription réalisée ! Veuillez vous connecter.');
-                    navigation.navigate('Connexion');
+                    navigation.navigate('Connexion',  {
+                        createdAccount: true
+                    });
                 }
             } catch (error) {
                 alert(error);
@@ -64,12 +60,6 @@ const RegisterScreen = ({ navigation }) => {
                 style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Connexion')}
             >Déjà inscrit ? Connectez-vous</Text>
-            <Snackbar
-                visible={visible}
-                duration={5000}
-                onDismiss={onDismissSnackBar}>
-                Compte créé ! Veuillez-vous connecter.
-            </Snackbar>
         </View>
     );
 };

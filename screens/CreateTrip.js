@@ -106,7 +106,8 @@ const CreateTripScreen = ({ route, navigation}) => {
                         console.log("response CREATION OK");
                         console.log(response);
                         navigation.navigate('UpdateTrip', {
-                            tripId: response.id
+                            tripId: response.id,
+                            created: true
                         });
                 })
             }

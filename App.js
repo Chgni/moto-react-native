@@ -54,7 +54,7 @@ export default function App() {
           <Stack.Screen name="Deconnexion" component={LogoutScreen} />
           <Stack.Screen name="Inscription" component={RegisterScreen} />
           <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="CreateTrip" component={logout} options={{ headerShown: false }} />
+          <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
           <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

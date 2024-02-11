@@ -31,6 +31,10 @@ const UpdateTripScreen = ({ route }) => {
     useEffect(() => {
         if (isFocused && user && token && route.params) {
             const { tripId } = route.params;
+            const { created } = route.params;
+            if (created) {
+                setVisible(true);
+            }
             getTrip(tripId);
             getFriendsForCurrentUser();
         } else {
