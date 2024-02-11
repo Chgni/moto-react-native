@@ -14,7 +14,7 @@ import axios from "axios";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import { Snackbar } from 'react-native-paper';
 
-const UpdateTripScreen = ({ route }) => {
+const UpdateTripScreen = ({ navigation, route }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
     const [routeSteps, setRouteSteps] = useState([]);
@@ -159,6 +159,10 @@ const UpdateTripScreen = ({ route }) => {
             });
     }
 
+    const returnHome = () => {
+        navigation.navigate('Main');
+    }
+
     const toggleAddFriendDialogAndRefresh = () => {
         setVisibleDialog(!visibleDialog);
         getTrip(trip.id);
@@ -290,7 +294,7 @@ const UpdateTripScreen = ({ route }) => {
                     </View>
                 </TabView.Item>
             </TabView>}
-            { isFocused && user && token && trip && Object.keys(trip).length > 0 && <View  style={styles.saveTripButton}>
+            { isFocused && user && token && trip && Object.keys(trip).length > 0 && <View style={styles.saveTripButton}>
                 { trip && trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
                     <Icon
                         name='save-outline'
@@ -300,6 +304,16 @@ const UpdateTripScreen = ({ route }) => {
                     />
                 </Button> }
             </View> }
+            <View style={styles.returnHomeButton}>
+                <Button onPress={() => returnHome()} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                    <Icon
+                        name='home-outline'
+                        type='ionicon'
+                        color='#fff'
+                        size={50}
+                    />
+                </Button>
+            </View>
             <Snackbar
                 visible={visible}
                 duration={5000}
@@ -372,6 +386,12 @@ const styles = StyleSheet.create({
     saveTripButton: {
         position: "absolute",
         right: 10,
+        bottom: 20,
+        borderRadius: 50
+    },
+    returnHomeButton: {
+        position: "absolute",
+        left: 10,
         bottom: 20,
         borderRadius: 50
     },
