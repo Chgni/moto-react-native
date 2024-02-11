@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "my-app",
+    "name": "Commu'moto",
     "slug": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logomoto.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logomoto.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
