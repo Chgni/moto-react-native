@@ -22,8 +22,7 @@ const RegisterScreen = ({ navigation }) => {
                     navigation.navigate('Connexion');
                 }
             } catch (error) {
-                alert(error.response.data);
-                console.log(error.response.data)
+                alert(error.response);
             }
         } else {
             alert('Merci de remplir tout les champs');
