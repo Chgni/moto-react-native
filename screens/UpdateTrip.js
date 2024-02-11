@@ -11,6 +11,7 @@ import {Tab, TabView, Text} from "@rneui/base";
 import {getFriends} from "../services/FriendsService";
 import SearchFriendTrip from "../components/SeachFriendTrip";
 import axios from "axios";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 
 const UpdateTripScreen = ({ route }) => {
     const { user, token } = useUser();
@@ -193,6 +194,7 @@ const UpdateTripScreen = ({ route }) => {
 
                         <MapView style={styles.mapStyle}
                                  onPress={handleMapPress}
+                                 provider={PROVIDER_GOOGLE}
                                  initialRegion={{
                                      latitude: 43.4496,
                                      longitude: 5.2443,
@@ -221,7 +223,7 @@ const UpdateTripScreen = ({ route }) => {
                                 waypoints={getWaypoints()}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
-                                apikey={"AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs"} //
+                                apikey={"AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"}
                             />}
                         </MapView>
 
