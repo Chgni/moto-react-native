@@ -12,6 +12,7 @@ import {getFriends} from "../services/FriendsService";
 import SearchFriendTrip from "../components/SeachFriendTrip";
 import axios from "axios";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+import { Snackbar } from 'react-native-paper';
 
 const UpdateTripScreen = ({ route }) => {
     const { user, token } = useUser();
@@ -24,6 +25,7 @@ const UpdateTripScreen = ({ route }) => {
     const [friends, setFriends] = useState([]);
     const [ableToUpdate, setAbleToUpdate] = useState(false);
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
+    const [visible, setVisible] = useState(false);
 
 
     useEffect(() => {
@@ -36,6 +38,8 @@ const UpdateTripScreen = ({ route }) => {
             setRouteSteps([]);
         }
     }, [isFocused, user, token]);
+
+    const onDismissSnackBar = () => setVisible(false);
 
     const toggleAddFriendDialog = () => {
         setVisibleDialog(!visibleDialog);
@@ -147,7 +151,7 @@ const UpdateTripScreen = ({ route }) => {
     const update = async (route_id) => {
         await updateTrip(route_id, routeSteps, token).then(
             (response) => {
-                //snackbar
+                setVisible(true);
             });
     }
 
@@ -226,17 +230,6 @@ const UpdateTripScreen = ({ route }) => {
                                 apikey={"AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"}
                             />}
                         </MapView>
-
-                        <View style={styles.saveTripButton}>
-                            { trip && trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
-                                <Icon
-                                    name='save-outline'
-                                    type='ionicon'
-                                    color='#fff'
-                                    size={50}
-                                />
-                            </Button> }
-                        </View>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%', padding: 15 }}>
@@ -293,6 +286,22 @@ const UpdateTripScreen = ({ route }) => {
                     </View>
                 </TabView.Item>
             </TabView>}
+            { isFocused && user && token && trip && Object.keys(trip).length > 0 && <View  style={styles.saveTripButton}>
+                { trip && trip.owner_id === user.id && <Button onPress={() => update(trip.id)} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                    <Icon
+                        name='save-outline'
+                        type='ionicon'
+                        color='#fff'
+                        size={50}
+                    />
+                </Button> }
+            </View> }
+            <Snackbar
+                visible={visible}
+                duration={5000}
+                onDismiss={onDismissSnackBar}>
+                Itinéraire mis à jour !
+            </Snackbar>
         </View>
     );
 };

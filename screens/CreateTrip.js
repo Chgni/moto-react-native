@@ -9,6 +9,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { createTrip } from "../services/TripService";
 import {Tab, TabView, Text} from "@rneui/base";
 import { PROVIDER_GOOGLE} from "react-native-maps";
+import {Snackbar} from "react-native-paper";
 
 const CreateTripScreen = ({ route, navigation}) => {
     const { user, token } = useUser();
@@ -20,6 +21,11 @@ const CreateTripScreen = ({ route, navigation}) => {
     const [name, setName] = useState(null);
     const [description, setDescription] = useState(null);
     const [index, setIndex] = React.useState(0);
+    const [visible, setVisible] = React.useState(false);
+
+    const onToggleSnackBar = () => setVisible(!visible);
+
+    const onDismissSnackBar = () => setVisible(false);
 
     const handleMapPress = (e) => {
         const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -152,16 +158,6 @@ const CreateTripScreen = ({ route, navigation}) => {
                                 apikey={"AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"}
                             />}
                         </MapView>
-                        <View style={styles.saveTripButton}>
-                            <Button onPress={create} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
-                                <Icon
-                                    name='save-outline'
-                                    type='ionicon'
-                                    color='#fff'
-                                    size={50}
-                                />
-                            </Button>
-                        </View>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
@@ -184,6 +180,22 @@ const CreateTripScreen = ({ route, navigation}) => {
                     <Button onPress={create}>Créer itinéraire</Button>
                 </View>
             </View>*/}
+            <View style={styles.saveTripButton}>
+                <Button onPress={create} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
+                    <Icon
+                        name='save-outline'
+                        type='ionicon'
+                        color='#fff'
+                        size={50}
+                    />
+                </Button>
+            </View>
+            <Snackbar
+                visible={visible}
+                duration={5000}
+                onDismiss={onDismissSnackBar}>
+                Itinéraire Créé !
+            </Snackbar>
         </View>
     );
 };
@@ -255,11 +267,16 @@ const styles = StyleSheet.create({
     customMarker: {
         position: "absolute",
         top: 0,
-        left: 8,
+        left: 5,
         backgroundColor: "red",
         padding: 2,
-        width: 18,
-        borderRadius: 20
+        width: 25,
+        borderRadius: 20,
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderColor: "#000",
+        display: "flex",
+        alignItems: "center"
     },
     markerText: {
         color: "#fff",
