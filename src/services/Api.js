@@ -1,12 +1,13 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {UnauthorizedError} from "../errors/ApiCallError";
+import JwtService from "./JwtService";
 
 export const BASE_URL = `${process.env.API_URL}/${process.env.API_VERSION}`;
-const Api = axios.create({
-    baseURL: BASE_URL,
-});
-Api.interceptors.request.use(
+axios.defaults.baseURL = BASE_URL
+axios.defaults.timeout = 5000
+
+axios.interceptors.request.use(
     async (config) => {
         const storedToken = await AsyncStorage.getItem('userToken');
         if (storedToken) {
@@ -17,7 +18,7 @@ Api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-Api.interceptors.response.use(function (response) {
+axios.interceptors.response.use(function (response) {
     // Optional: Do something with response data
     return response;
 }, function (error) {
@@ -30,4 +31,5 @@ Api.interceptors.response.use(function (response) {
     // the option of additional specialized handling at the call-site:
     return Promise.reject(error);
 });
+const Api = axios
 export default Api;

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import axios from "axios";
 import {Snackbar} from "react-native-paper";
+import Toast from "react-native-simple-toast";
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -19,9 +20,9 @@ const RegisterScreen = ({ navigation }) => {
                 });
 
                 if (response.status === 201) {
-                    navigation.navigate('Connexion',  {
-                        createdAccount: true
-                    });
+                    Toast.show('Votre compte a été créé', Toast.SHORT)
+
+                    navigation.navigate('Connexion');
                 }
             } catch (error) {
                 alert(error);

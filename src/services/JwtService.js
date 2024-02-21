@@ -5,7 +5,7 @@ export default class JwtService {
         await AsyncStorage.setItem('userToken', jwt);
     }
 
-    async getJwt(jwt) {
-        await AsyncStorage.getItem('userToken');
+    async getJwt() {
+        return await AsyncStorage.getItem('userToken');
     }
 }
