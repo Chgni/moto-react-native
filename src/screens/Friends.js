@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 import FriendItem from "../components/FriendItem";
 import SearchFriend from "../components/SearchFriend";
 import { getFriends, getFriendsRequestsSent, getFriendsRequestsReceived } from "../services/FriendsService";

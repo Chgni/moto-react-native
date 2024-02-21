@@ -3,19 +3,19 @@ import React from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import LoginScreen from './screens/Login';
-import LogoutScreen from './screens/Logout';
-import RegisterScreen from './screens/Register';
-import HomeScreen from "./screens/Home";
-import FriendsScreen from "./screens/Friends";
-import CreateTripScreen from "./screens/CreateTrip";
-import UpdateTripScreen from "./screens/UpdateTrip";
+import LoginScreen from './src/screens/Login';
+import LogoutScreen from './src/screens/Logout';
+import RegisterScreen from './src/screens/Register';
+import HomeScreen from "./src/screens/Home";
+import FriendsScreen from "./src/screens/Friends";
+import CreateTripScreen from "./src/screens/CreateTrip";
+import UpdateTripScreen from "./src/screens/UpdateTrip";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import { Ionicons } from '@expo/vector-icons';
-import withAuthGuard from "./Guard/WithAuthGuard";
-import logout from "./screens/Logout";
-
+import withAuthGuard from "./src/guards/WithAuthGuard";
+import logout from "./src/screens/Logout";
+import BASE_URL from './src/services/Api'
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,6 @@ const ProtectedHome = withAuthGuard(HomeScreen);
 const ProtectedFriends = withAuthGuard(FriendsScreen);
 const ProtectedCreateTrip = withAuthGuard(CreateTripScreen);
 const ProtectedUpdateTrip = withAuthGuard(UpdateTripScreen);
-
 
 const MainTabs = () => {
     return (

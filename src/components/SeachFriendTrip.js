@@ -2,7 +2,7 @@ import React, {forwardRef, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Text, Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 
 const SearchFriendTrip = ({ currentFriends, route_id, onAdd, members }) => {
     const { user, token } = useUser();
@@ -16,7 +16,7 @@ const SearchFriendTrip = ({ currentFriends, route_id, onAdd, members }) => {
         try {
             console.log(user);
             console.log(route_id);
-            const response = await axios.post(`http://82.65.153.125:8888/api/v0.1/routes/${route_id}/members`,{
+            const response = await axios.post(`http://192.168.8.92:8000/api/v0.1/routes/${route_id}/members`,{
                     id: user.target_user.id
                 },
                 {

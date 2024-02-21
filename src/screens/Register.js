@@ -12,7 +12,7 @@ const RegisterScreen = ({ navigation }) => {
     const handleSignIn = async () => {
         if (email && password && username) {
             try {
-                const response = await axios.post('http://82.65.153.125:8888/api/v0.1/auth/signup', {
+                const response = await axios.post('http://192.168.8.92:8000/api/v0.1/auth/signup', {
                     username: username,
                     email: email,
                     password: password

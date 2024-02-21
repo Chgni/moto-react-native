@@ -1,5 +1,5 @@
 import MapView, {Marker, UrlTile} from 'react-native-maps';
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
@@ -156,7 +156,7 @@ const CreateTripScreen = ({ route, navigation}) => {
                                 waypoints={getWaypoints()}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
-                                apikey={"AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"}
+                                apikey={"AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"}
                             />}
                         </MapView>
                     </View>

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import { Card, Button, BottomSheet } from '@rneui/themed';
 import {ListItem} from "@rneui/base";
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 import { deleteFriend, acceptFriend } from "../services/FriendsService";
 
 const TripItem = ({ trip, type, onUpdate }) => {

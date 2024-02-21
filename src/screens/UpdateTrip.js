@@ -1,5 +1,5 @@
 import MapView, {Marker, UrlTile} from 'react-native-maps';
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ScrollView, StyleSheet, View, Image, TextInput, TouchableOpacity} from "react-native";
@@ -173,7 +173,7 @@ const UpdateTripScreen = ({ navigation, route }) => {
             console.log(route_id);
             console.log(friendId);
             console.log(token);
-            const response = await axios.delete(`http://82.65.153.125:8888/api/v0.1/routes/${route_id}/members`,
+            const response = await axios.delete(`http://192.168.8.92:8000/api/v0.1/routes/${route_id}/members`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -235,7 +235,7 @@ const UpdateTripScreen = ({ navigation, route }) => {
                                 waypoints={getWaypoints()}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
-                                apikey={"AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"}
+                                apikey={"AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"}
                             />}
                         </MapView>
                     </View>

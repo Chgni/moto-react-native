@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 import {Header, Tab, TabView, Text} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
 import { getTripsJoined, getTripsOwned} from "../services/TripService";

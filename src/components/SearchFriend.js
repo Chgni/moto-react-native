@@ -2,7 +2,7 @@ import React, {useRef, useState} from 'react';
 import {Text, ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
-import {useUser} from "../Guard/WithAuthGuard";
+import {useUser} from "../guards/WithAuthGuard";
 
 const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => {
     const { user, token } = useUser();
@@ -15,7 +15,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
 
     const searchUsers = async (searchString) => {
         try {
-            const response = await axios.get(`http://82.65.153.125:8888/api/v0.1/users/`,{
+            const response = await axios.get(`http://192.168.8.92:8000/api/v0.1/users/`,{
                 params: {
                     username: searchString
                 },
@@ -44,7 +44,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
 
     const addUser = async (user) => {
         try {
-            const response = await axios.post(`http://82.65.153.125:8888/api/v0.1/friends/`,{
+            const response = await axios.post(`http://192.168.8.92:8000/api/v0.1/friends/`,{
                     target_user_id: user.id
                 },
                 {
