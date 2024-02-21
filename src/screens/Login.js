@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TextInput, Button, StyleSheet, ActivityIndicator, ToastAndroid} from 'react-native';
-import axios from 'axios';
+import axios, {create} from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import qs from 'qs';
 import {Snackbar} from "react-native-paper";
@@ -21,18 +21,24 @@ const LoginScreen = ({ navigation, route }) => {
     const jwtService = new JwtService()
     const authService = new AuthService()
 
+    useEffect( () => {
+        if (isFocused && route.params) {
 
+
+            const { created_email, created_password} = route.params;
+            if (created_email && created_password) {
+                handleSignIn(created_email, created_password)
+            }
+        }
+    }, [isFocused]);
     useEffect(  () => {
         handleConnectionState();
-    }, [isFocused]);
+    }, [] );
     const handleConnectionState = async () => {
-        console.log("j'ai un jwt")
-
+        await authService.disconnect()
         const jwt = await jwtService.getJwt()
         if(jwt) {
             try {
-                console.log('login token :');
-                console.log(jwt);
                 const user = await authService.getMe()
                 navigation.replace('Main');
             } catch (error) {
@@ -45,17 +51,15 @@ const LoginScreen = ({ navigation, route }) => {
 
 
 
-    const handleSignIn = async () => {
-        if (email && password) {
+    const handleSignIn = async (preset_email = null, preset_password = null) => {
+        if ((email && password) || (preset_email && preset_password)) {
             try {
                 setLoading(true)
-
-                let data = await authService.login(email, password)
+                console.log(preset_password)
+                let data = await authService.login(preset_email ?? email, preset_password ?? password)
                 setLoading(false)
-                Toast.show('Connecté', Toast.SHORT)
                 await jwtService.setJwt(data['access_token'])
-
-                // navigation.replace('Main')
+                navigation.replace('Main')
             } catch (error) {
                 setLoading(false)
                 if(error.name == "UnauthorizedError") {

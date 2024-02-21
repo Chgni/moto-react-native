@@ -3,27 +3,32 @@ import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import axios from "axios";
 import {Snackbar} from "react-native-paper";
 import Toast from "react-native-simple-toast";
+import AuthService from "../services/AuthService";
 
 const RegisterScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const [loading, setLoading] = useState(false)
+    const authService = new AuthService()
+    let registerButtonLabel = "S'enregistrer"
+    if (loading == true) {
+        registerButtonLabel = "Enregistrement..."
+    }
+    let connectionButtonDisabled = false
+    if (loading == true || email == '' || password == '' || password == '') {
+        connectionButtonDisabled = true
+    }
     const handleSignIn = async () => {
         if (email && password && username) {
             try {
-                const response = await axios.post('http://192.168.8.92:8000/api/v0.1/auth/signup', {
-                    username: username,
-                    email: email,
-                    password: password
+                const user = await authService.create(username, email, password)
+                Toast.show('Votre compte a été créé', Toast.SHORT)
+                navigation.navigate('Connexion', {
+                    created_email: email,
+                    created_password: password
                 });
-
-                if (response.status === 201) {
-                    Toast.show('Votre compte a été créé', Toast.SHORT)
-
-                    navigation.navigate('Connexion');
-                }
             } catch (error) {
                 alert(error);
             }
@@ -54,7 +59,8 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={setPassword}
             />
             <Button
-                title="Inscription"
+                disabled={connectionButtonDisabled}
+                title={registerButtonLabel}
                 onPress={handleSignIn}
             />
             <Text

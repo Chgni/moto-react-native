@@ -8,4 +8,8 @@ export default class JwtService {
     async getJwt() {
         return await AsyncStorage.getItem('userToken');
     }
+    async removeJwt() {
+        return await AsyncStorage.removeItem('userToken');
+
+    }
 }

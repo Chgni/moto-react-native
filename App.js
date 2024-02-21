@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -16,6 +16,9 @@ import { Ionicons } from '@expo/vector-icons';
 import withAuthGuard from "./src/guards/WithAuthGuard";
 import logout from "./src/screens/Logout";
 import BASE_URL from './src/services/Api'
+import {ActivityIndicator} from "react-native";
+import JwtService from "./src/services/JwtService";
+import AuthService from "./src/services/AuthService";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -46,16 +49,17 @@ const MainTabs = () => {
 };
 
 export default function App() {
-  return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Connexion">
-          <Stack.Screen name="Connexion" component={ProtectedLogin} />
-          <Stack.Screen name="Deconnexion" component={LogoutScreen} />
-          <Stack.Screen name="Inscription" component={RegisterScreen} />
-          <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
-          <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-  );
+
+    return (
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName="Connexion">
+              <Stack.Screen name="Connexion" component={ProtectedLogin} />
+              <Stack.Screen name="Deconnexion" component={LogoutScreen} />
+              <Stack.Screen name="Inscription" component={RegisterScreen} />
+              <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+              <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
+              <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
+            </Stack.Navigator>
+          </NavigationContainer>
+      );
 }

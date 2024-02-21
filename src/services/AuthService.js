@@ -36,6 +36,17 @@ export default class AuthService {
     }
 
     async disconnect() {
-        await this.#jwtService.setJwt(null)
+        await this.#jwtService.removeJwt()
+    }
+
+    async create(username, email, password){
+        let response = await this.#api.post('/auth/signup', {
+            username: username,
+            email: email,
+            password: password
+        });
+        const { id, username_, email_, role, is_active } = response.data;
+        return new User(id, username_, email_, role, is_active);
+
     }
 }
