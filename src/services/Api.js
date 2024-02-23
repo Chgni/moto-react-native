@@ -6,7 +6,6 @@ import JwtService from "./JwtService";
 export const BASE_URL = `${process.env.API_URL}/${process.env.API_VERSION}`;
 axios.defaults.baseURL = BASE_URL
 axios.defaults.timeout = 5000
-console.log(BASE_URL)
 axios.interceptors.request.use(
     async (config) => {
         const storedToken = await AsyncStorage.getItem('userToken');

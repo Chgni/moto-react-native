@@ -6,7 +6,7 @@ import {ScrollView, StyleSheet, View, Image, TextInput} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
-import { createTrip } from "../services/TripService";
+import { createTrip } from "../services/RouteService";
 import {Tab, TabView, Text} from "@rneui/base";
 import { PROVIDER_GOOGLE} from "react-native-maps";
 import {Snackbar} from "react-native-paper";

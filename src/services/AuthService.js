@@ -20,7 +20,6 @@ export default class AuthService {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
         });
-        console.log('yo')
         if (response.status === 200) {
             return response.data
         }

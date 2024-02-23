@@ -1,5 +1,25 @@
 import axios from "axios";
-
+import Api from "./Api";
+import Route from "../models/Route";
+export default class RouteService {
+    #api = Api
+    async getRoutes(owned, joined) {
+        const response = await this.#api.get(`/routes?owned=${owned}&joined=${joined}`)
+        const routesData = response.data;
+        const routes = routesData.map(route => {
+            return new Route(
+                route.id,
+                route.name,
+                route.description,
+                route.owner_id,
+                route.owner,
+                route.members,
+                route.waypoints
+            );
+        });
+        return routes;
+    }
+}
 const getTripsOwned = async (user, token) => {
     try {
         console.log('Get Trips');

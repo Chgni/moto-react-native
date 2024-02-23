@@ -6,7 +6,7 @@ import {ScrollView, StyleSheet, View, Image, TextInput, TouchableOpacity} from "
 import StepsComponent from "../components/StepsComponent";
 import {Button, Dialog, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
-import { getTripById, updateTrip } from "../services/TripService";
+import { getTripById, updateTrip } from "../services/RouteService";
 import {Tab, TabView, Text} from "@rneui/base";
 import {getFriends} from "../services/FriendsService";
 import SearchFriendTrip from "../components/SeachFriendTrip";

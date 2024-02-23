@@ -3,7 +3,7 @@ import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {useUser} from "../guards/WithAuthGuard";
 import {Header, Tab, TabView, Text} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
-import { getTripsJoined, getTripsOwned} from "../services/TripService";
+import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
 
 const HomeScreen = ({ navigation }) => {
@@ -16,7 +16,7 @@ const HomeScreen = ({ navigation }) => {
     const [loadingJoinedTrips, setLoadingJoinedTrips] = useState(true);
     const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
     const [index, setIndex] = React.useState(0);
-
+    const routeService = new RouteService()
     useEffect(() => {
         if (isFocused && user && token) {
             getAllTrips();
@@ -28,7 +28,10 @@ const HomeScreen = ({ navigation }) => {
     const getAllTrips = async () => {
         setLoadingTrips(true);
         setLoadingJoinedTrips(true);
-        await getTripsOwned(user, token).then(
+        await routeService.getRoutes(true, false).then(routes => {
+            console.log(routes)
+        })
+        getTripsOwned(user, token).then(
             (response) => {
                 if (response) {
                     console.log(response);
@@ -37,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
                 }
             }
         )
-        await getTripsJoined(user, token).then(
+        getTripsJoined(user, token).then(
             (response) => {
                 if (response) {
                     setJoinedTrips(response);
