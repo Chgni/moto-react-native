@@ -35,7 +35,6 @@ const LoginScreen = ({ navigation, route }) => {
         handleConnectionState();
     }, [] );
     const handleConnectionState = async () => {
-        await authService.disconnect()
         const jwt = await jwtService.getJwt()
         if(jwt) {
             try {
