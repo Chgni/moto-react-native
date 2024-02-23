@@ -53,14 +53,16 @@ const LoginScreen = ({ navigation, route }) => {
     const handleSignIn = async (preset_email = null, preset_password = null) => {
         if ((email && password) || (preset_email && preset_password)) {
             try {
+                console.log(preset_email)
                 setLoading(true)
-                console.log(preset_password)
                 let data = await authService.login(preset_email ?? email, preset_password ?? password)
                 setLoading(false)
                 await jwtService.setJwt(data['access_token'])
                 navigation.replace('Main')
             } catch (error) {
                 setLoading(false)
+                console.log(error.name)
+                console.log(error.message)
                 if(error.name == "UnauthorizedError") {
                     Toast.show('Identifiants incorrect', Toast.LONG)
                 } else {
@@ -96,7 +98,7 @@ const LoginScreen = ({ navigation, route }) => {
             <Button
                 disabled={connectionButtonDisabled}
                 title={connectionButtonLabel}
-                onPress={handleSignIn}
+                onPress={() => handleSignIn(null, null)}
             />
             <Text
                 style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
