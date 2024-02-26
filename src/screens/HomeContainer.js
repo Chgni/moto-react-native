@@ -7,6 +7,8 @@ import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteSer
 import {Button, Icon} from '@rneui/themed';
 import RouteCard from "../components/RouteCard";
 import FloatingButton from "../components/FloatingButton";
+import RoutesOwned from "../components/route/RoutesOwned";
+import RoutesJoined from "../components/route/RoutesJoined";
 
 const HomeScreen = ({ navigation }) => {
     const { user, token } = useUser();
@@ -19,38 +21,9 @@ const HomeScreen = ({ navigation }) => {
     const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
     const [index, setIndex] = React.useState(0);
     const routeService = new RouteService()
-    useEffect(() => {
-        if (isFocused && user && token) {
-            getAllTrips();
-        } else {
-            console.log('Screen not focused or user/token not available');
-        }
-    }, [isFocused, user, token]);
-
-    const getAllTrips = async () => {
-        setLoadingTrips(true);
-        setLoadingJoinedTrips(true);
-        routeService.getRoutes(true, false).then(owned_routes => {
-            setRoutes(owned_routes)
-            setLoadingTrips(false);
-        })
-
-        await routeService.getRoutes(false, true).then(joined_routes => {
-            setJoinedTrips(joined_routes);
-            setLoadingJoinedTrips(false);
-        })
-
-
-    };
 
     const goToCreatePage = () => {
         navigation.navigate('CreateTrip');
-    }
-
-    const goToTripPage = (id) => {
-        navigation.navigate('UpdateTrip', {
-            tripId: id
-        });
     }
 
     return (
@@ -61,36 +34,15 @@ const HomeScreen = ({ navigation }) => {
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
-                    <ScrollView style={{ padding: 10}}>
-                        { !loadingTrips && routes.map(route => (
-                            <RouteCard route={route} onPress={() => goToTripPage(route.id)} />
-                        ))}
-                    </ScrollView>
+                    <RoutesOwned />
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <ScrollView style={{ padding: 10}}>
-                        { !loadingJoinedTrips && joinedTrips.map(route => (
-                            <RouteCard route={route} onPress={() => goToTripPage(route.id)} />
-                        ))}
-                    </ScrollView>
+                    <RoutesJoined />
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
                 <FloatingButton onPress={goToCreatePage} icon={"add-outline"} />
             </View>
-            {/* user && <Header style={styles.headerStyle}
-                    centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
-                    rightComponent={<SettingHeader/>}
-            /> }
-            <ScrollView style={styles.friendsContainer}>
-                <Text>Mes itinéraires ({routes.length})</Text>
-            </ScrollView>
-            <ScrollView style={styles.friendsContainer}>
-                <Text>Itinéraires de mes amis ({friendTrips.length})</Text>
-            </ScrollView>
-            { /*<ScrollView style={styles.friendsContainer}>
-                <Text>Itinéraires de la communauté</Text>
-            </ScrollView>  */}
         </View>
     );
 };

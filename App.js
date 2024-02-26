@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/Login';
 import LogoutScreen from './src/screens/Logout';
 import RegisterScreen from './src/screens/Register';
-import HomeScreen from "./src/screens/Home";
+import HomeScreen from "./src/screens/HomeContainer";
 import FriendsScreen from "./src/screens/Friends";
 import CreateTripScreen from "./src/screens/CreateTrip";
 import UpdateTripScreen from "./src/screens/UpdateTrip";
