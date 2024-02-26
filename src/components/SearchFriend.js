@@ -3,40 +3,26 @@ import {Text, ScrollView, StyleSheet, View, ActivityIndicator} from 'react-nativ
 import {Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
 import {useUser} from "../guards/WithAuthGuard";
+import UserService from "../services/UserService";
+import FriendsService from "../services/FriendsService";
 
-const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => {
-    const { user, token } = useUser();
+const SearchFriend = ({ onAdd }) => {
     const [search, setSearch] = useState("");
-    const [friends, setFriends] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchDone, setSearchDone] = useState(false);
-
     const timerRef = useRef(null);
-
+    const userService = new UserService()
+    const friendsService = new FriendsService()
     const searchUsers = async (searchString) => {
         try {
-            const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/users/`,{
-                params: {
-                    username: searchString
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.status === 200) {
-                setFriends([]);
-                const friendsFiltered = [];
+            const users = await userService.searchBySimilarUsername(searchString)
+            setUsers(users);
+            setLoading(false);
+            setSearchDone(true);
 
-                for (const friend of response.data) {
-                    friendsFiltered.push(friend);
-                }
-                setFriends(friendsFiltered);
-                setLoading(false);
-                setSearchDone(true);
-
-            }
         } catch (error) {
-            setFriends([]);
+            setUsers([]);
             setLoading(false);
             setSearchDone(true);
         }
@@ -44,37 +30,29 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
 
     const addUser = async (user) => {
         try {
-            const response = await axios.post(`http://192.168.1.79:8000/api/v0.1/friends/`,{
-                    target_user_id: user.id
-                },
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.status === 201) {
-                onAdd();
-            }
+            const response = await friendsService.sendFriendRequest(user.id)
+            onAdd();
         } catch (error) {
-            if( error.response ){
-                // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends');
-            }
+            console.log('Cant get friends');
         }
     }
 
     const updateSearch = (searchString) => {
+        setLoading(true)
+        setUsers([])
         setSearch(searchString);
-
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
 
         timerRef.current = setTimeout(async () => {
-            if (searchString && searchString.length > 0 && user) {
+            if (searchString && searchString.length > 0) {
                 setLoading(true);
                 setSearchDone(false);
                 await searchUsers(searchString);
+            } else {
+                setLoading(false)
+
             }
         }, 1500);
     };
@@ -85,20 +63,19 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
                 placeholder="Taper un pseudo"
                 onChangeText={updateSearch}
                 value={search}
+                lightTheme={true}
             />
             <ScrollView style={styles.friendsContainer}>
-                {loading && <ActivityIndicator size="small" color="#0000ff" />}
-                {searchDone && !loading && friends.length === 0 && <Text>Aucun utilisateur.</Text>}
-                {friends.map(friend => {
-                    if (friend.username === user.username) {
-                        return null; // skip current user
-                    }
-                  return <View key={friend.id} style={styles.friendWrapper}>
-                            <Text style={styles.pseudo}>{friend.username}</Text>
-                            <Button title={"Ajouter"} onPress={ () => addUser(friend)}></Button>
+                <View style={[styles.item, { marginTop: 20 }]}>
+                    {loading && <ActivityIndicator size="small" color="#0000ff" />}
+                    {searchDone && !loading && users.length === 0 && <Text>Aucun utilisateur.</Text>}
+                    {users.map(user =>  <View key={user.id} style={styles.friendWrapper}>
+                            <Text style={styles.pseudo}>{user.username}</Text>
+                            <Button title={"Ajouter"} onPress={ () => addUser(user)}></Button>
                         </View>
-                }
-                )}
+                    )}
+                </View>
+
             </ScrollView>
         </View>
     );

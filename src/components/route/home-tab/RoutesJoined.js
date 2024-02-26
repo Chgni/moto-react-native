@@ -1,7 +1,7 @@
 import RouteCard from "../RouteCard";
 import {ScrollView} from "react-native";
 import React, {useEffect, useState} from "react";
-import RouteService, {getTripsOwned} from "../../services/RouteService";
+import RouteService, {getTripsOwned} from "../../../services/RouteService";
 import {useIsFocused, useNavigation} from "@react-navigation/native";
 
 const RoutesJoined = () => {

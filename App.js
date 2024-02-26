@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './src/screens/Login';
 import LogoutScreen from './src/screens/Logout';
 import RegisterScreen from './src/screens/Register';
-import HomeScreen from "./src/screens/HomeContainer";
+import HomeScreen from "./src/screens/Home";
 import FriendsScreen from "./src/screens/Friends";
 import CreateTripScreen from "./src/screens/CreateTrip";
 import UpdateTripScreen from "./src/screens/UpdateTrip";
@@ -17,7 +17,7 @@ import withAuthGuard from "./src/guards/WithAuthGuard";
 import logout from "./src/screens/Logout";
 import BASE_URL from './src/services/Api'
 import {ActivityIndicator} from "react-native";
-import JwtService from "./src/services/JwtService";
+import StorageService from "./src/services/storageService";
 import AuthService from "./src/services/AuthService";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

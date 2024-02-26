@@ -5,22 +5,13 @@ import {Header, Tab, TabView, Text} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
 import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
-import RouteCard from "../components/RouteCard";
+import RouteCard from "../components/route/RouteCard";
 import FloatingButton from "../components/FloatingButton";
-import RoutesOwned from "../components/route/RoutesOwned";
-import RoutesJoined from "../components/route/RoutesJoined";
+import RoutesOwned from "../components/route/home-tab/RoutesOwned";
+import RoutesJoined from "../components/route/home-tab/RoutesJoined";
 
 const HomeScreen = ({ navigation }) => {
-    const { user, token } = useUser();
-    const isFocused = useIsFocused();
-    const [routes, setRoutes] = useState([]);
-    const [joinedTrips, setJoinedTrips] = useState([]);
-    const [communityTrips, setCommunityTrips] = useState([]);
-    const [loadingTrips, setLoadingTrips] = useState(true);
-    const [loadingJoinedTrips, setLoadingJoinedTrips] = useState(true);
-    const [loadingCommunityTrips, setLoadingCommunityTrips] = useState(true);
     const [index, setIndex] = React.useState(0);
-    const routeService = new RouteService()
 
     const goToCreatePage = () => {
         navigation.navigate('CreateTrip');

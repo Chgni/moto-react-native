@@ -3,14 +3,14 @@ import Api from "./Api";
 import qs from 'qs';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {UnauthorizedError} from "../errors/ApiCallError";
-import JwtService from "./JwtService";
+import StorageService from "./storageService";
 import JwtResponse from "../types/JwtResponse";
 import axios from "axios";
 import User from "../models/User";
 
 export default class AuthService {
     #api = Api
-    #jwtService = new JwtService()
+    #jwtService = new StorageService()
     async login(email, password) {
         const response = await this.#api.post('/auth/signin', qs.stringify({
             username: email,

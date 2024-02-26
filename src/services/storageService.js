@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default class JwtService {
+export default class StorageService {
     async setJwt(jwt) {
         await AsyncStorage.setItem('userToken', jwt);
     }

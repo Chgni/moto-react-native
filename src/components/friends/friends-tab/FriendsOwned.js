@@ -1,0 +1,76 @@
+import {ScrollView, StyleSheet, View} from "react-native";
+import {Button, Dialog} from "@rneui/themed";
+import FriendItem from "../../FriendItem";
+import React, {useEffect, useState} from "react";
+import {useIsFocused} from "@react-navigation/native";
+import FriendsService, {getFriends} from "../../../services/FriendsService";
+import SearchFriend from "../../SearchFriend";
+import {useUser} from "../../../guards/WithAuthGuard";
+
+const FriendsOwned = () => {
+    const [friends, setFriends] = useState([]);
+    const isFocused = useIsFocused()
+    const friendsService = new FriendsService()
+    const [loadingFriends, setLoadingFriends] = useState(true); // add friend dialog visible
+    const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
+    const toggleAddFriendDialog = () => {
+        setVisibleDialog(!visibleDialog);
+    };
+    const toggleAddFriendDialogAndRefresh = () => {
+        setVisibleDialog(!visibleDialog);
+        loadFriends()
+    };
+    const loadFriends = () => {
+        friendsService.getFriends().then(
+            (response) => {
+                setLoadingFriends(false)
+                setFriends(response);
+                setLoadingFriends(false);
+            }
+        ).catch(
+            (error) => {
+                setFriends([])
+            }
+        )
+    }
+
+    useEffect(() => {
+        if (isFocused == true) {
+            setLoadingFriends(true)
+            loadFriends()
+
+        }
+    }, [isFocused]);
+    return (
+        <>
+            <ScrollView style={{ padding: 10}}>
+                <View style={styles.addFriendButton}>
+                    <Button title='Ajouter un ami' buttonStyle={{ borderRadius: 30}}
+                            onPress={toggleAddFriendDialog}
+                    />
+                </View>
+                {friends.map(friend => (
+                    <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={loadFriends} />
+                )) }
+            </ScrollView>
+            <Dialog
+                isVisible={visibleDialog}
+                onBackdropPress={toggleAddFriendDialog}>
+                <SearchFriend onAdd={toggleAddFriendDialogAndRefresh} ></SearchFriend>
+            </Dialog>
+        </>
+
+
+    )
+}
+const styles = StyleSheet.create({
+    addFriendButton: {
+        display: "flex",
+        alignSelf: "center",
+        maxWidth: 250,
+        marginLeft: 10,
+        marginBottom: 10
+    }
+});
+
+export default FriendsOwned

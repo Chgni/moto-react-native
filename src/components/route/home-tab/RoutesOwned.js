@@ -1,9 +1,9 @@
 import RouteCard from "../RouteCard";
 import {ScrollView} from "react-native";
 import React, {useEffect, useState} from "react";
-import RouteService, {getTripsOwned} from "../../services/RouteService";
+import RouteService, {getTripsOwned} from "../../../services/RouteService";
 import {useIsFocused, useNavigation} from "@react-navigation/native";
-import {useUser} from "../../guards/WithAuthGuard";
+import {useUser} from "../../../guards/WithAuthGuard";
 
 const RoutesOwned = () => {
     const isFocused = useIsFocused();

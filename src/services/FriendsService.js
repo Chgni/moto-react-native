@@ -1,5 +1,28 @@
 import axios from "axios";
+import Api from "./Api";
 
+export default class FriendsService {
+    #api = Api
+    async getFriends (){
+        const response = await this.#api.get(`/friends`);
+        return response.data;
+    };
+    async getFriendsRequestsReceived() {
+        const response = await this.#api.get(`/friends?pending_received=true`);
+        return response.data;
+    }
+
+    async getFriendsRequestsSent() {
+        const response = await this.#api.get(`/friends?pending_sent=true`);
+        return response.data;
+    }
+    async sendFriendRequest(target_user_id) {
+        const response = await axios.post(`/friends/`,{
+                target_user_id: target_user_id
+        });
+        return response.data
+    }
+}
 const getFriends = async (user, token) => {
     try {
         console.log('Get friends');

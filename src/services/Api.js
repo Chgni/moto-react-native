@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {UnauthorizedError} from "../errors/ApiCallError";
-import JwtService from "./JwtService";
+import StorageService from "./storageService";
 
 export const BASE_URL = `${process.env.API_URL}/${process.env.API_VERSION}`;
 axios.defaults.baseURL = BASE_URL

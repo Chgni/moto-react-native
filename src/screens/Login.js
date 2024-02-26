@@ -7,7 +7,7 @@ import {Snackbar} from "react-native-paper";
 import {useIsFocused} from "@react-navigation/native";
 import AuthService from "../services/AuthService";
 import {UnauthorizedError} from "../errors/ApiCallError";
-import JwtService from "../services/JwtService";
+import StorageService from "../services/storageService";
 import Toast from 'react-native-simple-toast';
 
 const LoginScreen = ({ navigation, route }) => {
@@ -18,7 +18,7 @@ const LoginScreen = ({ navigation, route }) => {
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false)
 
-    const jwtService = new JwtService()
+    const jwtService = new StorageService()
     const authService = new AuthService()
 
     useEffect( () => {

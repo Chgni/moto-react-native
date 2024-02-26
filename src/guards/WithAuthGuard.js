@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
-import JwtService from "../services/JwtService";
+import StorageService from "../services/storageService";
 
 // Context to hold and provide user data
 const UserContext = createContext({user: null, token: null});
@@ -16,7 +16,7 @@ const withAuthGuard = (WrappedComponent) => {
         //const [user, setUser] = useState(null);
         const [authInfo, setAuthInfo] = useState({ user: null, token: null });
         const navigation = useNavigation();
-        const jwtService = new JwtService()
+        const jwtService = new StorageService()
         useEffect(() => {
             const checkAuth = async () => {
                 try {
@@ -40,7 +40,6 @@ const withAuthGuard = (WrappedComponent) => {
                                 console.log('success auth')
 
                                 setAuthInfo({ user: response.data, token: jwt });
-                                // console.log('guard user got');
                             }
                         } catch (error) {
                             if( error.response ){
