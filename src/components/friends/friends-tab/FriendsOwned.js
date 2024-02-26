@@ -23,7 +23,6 @@ const FriendsOwned = () => {
     const loadFriends = () => {
         friendsService.getFriends().then(
             (response) => {
-                setLoadingFriends(false)
                 setFriends(response);
                 setLoadingFriends(false);
             }

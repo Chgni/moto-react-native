@@ -12,60 +12,14 @@ import {
 import {Header, Tab, TabView} from "@rneui/base";
 import SettingHeader from "../components/SettingHeader";
 import FriendsOwned from "../components/friends/friends-tab/FriendsOwned";
+import FriendsSent from "../components/friends/friends-tab/FriendsSent";
+import FriendsReceived from "../components/friends/friends-tab/FriendsReceived";
 
 const FriendsScreen = ({ navigation }) => {
-    const { user, token } = useUser();
-    const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
-    const [friendRequestsSent, setFriendRequestsSent] = useState([]);
-    const isFocused = useIsFocused();
-    const [loadingFriendsReceived, setLoadingFriendsReceived] = useState(true); // add friend dialog visible
-    const [loadingFriendsSent, setLoadingFriendsSent] = useState(true); // add friend dialog visible
     const [index, setIndex] = React.useState(0);
-    const friendService = new FriendsService()
-
-
-
-
-    const getFriendsAndRequests = async () => {
-        console.log("start get friends");
-        setLoadingFriendsSent(true);
-        setLoadingFriendsReceived(true);
-
-
-        await getFriendsRequestsReceived(user, token).then(
-            (response) => {
-                if (response) {
-                    setFriendRequestsReceived(response);
-                    setLoadingFriendsReceived(false);
-                }
-            }
-        )
-        await getFriendsRequestsSent(user, token).then(
-            (response) => {
-                if (response) {
-                    setFriendRequestsSent(response);
-                    setLoadingFriendsSent(false);
-                }
-            }
-        )
-    }
-
-    useEffect(() => {
-        if (isFocused && user && token) {
-            console.log('get friend start');
-            getFriendsAndRequests();
-        } else {
-            console.log('Screen not focused or user/token not available');
-        }
-    }, [isFocused, user, token]);
-
 
     return (
         <View style={styles.container}>
-            {/*user && <Header style={styles.headerStyle}
-                          centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
-                          rightComponent={<SettingHeader/>}
-            /> */}
             <Tab value={index} onChange={setIndex} dense>
                 <Tab.Item>Amis</Tab.Item>
                 <Tab.Item>Invitations envoyées</Tab.Item>
@@ -76,18 +30,11 @@ const FriendsScreen = ({ navigation }) => {
                     <FriendsOwned />
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <ScrollView style={{ padding: 10}}>
-                        {friendRequestsSent.map(friend => (
-                            <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={getFriendsAndRequests} />
-                        )) }
-                    </ScrollView>
+                    <FriendsSent />
+
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    <ScrollView style={{ padding: 10}}>
-                        {friendRequestsReceived.map(friend => (
-                            <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={getFriendsAndRequests} />
-                        )) }
-                    </ScrollView>
+                    <FriendsReceived />
                 </TabView.Item>
             </TabView>
 
