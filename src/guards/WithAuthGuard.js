@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
+import JwtService from "../services/JwtService";
 
 // Context to hold and provide user data
 const UserContext = createContext({user: null, token: null});
@@ -15,11 +16,11 @@ const withAuthGuard = (WrappedComponent) => {
         //const [user, setUser] = useState(null);
         const [authInfo, setAuthInfo] = useState({ user: null, token: null });
         const navigation = useNavigation();
-
+        const jwtService = new JwtService()
         useEffect(() => {
             const checkAuth = async () => {
                 try {
-                    const jwt = await AsyncStorage.getItem('userToken');
+                    const jwt = await jwtService.getJwt();
                     if (!jwt) {
                         // No JWT found, redirect to login
                         setLoading(false);
@@ -27,17 +28,17 @@ const withAuthGuard = (WrappedComponent) => {
                     } else {
                         setLoading(false);
                         try {
-                            const response = await axios.get('http://192.168.8.92:8000/api/v0.1/auth/me',{
-                                headers: {
-                                    Authorization: `Bearer ${jwt}`
-                                }
-                            });
+                            console.log('checking auth')
+
+                            const response = await axios.get('http://192.168.1.79:8000/api/v0.1/auth/me');
 
                             if (response.status === 401) {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
-
+                            console.log(response.status)
                             if (response.status === 200) {
+                                console.log('success auth')
+
                                 setAuthInfo({ user: response.data, token: jwt });
                                 // console.log('guard user got');
                             }

@@ -5,11 +5,13 @@ import {Header, Tab, TabView, Text} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
 import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
+import RouteCard from "../components/RouteCard";
+import FloatingButton from "../components/FloatingButton";
 
 const HomeScreen = ({ navigation }) => {
     const { user, token } = useUser();
     const isFocused = useIsFocused();
-    const [trips, setTrips] = useState([]);
+    const [routes, setRoutes] = useState([]);
     const [joinedTrips, setJoinedTrips] = useState([]);
     const [communityTrips, setCommunityTrips] = useState([]);
     const [loadingTrips, setLoadingTrips] = useState(true);
@@ -28,26 +30,17 @@ const HomeScreen = ({ navigation }) => {
     const getAllTrips = async () => {
         setLoadingTrips(true);
         setLoadingJoinedTrips(true);
-        await routeService.getRoutes(true, false).then(routes => {
-            console.log(routes)
+        routeService.getRoutes(true, false).then(owned_routes => {
+            setRoutes(owned_routes)
+            setLoadingTrips(false);
         })
-        getTripsOwned(user, token).then(
-            (response) => {
-                if (response) {
-                    console.log(response);
-                    setTrips(response);
-                    setLoadingTrips(false);
-                }
-            }
-        )
-        getTripsJoined(user, token).then(
-            (response) => {
-                if (response) {
-                    setJoinedTrips(response);
-                    setLoadingJoinedTrips(false);
-                }
-            }
-        )
+
+        await routeService.getRoutes(false, true).then(joined_routes => {
+            setJoinedTrips(joined_routes);
+            setLoadingJoinedTrips(false);
+        })
+
+
     };
 
     const goToCreatePage = () => {
@@ -69,45 +62,28 @@ const HomeScreen = ({ navigation }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
-                        { !loadingTrips && trips.map(trip => (
-                            <View key={trip.id}>
-                                <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
-                                    <Text h4>{trip.name}</Text>
-                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De {trip.owner.username}</Text>
-                                </TouchableOpacity>
-                            </View>
+                        { !loadingTrips && routes.map(route => (
+                            <RouteCard route={route} onPress={() => goToTripPage(route.id)} />
                         ))}
                     </ScrollView>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <ScrollView style={{ padding: 10}}>
-                        { !loadingJoinedTrips && joinedTrips.map(trip => (
-                            <View key={trip.id}>
-                                <TouchableOpacity onPress={ () => goToTripPage(trip.id)} style={styles.tripCard}>
-                                    <Text h4>{trip.name}</Text>
-                                    <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De {trip.owner.username}</Text>
-                                </TouchableOpacity>
-                            </View>
+                        { !loadingJoinedTrips && joinedTrips.map(route => (
+                            <RouteCard route={route} onPress={() => goToTripPage(route.id)} />
                         ))}
                     </ScrollView>
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
-                <Button onPress={goToCreatePage} buttonStyle={{borderRadius: 50, width: 75, height: 75}}>
-                    <Icon
-                        name='add-outline'
-                        type='ionicon'
-                        color='#fff'
-                        size={60}
-                    />
-                </Button>
+                <FloatingButton onPress={goToCreatePage} icon={"add-outline"} />
             </View>
             {/* user && <Header style={styles.headerStyle}
                     centerComponent={{ text: `Bonjour, ${user.username}`, style: { color: '#fff' } }}
                     rightComponent={<SettingHeader/>}
             /> }
             <ScrollView style={styles.friendsContainer}>
-                <Text>Mes itinéraires ({trips.length})</Text>
+                <Text>Mes itinéraires ({routes.length})</Text>
             </ScrollView>
             <ScrollView style={styles.friendsContainer}>
                 <Text>Itinéraires de mes amis ({friendTrips.length})</Text>

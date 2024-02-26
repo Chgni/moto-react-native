@@ -15,7 +15,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
 
     const searchUsers = async (searchString) => {
         try {
-            const response = await axios.get(`http://192.168.8.92:8000/api/v0.1/users/`,{
+            const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/users/`,{
                 params: {
                     username: searchString
                 },
@@ -44,7 +44,7 @@ const SearchFriend = ({ currentFriends, friendReceived, friendSent, onAdd }) => 
 
     const addUser = async (user) => {
         try {
-            const response = await axios.post(`http://192.168.8.92:8000/api/v0.1/friends/`,{
+            const response = await axios.post(`http://192.168.1.79:8000/api/v0.1/friends/`,{
                     target_user_id: user.id
                 },
                 {

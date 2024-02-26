@@ -3,7 +3,7 @@ import axios from "axios";
 const getFriends = async (user, token) => {
     try {
         console.log('Get friends');
-        const response = await axios.get(`http://192.168.8.92:8000/api/v0.1/friends`,{
+        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/friends`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -22,7 +22,7 @@ const getFriends = async (user, token) => {
 const getFriendsRequestsReceived = async (user, token) => {
     try {
         console.log('Get friends received');
-        const response = await axios.get(`http://192.168.8.92:8000/api/v0.1/friends?pending_received=true`,{
+        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/friends?pending_received=true`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -42,7 +42,7 @@ const getFriendsRequestsReceived = async (user, token) => {
 const getFriendsRequestsSent = async (user, token) => {
     try {
         console.log('Get friends sent');
-        const response = await axios.get(`http://192.168.8.92:8000/api/v0.1/friends?pending_sent=true`,{
+        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/friends?pending_sent=true`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -66,7 +66,7 @@ const deleteFriend = async (friend, type, token) => {
         if (type === "friend") {
             statusId = 3;
         }
-        const response = await axios.patch(`http://192.168.8.92:8000/api/v0.1/friends/`, {
+        const response = await axios.patch(`http://192.168.1.79:8000/api/v0.1/friends/`, {
                 id: friend.id,
                 status : statusId
             }
@@ -92,7 +92,7 @@ const deleteFriend = async (friend, type, token) => {
 const acceptFriend = async (friend, type, token) => {
     try {
         console.log(friend);
-        const response = await axios.patch(`http://192.168.8.92:8000/api/v0.1/friends/`, {
+        const response = await axios.patch(`http://192.168.1.79:8000/api/v0.1/friends/`, {
                 id: friend.id,
                 status : 1
             }
