@@ -28,17 +28,11 @@ const withAuthGuard = (WrappedComponent) => {
                     } else {
                         setLoading(false);
                         try {
-                            console.log('checking auth')
-
-                            const response = await axios.get('http://192.168.1.79:8000/api/v0.1/auth/me');
-
+                            const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/auth/me`);
                             if (response.status === 401) {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
-                            console.log(response.status)
                             if (response.status === 200) {
-                                console.log('success auth')
-
                                 setAuthInfo({ user: response.data, token: jwt });
                             }
                         } catch (error) {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import Api from "./Api";
 import Route from "../models/Route";
+
 export default class RouteService {
     #api = Api
     async getRoutes(owned, joined) {
@@ -19,11 +20,15 @@ export default class RouteService {
         });
         return routes;
     }
+    async getRouteById(id) {
+        const response = await this.#api.get(`/routes/${id}`);
+        return response.data;
+    };
 }
 const getTripsOwned = async (user, token) => {
     try {
         console.log('Get Trips');
-        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/routes?owned=true&joined=false`,{
+        const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/routes?owned=true&joined=false`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -40,7 +45,7 @@ const getTripsOwned = async (user, token) => {
 };
 const getTripsJoined = async (user, token) => {
     try {
-        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/routes?owned=false&joined=true`,{
+        const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/routes?owned=false&joined=true`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -58,9 +63,7 @@ const getTripsJoined = async (user, token) => {
 const getTripById = async (id, user, token) => {
     try {
         console.log("GET TRIP ID ERROR");
-        console.log(id);
-        console.log(token);
-        const response = await axios.get(`http://192.168.1.79:8000/api/v0.1/routes/${id}`,{
+        const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${id}`,{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -85,7 +88,7 @@ const createTrip = async (name, description, token, steps) => {
         filteredSteps.push(filtered);
     }
         try {
-            const response = await axios.post('http://192.168.1.79:8000/api/v0.1/routes/', {
+            const response = await axios.post(`${process.env.API_URL}/${process.env.API_VERSION}/routes/`, {
                 name: name,
                 description: description,
                 waypoints: filteredSteps
@@ -124,7 +127,7 @@ const updateTrip = async (route_id, steps, token) => {
         //console.log("filter");
         console.log(route_id);
         console.log(filteredSteps);
-        const response = await axios.put(`http://192.168.1.79:8000/api/v0.1/routes/${route_id}/waypoints/`,
+        const response = await axios.put(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${route_id}/waypoints/`,
             filteredSteps
         , {headers: {
                 Authorization: `Bearer ${token}`

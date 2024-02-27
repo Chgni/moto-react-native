@@ -21,7 +21,7 @@ const RoutesOwned = () => {
     }
 
     const goToTripPage = (id) => {
-        navigation.navigate('UpdateTrip', {
+        navigation.navigate('Route', {
             tripId: id
         });
     }

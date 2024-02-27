@@ -29,6 +29,7 @@ const UpdateTripScreen = ({ navigation, route }) => {
     const friendsService = new FriendsService()
 
     useEffect(() => {
+        console.log(user)
         if (isFocused && user && token && route.params) {
             const { tripId } = route.params;
             const { created } = route.params;
@@ -173,7 +174,7 @@ const UpdateTripScreen = ({ navigation, route }) => {
             console.log(route_id);
             console.log(friendId);
             console.log(token);
-            const response = await axios.delete(`http://192.168.1.79:8000/api/v0.1/routes/${route_id}/members`,
+            const response = await axios.delete(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${route_id}/members`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
