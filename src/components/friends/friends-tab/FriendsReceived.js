@@ -1,15 +1,19 @@
 import {ScrollView} from "react-native";
 import FriendItem from "../../FriendItem";
-import React, {useEffect, useState} from "react";
-import FriendsService, {getFriends} from "../../../services/FriendsService";
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import FriendsService from "../../../services/FriendsService";
 import {useIsFocused} from "@react-navigation/native";
 
-const FriendsReceived = () => {
+const FriendsReceived = forwardRef(({updateAll}, ref) => {
     const isFocused = useIsFocused()
     const [loadingFriendsReceived, setLoadingFriendsReceived] = useState(true); // add friend dialog visible
     const friendsService = new FriendsService()
     const [friendsReceived, setFriendsReceived] = useState([]);
 
+    // ça sert a mettre, grace au forwardRef, la fonction a disposition du composant parent
+    useImperativeHandle(ref, () => ({
+        update: () => loadFriendsReceived()
+    }));
     const loadFriendsReceived = () => {
         friendsService.getFriendsRequestsReceived().then(
             (response) => {
@@ -19,6 +23,7 @@ const FriendsReceived = () => {
         ).catch(
             (error) => {
                 setFriendsReceived([])
+                // TODO error handling
             }
         )
     }
@@ -32,9 +37,9 @@ const FriendsReceived = () => {
     return (
         <ScrollView style={{ padding: 10}}>
             {friendsReceived.map(friend => (
-                <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={loadFriendsReceived} />
+                <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={updateAll} />
             )) }
         </ScrollView>
     )
-}
+});
 export default FriendsReceived;

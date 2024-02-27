@@ -1,23 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
-import { useIsFocused } from "@react-navigation/native";
-import {useUser} from "../guards/WithAuthGuard";
-import FriendItem from "../components/FriendItem";
-import SearchFriend from "../components/SearchFriend";
-import FriendsService, { getFriendsRequestsSent, getFriendsRequestsReceived } from "../services/FriendsService";
-import {
-    Button,
-    Dialog,
-} from '@rneui/themed';
-import {Header, Tab, TabView} from "@rneui/base";
-import SettingHeader from "../components/SettingHeader";
+
+import {Tab, TabView} from "@rneui/base";
 import FriendsOwned from "../components/friends/friends-tab/FriendsOwned";
 import FriendsSent from "../components/friends/friends-tab/FriendsSent";
 import FriendsReceived from "../components/friends/friends-tab/FriendsReceived";
 
-const FriendsScreen = ({ navigation }) => {
+const FriendsScreen = () => {
     const [index, setIndex] = React.useState(0);
-
+    const friendsOwnedRef = useRef()
+    const friendsReceivedRef = useRef()
+    const friendsSentRef = useRef()
+    const updateAllTabs = () => {
+        friendsOwnedRef.current.update()
+        friendsReceivedRef.current.update()
+        friendsSentRef.current.update()
+    }
     return (
         <View style={styles.container}>
             <Tab value={index} onChange={setIndex} dense>
@@ -27,14 +25,14 @@ const FriendsScreen = ({ navigation }) => {
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
-                    <FriendsOwned />
+                    <FriendsOwned updateAll={updateAllTabs} ref={friendsOwnedRef} />
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <FriendsSent />
+                    <FriendsSent ref={friendsSentRef} updateAll={updateAllTabs} />
 
                 </TabView.Item>
                 <TabView.Item style={{width: '100%' }}>
-                    <FriendsReceived />
+                    <FriendsReceived updateAll={updateAllTabs} ref={friendsReceivedRef} />
                 </TabView.Item>
             </TabView>
 

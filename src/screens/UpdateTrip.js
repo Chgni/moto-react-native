@@ -2,13 +2,13 @@ import MapView, {Marker, UrlTile} from 'react-native-maps';
 import {useUser} from "../guards/WithAuthGuard";
 import {useIsFocused} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {ScrollView, StyleSheet, View, Image, TextInput, TouchableOpacity} from "react-native";
+import {StyleSheet, View, Image, TextInput, TouchableOpacity} from "react-native";
 import StepsComponent from "../components/StepsComponent";
 import {Button, Dialog, Icon, Input} from "@rneui/themed";
 import MapViewDirections from "react-native-maps-directions";
 import { getTripById, updateTrip } from "../services/RouteService";
 import {Tab, TabView, Text} from "@rneui/base";
-import {getFriends} from "../services/FriendsService";
+import FriendsService from "../services/FriendsService";
 import SearchFriendTrip from "../components/SeachFriendTrip";
 import axios from "axios";
 import { PROVIDER_GOOGLE } from "react-native-maps";
@@ -26,7 +26,7 @@ const UpdateTripScreen = ({ navigation, route }) => {
     const [ableToUpdate, setAbleToUpdate] = useState(false);
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
     const [visible, setVisible] = useState(false);
-
+    const friendsService = new FriendsService()
 
     useEffect(() => {
         if (isFocused && user && token && route.params) {
@@ -49,12 +49,12 @@ const UpdateTripScreen = ({ navigation, route }) => {
         setVisibleDialog(!visibleDialog);
     };
 
-    const getFriendsForCurrentUser = async () => {
-        await getFriends(user, token).then(
+    const getFriendsForCurrentUser = () => {
+        friendsService.getFriends().then(
             (response) => {
-                if (response) {
-                    setFriends(response);
-                }
+                setFriends(response);
+            }).catch(error => {
+                // TODO Error handling
             }
         )
     }

@@ -1,18 +1,23 @@
 import {ScrollView, StyleSheet, View} from "react-native";
 import {Button, Dialog} from "@rneui/themed";
 import FriendItem from "../../FriendItem";
-import React, {useEffect, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
-import FriendsService, {getFriends} from "../../../services/FriendsService";
-import SearchFriend from "../../SearchFriend";
-import {useUser} from "../../../guards/WithAuthGuard";
+import FriendsService from "../../../services/FriendsService";
+import SearchFriend from "../SearchFriend";
 
-const FriendsOwned = () => {
+const FriendsOwned = forwardRef(({updateAll}, ref) => {
     const [friends, setFriends] = useState([]);
     const isFocused = useIsFocused()
     const friendsService = new FriendsService()
     const [loadingFriends, setLoadingFriends] = useState(true); // add friend dialog visible
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
+
+    // ça sert a mettre, grace au forwardRef, la fonction a disposition du composant parent
+    useImperativeHandle(ref, () => ({
+        update: () => loadFriends()
+    }));
+
     const toggleAddFriendDialog = () => {
         setVisibleDialog(!visibleDialog);
     };
@@ -21,6 +26,7 @@ const FriendsOwned = () => {
         loadFriends()
     };
     const loadFriends = () => {
+
         friendsService.getFriends().then(
             (response) => {
                 setFriends(response);
@@ -49,7 +55,7 @@ const FriendsOwned = () => {
                     />
                 </View>
                 {friends.map(friend => (
-                    <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={loadFriends} />
+                    <FriendItem key={friend.id} friend={friend} type={"friend"} onUpdate={updateAll} />
                 )) }
             </ScrollView>
             <Dialog
@@ -61,7 +67,7 @@ const FriendsOwned = () => {
 
 
     )
-}
+});
 const styles = StyleSheet.create({
     addFriendButton: {
         display: "flex",

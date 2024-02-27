@@ -6,7 +6,7 @@ import {useIsFocused} from "@react-navigation/native";
 import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
 import RouteCard from "../components/route/RouteCard";
-import FloatingButton from "../components/FloatingButton";
+import FloatingButton from "../components/common/FloatingButton";
 import RoutesOwned from "../components/route/home-tab/RoutesOwned";
 import RoutesJoined from "../components/route/home-tab/RoutesJoined";
 

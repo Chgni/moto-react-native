@@ -2,9 +2,9 @@ import React, {useRef, useState} from 'react';
 import {Text, ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Button, SearchBar} from '@rneui/themed';
 import axios from "axios";
-import {useUser} from "../guards/WithAuthGuard";
-import UserService from "../services/UserService";
-import FriendsService from "../services/FriendsService";
+import {useUser} from "../../guards/WithAuthGuard";
+import UserService from "../../services/UserService";
+import FriendsService from "../../services/FriendsService";
 
 const SearchFriend = ({ onAdd }) => {
     const [search, setSearch] = useState("");
@@ -30,10 +30,10 @@ const SearchFriend = ({ onAdd }) => {
 
     const addUser = async (user) => {
         try {
-            const response = await friendsService.sendFriendRequest(user.id)
+            await friendsService.sendFriendRequest(user.id)
             onAdd();
         } catch (error) {
-            console.log('Cant get friends');
+            // TODO error handling
         }
     }
 

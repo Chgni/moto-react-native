@@ -1,39 +1,40 @@
-import React, {useState} from 'react';
-import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, StyleSheet, TouchableOpacity, BackHandler, Alert} from 'react-native';
 import { Card, Button, BottomSheet } from '@rneui/themed';
 import {ListItem} from "@rneui/base";
 import {useUser} from "../guards/WithAuthGuard";
-import { deleteFriend, acceptFriend } from "../services/FriendsService";
+import FriendsService from "../services/FriendsService";
 
 const FriendItem = ({ friend, type, onUpdate }) => {
-    const { user, token } = useUser();
     const [isVisible, setIsVisible] = useState(false);
+    const friendsService = new FriendsService()
     const list = [
         {
             title: 'Supprimer',
+            containerStyle: { backgroundColor: 'red' },
+            titleStyle: { color: 'white' },
             onPress: async () => {await deleteUserFriend()}
         },
         {
-            title: 'Annuler',
-            containerStyle: { backgroundColor: 'red' },
-            titleStyle: { color: 'white' },
+            title: 'Retour',
             onPress: () => setIsVisible(false),
         },
     ];
 
     const listReceived = [
         {
-            title: 'Ajouter',
+            title: 'Accepter',
             onPress: async () => {await acceptUserFriend()}
         },
         {
-            title: 'Supprimer',
+            title: 'Refuser',
+            containerStyle: { backgroundColor: 'red' },
+            titleStyle: { color: 'white' },
             onPress: async () => {await deleteUserFriend()}
         },
         {
-            title: 'Annuler',
-            containerStyle: { backgroundColor: 'red' },
-            titleStyle: { color: 'white' },
+            title: 'Retour',
+
             onPress: () => setIsVisible(false),
         },
     ];
@@ -45,27 +46,41 @@ const FriendItem = ({ friend, type, onUpdate }) => {
         setIsVisible(true);
     }
 
-    const deleteUserFriend = async () => {
-        await deleteFriend(friend, type, token).then(
-            (response) => {
-                if (response) {
-                    setIsVisible(false);
-                    onUpdate();
-                }
+    const deleteUserFriend = () => {
+        friendsService.deleteFriend(friend, type).then(
+            () => {
+                setIsVisible(false);
+                onUpdate();
+            }).catch(error => {
+                // TODO error handling
             }
         )
     }
 
-    const acceptUserFriend = async () => {
-        await acceptFriend(friend, type, token).then(
-            (response) => {
-                if (response) {
-                    setIsVisible(false);
-                    onUpdate();
-                }
-            }
-        )
+    const acceptUserFriend = () => {
+        friendsService.acceptFriend(friend, type).then(
+            () => {
+                console.log('ami accepté')
+                onUpdate()
+                setIsVisible(false);
+            }).catch(error => {
+                // TODO error handling
+        })
     }
+    function handleBackButtonClick() {
+        if(isVisible) {
+            setIsVisible(false)
+            return true
+        }
+        return true;
+    }
+
+    useEffect(() => {
+        BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+        return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+        };
+    }, []);
 
     return (
             <TouchableOpacity style={styles.tripCard} onPress={() => openMenuActions(type)}>
