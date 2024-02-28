@@ -24,6 +24,11 @@ export default class RouteService {
         const response = await this.#api.get(`/routes/${id}`);
         return response.data;
     };
+    async addMember(route_id, member_to_add_id) {
+        await this.#api.post(`/routes/${route_id}/members`, {
+            id: member_to_add_id
+        });
+    }
 }
 const getTripsOwned = async (user, token) => {
     try {

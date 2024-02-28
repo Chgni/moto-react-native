@@ -22,7 +22,7 @@ const RoutesOwned = () => {
 
     const goToTripPage = (id) => {
         navigation.navigate('Route', {
-            tripId: id
+            routeId: id
         });
     }
     useEffect(() => {
