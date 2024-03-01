@@ -1,8 +1,9 @@
 import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
-import {Text, Button, SearchBar} from '@rneui/themed';
+import {Text, Button} from 'react-native-paper';
 import axios from "axios";
 import {useUser} from "../guards/WithAuthGuard";
+import MemberCard from "./route/MemberCard";
 
 const SearchFriendTrip = ({ currentFriends, members, onClick }) => {
     const [users, setUsers] = useState([]);
@@ -33,9 +34,8 @@ const SearchFriendTrip = ({ currentFriends, members, onClick }) => {
         <View>
             <ScrollView style={styles.friendsContainer}>
                 {users.length === 0 && <Text>Aucun ami à ajouter.</Text>}
-                {users.map(user => <View key={user.id} style={styles.friendWrapper}>
-                            <Text style={styles.pseudo}>{user.username}</Text>
-                            <Button title={"Ajouter"} onPress={() => onClick(user)}></Button>
+                {users.map(user => <View key={user.id}>
+                            <MemberCard user={user} addMember={() => {onClick(user)}} />
                         </View>
 
                 )}
@@ -57,12 +57,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
     },
-    friendWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 8
-    },
+
     pseudo: {
         fontSize: 18
     }

@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import {View, StyleSheet, Image, TextInput, TouchableOpacity, Text} from 'react-native';
+import {View, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator} from 'react-native';
 import StepsComponent from '../components/StepsComponent';
-import { Button, Dialog, Icon, Input, Snackbar } from '@rneui/themed';
+import { Dialog, Icon, Input, Snackbar } from '@rneui/themed';
+import {
+    Button,
+    Text,
+    Divider,
+    IconButton,
+    MD3Colors,
+    Chip,
+    Avatar,
+    Appbar,
+    Portal,
+    Modal,
+    PaperProvider
+} from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import RouteService, { createTrip, getTripById, updateTrip } from '../services/RouteService';
@@ -12,6 +25,8 @@ import SearchFriendTrip from '../components/SeachFriendTrip';
 import axios from 'axios';
 import {Tab, TabView} from "@rneui/base";
 import FloatingButton from "../components/common/FloatingButton";
+import MemberCard from "../components/route/MemberCard";
+import ContentLoader from "react-native-easy-content-loader";
 
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
@@ -26,7 +41,9 @@ const RouteScreen = ({ route, navigation }) => {
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
     const [tabIndex, setTabIndex] = React.useState(0);
     const [editing, setEditing] = useState(false)
-    const [pageType, setPageType] = useState("create")
+
+    const [pageType, setPageType] = useState(route.params.routeId ? "update" : "create") // create / update
+    const [loading, setLoading] = useState(true)
 
     const loadRoute = async (routeId) => {
         try {
@@ -41,14 +58,14 @@ const RouteScreen = ({ route, navigation }) => {
             // TODO handle error
         }
     }
-    const loadFriendsOfCurrentUser = () => {
-        friendsService.getFriends().then(
-            (response) => {
-                setFriends(response);
-            }).catch(error => {
-                // TODO Error handling
-            }
-        )
+    const loadFriendsOfCurrentUser = async () => {
+        try {
+            const friends = await friendsService.getFriends()
+            setFriends(friends)
+
+        } catch (e) {
+            // TODO Error handling
+        }
     }
     const toggleAddFriendDialog = () => {
         setVisibleDialog(!visibleDialog);
@@ -70,23 +87,35 @@ const RouteScreen = ({ route, navigation }) => {
             }
         }
     }
-
     useEffect(() => {
-        if (isFocused && user && token && route.params) {
+        if (user && route.params) {
             const { routeId: routeId } = route.params;
             if(routeId) {
                 setPageType('update')
-                loadRoute(routeId)
-                loadFriendsOfCurrentUser()
+                loadRoute(routeId).then(() => {
+                    setLoading(false)
+                    loadFriendsOfCurrentUser().then(() => {
+
+                    })
+
+                })
+            } else {
+                setLoading(false)
             }
 
             // getTrip(tripId);
             // getFriendsForCurrentUser();
         }
-    }, [isFocused, user, token]);
+    }, [user, token]);
 
     return(
+
         <View style={styles.container}>
+            <Appbar.Header>
+                <Appbar.BackAction onPress={() => {navigation.goBack()}} />
+                <Appbar.Content title={pageType == "create" ? 'Nouvel itinéraire' : <ContentLoader loading={loading} pRows={0} ><Text variant={"headlineMedium"}>{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
+            </Appbar.Header>
+            <PaperProvider>
             <Tab value={tabIndex} onChange={setTabIndex} dense>
                 <Tab.Item>Itinéraires</Tab.Item>
                 {pageType=='update' && <Tab.Item >Participants</Tab.Item>}
@@ -98,42 +127,39 @@ const RouteScreen = ({ route, navigation }) => {
                 {/*page participant*/}
                 {pageType=='update' && navigationRoute &&<TabView.Item style={{ width: '100%' }} >
                     <View>
-                        <View>
-                            <Text h3>Propriétaire</Text>
-                        </View>
                         <View style={styles.friendCard}>
-                            <View style={{
-                                flexDirection: "row",
-                                justifyContent: "start",
-                                alignItems: "center"}}>
-                                { navigationRoute!==null && <Text style={{paddingEnd: 10}} h4>{navigationRoute.owner.username}</Text>}
-                            </View>
+
                         </View>
                         <View>
-                            <View style={{paddingBottom: 10}}>
-                                <Text h3>Invités</Text>
-                                { navigationRoute!==null && navigationRoute.owner_id === user.id && <Button radius={"sm"} onPress={toggleAddFriendDialog}>Ajouter</Button> }
+
+                            <View>
+                                <Divider />
+                                <MemberCard role={"Organisateur"} user={navigationRoute.owner} />
+
+                                {navigationRoute.members.map((member, index) => {
+                                        return (
+                                            <View key={member.id}>
+                                                    <Divider />
+                                                    <MemberCard user={member}  removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(navigationRoute.id, member.id) : null} />
+                                            </View>
+                                        )
+                                    }
+                                )}
+                                <Divider />
+
                             </View>
-                            {navigationRoute.members.map(member => {
-                                    return <TouchableOpacity key={member.id} style={styles.friendCard}>
-                                        <View style={{
-                                            flexDirection: "row",
-                                            justifyContent: "space-between",
-                                            alignItems: "center"}}>
-                                            <Text style={{paddingEnd: 10}} h4>{member.username}</Text>
-                                            { navigationRoute && navigationRoute.owner_id === user.id && <Button color="error" radius={"sm"} type="solid"
-                                                                                           onPress={ () => removeMember(navigationRoute.id, member.id)}>Retirer</Button> }
-                                        </View>
-                                    </TouchableOpacity>
-                                }
-                            )}
+
                         </View>
-                        <Dialog
-                            isVisible={visibleDialog}
-                            onBackdropPress={toggleAddFriendDialog}>
-                            <SearchFriendTrip currentFriends={friends} route_id={navigationRoute.id} onClick={addMember}
-                                              members={navigationRoute.members} ></SearchFriendTrip>
-                        </Dialog>
+                            <Portal >
+                                <Modal visible={visibleDialog}  onDismiss={() => setVisibleDialog(false)} contentContainerStyle={styles.modal} >
+                                    <View>
+                                        <SearchFriendTrip currentFriends={friends} route_id={navigationRoute.id} onClick={addMember}
+                                                      members={navigationRoute.members} />
+                                    </View>
+                                </Modal>
+                            </Portal>
+
+
                         { /* routeSteps.map((marker, i) => (
 
                         )) */}
@@ -151,10 +177,15 @@ const RouteScreen = ({ route, navigation }) => {
                 </TabView.Item>
             </TabView>
             <View style={styles.saveTripButton}>
-                <FloatingButton icon='pencil-outline' />
+                { tabIndex == 2 && <FloatingButton icon='pencil-outline' text={"Modifier"} />}
+                { tabIndex==1 && navigationRoute!==null && navigationRoute.owner_id === user.id && (
+                    <FloatingButton onPress={toggleAddFriendDialog} icon={"plus"} text={"Ajouter un membre"} />
+                ) }
 
             </View>
+            </PaperProvider>
         </View>
+
     )
 
 }
@@ -162,7 +193,6 @@ const RouteScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 20,
         backgroundColor: '#fff',
     },
     mapStyle: {
@@ -198,6 +228,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    modal: {
+        backgroundColor: 'white',
+        padding: 20,
+        margin: 10
+    },
 });
+const containerStyle = {backgroundColor: 'white', padding: 20};
 
 export default RouteScreen;

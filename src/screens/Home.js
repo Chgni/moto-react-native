@@ -9,6 +9,7 @@ import RouteCard from "../components/route/RouteCard";
 import FloatingButton from "../components/common/FloatingButton";
 import RoutesOwned from "../components/route/home-tab/RoutesOwned";
 import RoutesJoined from "../components/route/home-tab/RoutesJoined";
+import {Appbar, Divider} from "react-native-paper";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
@@ -19,6 +20,9 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <Appbar.Header>
+                <Appbar.Content title="CommuMoto" />
+            </Appbar.Header>
             <Tab value={index} onChange={setIndex} dense>
                 <Tab.Item>Mes trajets</Tab.Item>
                 <Tab.Item>Trajets rejoints</Tab.Item>
@@ -32,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
-                <FloatingButton onPress={goToCreatePage} icon={"add-outline"} />
+                <FloatingButton onPress={goToCreatePage} icon={"plus"} />
             </View>
         </View>
     );
@@ -43,7 +47,6 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        paddingTop: 15,
         backgroundColor: "#fff"
     },
     tripCard: {

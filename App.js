@@ -1,4 +1,9 @@
+import { View, StyleSheet } from 'react-native';
 
+import { CommonActions } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Text, BottomNavigation } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, {useEffect} from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +15,6 @@ import HomeScreen from "./src/screens/Home";
 import FriendsScreen from "./src/screens/Friends";
 import CreateTripScreen from "./src/screens/CreateTrip";
 import UpdateTripScreen from "./src/screens/UpdateTrip";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import { Ionicons } from '@expo/vector-icons';
 import withAuthGuard from "./src/guards/WithAuthGuard";
@@ -31,19 +35,64 @@ const ProtectedUpdateTrip = withAuthGuard(UpdateTripScreen);
 const ProtectedRoute = withAuthGuard(RouteScreen)
 const MainTabs = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+            tabBar={({ navigation, state, descriptors, insets }) => (
+                <BottomNavigation.Bar
+                    navigationState={state}
+                    safeAreaInsets={insets}
+                    onTabPress={({ route, preventDefault }) => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+
+                        if (event.defaultPrevented) {
+                            preventDefault();
+                        } else {
+                            navigation.dispatch({
+                                ...CommonActions.navigate(route.name, route.params),
+                                target: state.key,
+                            });
+                        }
+                    }}
+                    renderIcon={({ route, focused, color }) => {
+                        const { options } = descriptors[route.key];
+                        if (options.tabBarIcon) {
+                            return options.tabBarIcon({ focused, color, size: 24 });
+                        }
+
+                        return null;
+                    }}
+                    getLabelText={({ route }) => {
+                        const { options } = descriptors[route.key];
+                        const label =
+                            options.tabBarLabel !== undefined
+                                ? options.tabBarLabel
+                                : options.title !== undefined
+                                    ? options.title
+                                    : route.title;
+
+                        return label;
+                    }}
+                />
+            )}
+        >
             <Tab.Screen name="Home" component={ProtectedHome} options={{
                 title: 'Accueil', headerShown: false,
                 tabBarLabel: 'Accueil',
-                tabBarIcon: () => (
-                    <Ionicons name="home" size={30}/>
+                tabBarIcon: ({ color, size }) => (
+                    <Icon name="home" size={size} color={color} />
                 ),
             }}/>
             <Tab.Screen name="Friends" component={ProtectedFriends} options={{ title: 'Amis', headerShown: false,
                 tabBarLabel: 'Amis',
-                tabBarIcon: () => (
-                    <Ionicons name="people-circle-outline" size={30}/>
-                ),
+                tabBarIcon: ({ color, size }) => {
+                    return <Icon name="account-group" size={size} color={color} />;
+                },
             }} />
         </Tab.Navigator>
     );
