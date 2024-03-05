@@ -56,16 +56,13 @@ const CreateTripScreen = ({ route, navigation}) => {
         if (isFocused && user && token) {
 /*            if (route.params) {
                 const { tripId } = route.params;
-                console.log(tripId);
             }*/
         } else {
-            console.log('Screen not focused or user/token not available');
             setRouteSteps([]);
         }
     }, [isFocused, user, token]);
 
     const deleteStep = (index) => {
-        console.log('remove step');
         const filterRouteSteps = routeSteps.filter((currentStep, i) => i !== (index-1));
         // re order steps
         const updatedSteps = filterRouteSteps.map((item, i) => ({
@@ -73,7 +70,6 @@ const CreateTripScreen = ({ route, navigation}) => {
             order: i + 1, // Starting order from 2
         }));
 
-        console.log(updatedSteps);
         setRouteSteps(updatedSteps);
     };
 
@@ -103,8 +99,6 @@ const CreateTripScreen = ({ route, navigation}) => {
                 alert("Veuillez renseigner au moins deux destinations.");
             } else {
                 await createTrip(name, description, token, routeSteps).then( (response) => {
-                        console.log("response CREATION OK");
-                        console.log(response);
                         navigation.navigate('UpdateTrip', {
                             tripId: response.id,
                             created: true

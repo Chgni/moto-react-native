@@ -60,7 +60,6 @@ const FriendItem = ({ friend, type, onUpdate }) => {
     const acceptUserFriend = () => {
         friendsService.acceptFriend(friend, type).then(
             () => {
-                console.log('ami accepté')
                 onUpdate()
                 setIsVisible(false);
             }).catch(error => {

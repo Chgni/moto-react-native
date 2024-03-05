@@ -37,7 +37,7 @@ const withAuthGuard = (WrappedComponent) => {
                             }
                         } catch (error) {
                             if( error.response ){
-                                console.log(error.response.data); // => the response payload
+                                // TODO error handling
                             }
                         }
                     }

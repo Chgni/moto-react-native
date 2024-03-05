@@ -5,18 +5,20 @@ import RouteService, {getTripsOwned} from "../../../services/RouteService";
 import {useIsFocused, useNavigation} from "@react-navigation/native";
 import {useUser} from "../../../guards/WithAuthGuard";
 
-const RoutesOwned = () => {
+const RoutesList = ({loadData}) => {
     const isFocused = useIsFocused();
     const navigation = useNavigation()
     const [loadingTrips, setLoadingTrips] = useState(true);
-    const routeService = new RouteService()
     const [routes, setRoutes] = useState([]);
 
-    const getTripsOwned = () => {
+    const loadRoute = () => {
         setLoadingTrips(true);
-        routeService.getRoutes(true, false).then(owned_routes => {
-            setRoutes(owned_routes)
+        loadData().then((routes) => {
+            setRoutes(routes)
             setLoadingTrips(false);
+
+        }).catch((e) => {
+            //TODO handle error
         })
     }
 
@@ -27,15 +29,15 @@ const RoutesOwned = () => {
     }
     useEffect(() => {
         if(isFocused == true) {
-            getTripsOwned();
+            loadRoute();
         }
     }, [isFocused]);
     return (
         <ScrollView style={{ padding: 10}}>
-            {!loadingTrips && !loadingTrips && routes.map(route => (
+            {routes && !loadingTrips && !loadingTrips && routes.map(route => (
                 <RouteCard key={route.id} route={route} onPress={() => goToTripPage(route.id)} />
             ))}
         </ScrollView>
     )
 }
-export default RoutesOwned
+export default RoutesList

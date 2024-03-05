@@ -7,7 +7,8 @@ export class UnauthorizedError extends Error {
 }
 
 export class UnprocessableEntityError extends Error {
-    constructor() {
+    details;
+    constructor()    {
         super();
         this.name = "UnprocessableEntity"
         this.message = "The entity is not valid"

@@ -25,7 +25,7 @@ const MemberCard = ({user, removeMember = null, role = null, addMember}) => {
 
             </View>
 
-            { removeMember && <IconButton icon={"minus"} size={30}    iconColor={MD3Colors.error50}
+            { removeMember && <IconButton icon={"close"} size={30}
                 onPress={removeMember} >Retirer</IconButton> }
             { addMember && <IconButton icon={"plus"} size={30}   iconColor={MD3Colors.secondary50}
 

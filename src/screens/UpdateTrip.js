@@ -29,7 +29,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
     const friendsService = new FriendsService()
 
     useEffect(() => {
-        console.log(user)
         if (isFocused && user && token && route.params) {
             const { tripId } = route.params;
             const { created } = route.params;
@@ -39,7 +38,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
             getTrip(tripId);
             getFriendsForCurrentUser();
         } else {
-            console.log('Screen not focused or user/token not available');
             setRouteSteps([]);
         }
     }, [isFocused, user, token]);
@@ -109,7 +107,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
     }
 
     const deleteStep = (index) => {
-        console.log('remove step');
         const filterRouteSteps = routeSteps.filter((currentStep, i) => i !== (index-1));
         // re order steps
         const updatedSteps = filterRouteSteps.map((item, i) => ({
@@ -117,7 +114,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
             order: i + 1, // Starting order from 2
         }));
 
-        console.log(updatedSteps);
         setRouteSteps(updatedSteps);
     };
 
@@ -145,7 +141,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
     }
 
     const getWaypoints = () => {
-        console.log("get waypoints");
         const waypoints = [];
         routeSteps.slice(1, routeSteps.length - 1).map( (item) => {
             waypoints.push({latitude: item.latitude, longitude: item.longitude});
@@ -171,9 +166,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
 
     const removeFriend = async (route_id, friendId) => {
         try {
-            console.log(route_id);
-            console.log(friendId);
-            console.log(token);
             const response = await axios.delete(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${route_id}/members`,
                 {
                     headers: {
@@ -187,8 +179,6 @@ const UpdateTripScreen = ({ navigation, route }) => {
             }
         } catch (error) {
             if( error.response ){
-                // console.log(error.response.data); // => the response payload
-                console.log('Cant get friends');
             }
         }
     }

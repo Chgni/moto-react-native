@@ -12,7 +12,6 @@ const SettingHeader = () => {
 
     const toggleVisibleSideMenu = () => {
         setIsVisible(!isVisible);
-        console.log(isVisible);
     }
 
     const disconnect = () => {

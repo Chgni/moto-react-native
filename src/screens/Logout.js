@@ -6,7 +6,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const LogoutScreen = ({ navigation }) => {
 
     const logout = async () => {
-        console.log('LOGOUT');
         try {
             await AsyncStorage.removeItem('userToken');
             navigation.navigate('Connexion');

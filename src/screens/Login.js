@@ -53,7 +53,6 @@ const LoginScreen = ({ navigation, route }) => {
     const handleSignIn = async (preset_email = null, preset_password = null) => {
         if ((email && password) || (preset_email && preset_password)) {
             try {
-                console.log(preset_email)
                 setLoading(true)
                 let data = await authService.login(preset_email ?? email, preset_password ?? password)
                 setLoading(false)
@@ -61,8 +60,6 @@ const LoginScreen = ({ navigation, route }) => {
                 navigation.replace('Main')
             } catch (error) {
                 setLoading(false)
-                console.log(error.name)
-                console.log(error.message)
                 if(error.name == "UnauthorizedError") {
                     Toast.show('Identifiants incorrect', Toast.LONG)
                 } else {

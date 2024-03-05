@@ -3,7 +3,7 @@ import React from "react";
 import {FAB} from "react-native-paper";
 
 
-const FloatingButton = ({onPress, icon, color='#fff', disabled, text}) => {
+const FloatingButton = ({onPress = () => {}, icon, color='#fff', disabled = false, text = null}) => {
     return (
         <FAB
             disabled={disabled}

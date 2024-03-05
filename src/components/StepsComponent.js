@@ -1,13 +1,12 @@
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import {Button, Input} from '@rneui/themed';
+import {Button, Divider, IconButton, Surface, TextInput} from 'react-native-paper';
 import {useEffect, useState} from "react";
 import Geocoder from 'react-native-geocoding';
 
-const StepsComponent = ({ steps, deleteStep, tripOwner, currentUser }) => {
+const StepsComponent = ({ steps, deleteStep, allowDelete}) => {
     Geocoder.init("AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs");
 
     useEffect(() => {
-        console.log(steps);
 
         steps.forEach((step, index) => {
             // Check if the address is not already set
@@ -22,47 +21,43 @@ const StepsComponent = ({ steps, deleteStep, tripOwner, currentUser }) => {
  /*       Geocoder.from(latitude, longitude)
             .then(json => {
                 const address = json.results[0].formatted_address;
-                console.log(address);
                 steps[stepIndex].address = address;
             })
             .catch(error => console.warn(error));*/
     };
 
-    const removeStep = (index) => {
-        console.log('remove step');
-        this.props.deleteStep(index);
-    }
-
     return (
-        <ScrollView style={styles.menu}>
-            <ScrollView style={styles.menuItem}>
-                {steps.map((step, index) => (
-                    <View style={styles.menuItemWrapper} key={index}>
-                        <Text>{step.order}</Text>
-                        <Input disabled style={styles.menuItemText}> {step.latitude}, {step.longitude}</Input>
-                        { tripOwner === currentUser && <Button radius={"sm"} style={styles.removeStep} onPress={() => deleteStep(step.order)}>X</Button> }
-                    </View>
-                ))}
-                {steps.length === 0 && <View style={styles.menuItemWrapper}>
-                    <Text>1</Text>
-                    <Input disabled style={styles.menuItemText}></Input>
-                </View>}
-            </ScrollView>
-        </ScrollView>
+            <Surface style={styles.surface} elevation={4}>
+                <ScrollView style={styles.menu}>
+                    {steps.map((step, index) => (
+                        <View key={index} style={styles.menuItem}>
+                            <View style={styles.menuItemWrapper} >
+                                <View style={{alignContent: "center", borderColor:'grey', borderWidth:1, borderRadius: 50, width: 20, height: 20, justifyContent: 'center', alignItems: 'center'}}>
+                                    <Text style={{textAlign: 'center', textAlignVertical: 'center'}}>{step.order}</Text>
+                                </View>
+                                <Text disabled style={styles.menuItemText}> {step.latitude}, {step.longitude}</Text>
+                                <IconButton icon={"close"} style={styles.removeStep} onPress={() => deleteStep(step.order)}/>
+                            </View>
+                            <Divider style={{marginStart:25, marginEnd: 35}} />
+                        </View>
+                    ))}
+                    {steps.length === 0 && <View style={styles.menuItemWrapper}>
+                        <Text>1</Text>
+                        <TextInput disabled style={styles.menuItemText}></TextInput>
+                    </View>}
+                </ScrollView>
+            </Surface>
+
     );
 };
 
 const styles = StyleSheet.create({
     menu: {
-        position: 'absolute',
-        top: 30,
-        left: 30,
-        right: 30,
+
         backgroundColor: 'white',
-        maxHeight: 220,
         padding: 10,
         borderRadius: 5,
-        zIndex: 10,
+
     },
     menuItemWrapper: {
         display: "flex",
@@ -71,20 +66,26 @@ const styles = StyleSheet.create({
         width: 250,
     },
     menuItem: {
-        display: "flex",
-        flexDirection: "column",
-        marginRight: 10,
+        marginEnd: 10,
         padding: 10,
         borderRadius: 5,
-        width: 350
+        width: '100%'
     },
     menuItemText: {
-        fontWeight: 'bold',
-        width: 50
+        width: '100%'
     },
     removeStep: {
         borderRadius: 50,
     },
+    surface: {
+        position: 'absolute',
+        top: 30,
+        left: 30,
+        right: 30,
+        maxHeight: 150,
+        zIndex: 10,
+    },
+
 
 });
 

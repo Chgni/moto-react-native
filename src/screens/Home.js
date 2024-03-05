@@ -1,27 +1,33 @@
 import React, {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {useUser} from "../guards/WithAuthGuard";
-import {Header, Tab, TabView, Text} from "@rneui/base";
+import {Header, Tab, TabView} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
 import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
 import RouteCard from "../components/route/RouteCard";
 import FloatingButton from "../components/common/FloatingButton";
-import RoutesOwned from "../components/route/home-tab/RoutesOwned";
+import RoutesList from "../components/route/home-tab/RoutesList";
 import RoutesJoined from "../components/route/home-tab/RoutesJoined";
-import {Appbar, Divider} from "react-native-paper";
+import {Appbar, Badge, Text} from "react-native-paper";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
+    const routeService = new RouteService()
 
     const goToCreatePage = () => {
         navigation.navigate('CreateTrip');
     }
-
+    const getRoutesOwned = async () => {
+        return await routeService.getRoutes(true, false)
+    }
+    const getRoutesJoined = async () => {
+        return await routeService.getRoutes(false, true)
+    }
     return (
         <View style={styles.container}>
             <Appbar.Header>
-                <Appbar.Content title="CommuMoto" />
+                <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
             </Appbar.Header>
             <Tab value={index} onChange={setIndex} dense>
                 <Tab.Item>Mes trajets</Tab.Item>
@@ -29,10 +35,10 @@ const HomeScreen = ({ navigation }) => {
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
-                    <RoutesOwned />
+                    <RoutesList loadData={getRoutesOwned} />
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
-                    <RoutesJoined />
+                    <RoutesList loadData={getRoutesJoined} />
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>

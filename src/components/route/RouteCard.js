@@ -1,14 +1,19 @@
 import {StyleSheet, TouchableOpacity, View} from "react-native";
-import {Text} from "@rneui/base";
 import React from "react";
+import {Avatar, Divider, Text} from "react-native-paper";
 
 const RouteCard = ({route, onPress}) => {
     return (
         <View  >
             <TouchableOpacity onPress={onPress} style={styles.tripCard}>
-                <Text h4>{route.name}</Text>
-                <Text h4 style={{color: "#fff", alignSelf: "flex-end"}}>De {route.owner.username}</Text>
+                <Text variant="titleLarge" h4>{route.name}</Text>
+                <View style={{flexDirection:"row"}}>
+                    <Avatar.Text style={{alignSelf:"center", marginEnd:5}} label={route.owner.username[0]} size={16} />
+                    <Text h4 style={{fontSize:13}}>{route.owner.username}</Text>
+
+                </View>
             </TouchableOpacity>
+            <Divider />
         </View>
     )
 
@@ -16,14 +21,13 @@ const RouteCard = ({route, onPress}) => {
 
 const styles = StyleSheet.create({
     tripCard: {
-        display: "flex",
         flexDirection: "column",
-        backgroundColor: 'lightgray',
         justifyContent: "center",
         width: "100%",
         borderRadius: 15,
-        height: 70,
-        padding: 10,
+        height: 60,
+        paddingEnd: 10,
+        paddingStart: 10,
         marginTop: 5,
         marginBottom: 5
     }

@@ -22,17 +22,31 @@ export default class RouteService {
     }
     async getRouteById(id) {
         const response = await this.#api.get(`/routes/${id}`);
-        return response.data;
+        let route = response.data;
+        let data = []
+        //c'est requis pour l'affichage de la carte
+        for (const waypoint of route.waypoints) {
+            waypoint.latitude = parseFloat(waypoint.latitude);
+            waypoint.longitude = parseFloat(waypoint.longitude);
+            data.push(waypoint)
+        }
+        route.waypoints = data
+        return route;
     };
     async addMember(route_id, member_to_add_id) {
         await this.#api.post(`/routes/${route_id}/members`, {
             id: member_to_add_id
         });
     }
+    async update(route)  {
+
+        await this.#api.put(`/routes/${route.id}/waypoints/`,
+            route.waypoints
+        )
+    }
 }
 const getTripsOwned = async (user, token) => {
     try {
-        console.log('Get Trips');
         const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/routes?owned=true&joined=false`,{
             headers: {
                 Authorization: `Bearer ${token}`
@@ -67,7 +81,6 @@ const getTripsJoined = async (user, token) => {
 
 const getTripById = async (id, user, token) => {
     try {
-        console.log("GET TRIP ID ERROR");
         const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${id}`,{
             headers: {
                 Authorization: `Bearer ${token}`
@@ -79,7 +92,6 @@ const getTripById = async (id, user, token) => {
     } catch (error) {
         if( error.response ){
             // console.log(error.response.data); // => the response payload
-            console.log('Cant get trips');
         }
     }
 };
@@ -129,9 +141,6 @@ const updateTrip = async (route_id, steps, token) => {
         filteredSteps.push(filtered);
     }
     try {
-        //console.log("filter");
-        console.log(route_id);
-        console.log(filteredSteps);
         const response = await axios.put(`${process.env.API_URL}/${process.env.API_VERSION}/routes/${route_id}/waypoints/`,
             filteredSteps
         , {headers: {
@@ -151,7 +160,6 @@ const updateTrip = async (route_id, steps, token) => {
         }
     } catch (error) {
         if( error.response ){
-            console.log(error); // => the response payload
         }
     }
 
