@@ -1,4 +1,4 @@
-export default class Route {
+export default class RouteModel {
     id;
     name;
     description;

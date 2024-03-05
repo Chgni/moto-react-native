@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {View, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator, Linking} from 'react-native';
+import {View, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Linking} from 'react-native';
 import WaypointsList from '../components/StepsComponent';
+import { buildGPX, GarminBuilder } from 'gpx-builder';
+import * as DocumentPicker from 'expo-document-picker'
+
 import {
     Button,
     Text,
@@ -13,7 +16,8 @@ import {
     Portal,
     Modal,
     PaperProvider,
-    Dialog, FAB
+    Dialog, FAB,
+    TextInput
 } from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -27,7 +31,12 @@ import {Tab, TabView} from "@rneui/base";
 import FloatingButton from "../components/common/FloatingButton";
 import MemberCard from "../components/route/MemberCard";
 import ContentLoader from "react-native-easy-content-loader";
-
+import Toast from "react-native-simple-toast";
+const { Point, Route } = GarminBuilder.MODELS;
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import RouteModel from "../models/RouteModel";
+import {Input} from "@rneui/themed";
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
@@ -40,13 +49,43 @@ const RouteScreen = ({ route, navigation }) => {
     const [friends, setFriends] = useState([]);
     const [waypoints, setWaypoints] = useState([])
     const [visibleMemberModal, setVisibleMemberModal] = useState(false); // add friend dialog visible
+    const [visibleNameModal, setVisibleNameModal] = useState(false)
     const [visibleWaypointDialog, setvisibleWaypointDialog] = useState(false); // add friend dialog visible
     const [tabIndex, setTabIndex] = React.useState(0);
     const [editing, setEditing] = useState(false)
-    const [pageType, setPageType] = useState(route.params.routeId ? "update" : "create") // create / update
+    const [pageType, setPageType] = useState(route.params ? "update" : "create") // create / update
     const [loading, setLoading] = useState(true)
     const mapRef = React.createRef();
+    const [createName, onChangeCreateName] = useState('')
+    const createButtonHandler = () => {
+        if (waypoints.length < 2) {
+            Toast.show("Veuillez placer au moins 2 points", Toast.SHORT)
+            return;
+        }
+        setVisibleNameModal(true)
+    }
+    const routeCreate = async () => {
+        if (createName.trim().length < 3) {
+            Toast.show("Veuillez renseigner un nom d'itinéraire et une description (min 3 et 5 charactères)", Toast.SHORT);
+            return
+        }
+        const filteredWaypoints = [];
+        for (let waypoint of waypoints) {
+            const filtered = {latitude: parseFloat(waypoint.latitude.toFixed(5)),
+                longitude: parseFloat(waypoint.longitude.toFixed(5)), order: waypoint.order, name: "step"};
+            filteredWaypoints.push(filtered);
+        }
+        try {
+            const newNavigationRoute = await routeService.create(createName, filteredWaypoints)
+            navigation.replace('Route', {
+                routeId: newNavigationRoute.id
+            })
+            Toast.show('Vous pouvez maintenant partager ce trajet !', Toast.SHORT)
 
+        } catch (e) {
+            //TODO error handling
+        }
+    }
     const openInMaps = () => {
         let formattedString = '';
         for(let waypoint of waypoints) {
@@ -54,8 +93,33 @@ const RouteScreen = ({ route, navigation }) => {
         }
         Linking.openURL(`https://www.google.co.in/maps/dir${formattedString}/?action=navigate`);
     }
-    const saveGpx = () => {
 
+    const saveGpx = async () => {
+        const points = [];
+        for(let waypoint of waypoints) {
+            points.push(new Point(waypoint.latitude, waypoint.longitude, {
+                // ele: 314.715,
+                // time: new Date('2018-06-10T17:29:35Z'),
+                // hr: 120,
+            }))
+        }
+        const gpxData = new GarminBuilder();
+        gpxData.setSegmentPoints(points);
+        // gpxData.setWayPoints(points)
+        const gpxXml = buildGPX(gpxData.toObject());
+        let formattedString = navigationRoute.name.replace(/\s+/g, '-');
+
+        // Supprime les caractères spéciaux en utilisant une expression régulière
+        formattedString = formattedString.replace(/[^\w\-]+/g, '');
+        try {
+            const filePath = FileSystem.documentDirectory + `/${formattedString}.gpx`;
+            console.log(filePath)
+            await FileSystem.writeAsStringAsync(filePath, gpxXml, { encoding: FileSystem.EncodingType.UTF8 });
+            await Sharing.shareAsync(filePath);
+            Toast.show('Fichier GPX sauvegardé dans: ' + filePath, Toast.LONG);
+        } catch (error) {
+            console.error('Error saving GPX file: ', error);
+        }
     }
     const deleteWaypoint = (index) => {
         const filterRouteSteps = waypoints.filter((currentStep, i) => i !== (index-1));
@@ -66,6 +130,7 @@ const RouteScreen = ({ route, navigation }) => {
         }));
 
         setWaypoints(updatedSteps);
+        updateWaypoints(updatedSteps)
     };
     const getOrigin = () => {
         return {latitude: waypoints[0].latitude, longitude: waypoints[0].longitude};
@@ -83,8 +148,7 @@ const RouteScreen = ({ route, navigation }) => {
         });
 
         setWaypoints(updatedSteps);
-
-
+        updateWaypoints(updatedSteps)
     }
     const updateWaypoints = (new_waypoints) => {
 
@@ -94,15 +158,22 @@ const RouteScreen = ({ route, navigation }) => {
                 longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step"};
             parsedWaypoints.push(filtered);
         }
-        let update_route = navigationRoute
-        update_route.waypoints = parsedWaypoints
-        routeService.update(update_route).then(
-            () => {
-                setWaypoints(new_waypoints)
-                setVisible(true);
-            }).catch(error => {
+        if (pageType=="update") {
+            let update_route = navigationRoute
+            update_route.waypoints = parsedWaypoints
+            routeService.update(update_route).then(
+                () => {
+                    setWaypoints(new_waypoints)
+                    setVisible(true);
+                }).catch(error => {
                 // TODO error handling
             })
+        } else {
+            setWaypoints(new_waypoints)
+            setVisible(true);
+
+        }
+
     }
     const getMapsWaypoints = () => {
         const mapsWaypoints = [];
@@ -170,10 +241,12 @@ const RouteScreen = ({ route, navigation }) => {
     }
     useEffect(() => {
         if (pageType == "create" && user) {
-
+            const navigationRoute = new RouteModel(null, null, null, null, null, null, [])
+            setNavigationRoute(navigationRoute)
         } else {
-            if (user && route.params) {
-                const { routeId: routeId } = route.params;
+            if (user && route.params != undefined) {
+
+                const { routeId } = route.params;
                 if(routeId) {
                     loadRoute(routeId).then(() => {
 
@@ -199,18 +272,19 @@ const RouteScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
-                <Appbar.Content title={pageType == "create" ? 'Nouvel itinéraire' : <ContentLoader loading={loading} pRows={0} ><Text variant={"headlineMedium"}>{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
-                <Appbar.Action icon="calendar" onPress={() => {}} />
+                <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} ><Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
+                {pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />}
             </Appbar.Header>
             <PaperProvider>
-            <Tab value={tabIndex} onChange={setTabIndex} dense>
+            <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
                 <Tab.Item>Itinéraires</Tab.Item>
                 {pageType=='update' && <Tab.Item >Participants</Tab.Item>}
-                <Tab.Item>Détails</Tab.Item>
+                {pageType=='update' && <Tab.Item>Détails</Tab.Item>}
             </Tab>
             <TabView value={tabIndex} onChange={setTabIndex} disableSwipe={tabIndex == 0 ? true : false} >
                 {/*page map*/}
-                {user && navigationRoute != null && <TabView.Item style={{ width: '100%' }} >
+                {user && navigationRoute &&
+                    <TabView.Item style={{ width: '100%' }} >
                     <View style={{ width: '100%', height: '100%' }}>
                         <WaypointsList steps={waypoints} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={true}/>
 
@@ -261,12 +335,24 @@ const RouteScreen = ({ route, navigation }) => {
                                 apikey={process.env.GOOGLE_MAPS_API_KEY}
                             />}
                         </MapView>
+                        <Portal>
+                            <Dialog visible={visibleNameModal} onDismiss={() => setVisibleNameModal(false)}>
+                                <Dialog.Content>
+                                    <TextInput label="Nom" onChangeText={onChangeCreateName} />
+                                </Dialog.Content>
+                                <Dialog.Actions>
+                                    <Button onPress={() => setVisibleNameModal(false)}>Annuler</Button>
+                                    <Button onPress={routeCreate}>Créer l'itinéraire</Button>
+                                </Dialog.Actions>
+                            </Dialog>
+                        </Portal>
                     </View>
 
 
                 </TabView.Item>}
                 {/*page participant*/}
-                {pageType=='update' && navigationRoute &&<TabView.Item style={{ width: '100%' }} >
+                {pageType=='update' && navigationRoute &&
+                    <TabView.Item style={{ width: '100%' }} >
                     <View>
                         <View style={styles.friendCard}>
 
@@ -301,6 +387,7 @@ const RouteScreen = ({ route, navigation }) => {
                             </Portal>
 
 
+
                         { /* routeSteps.map((marker, i) => (
 
                         )) */}
@@ -310,18 +397,20 @@ const RouteScreen = ({ route, navigation }) => {
                 </TabView.Item>}
                 {/*page details*/}
 
-                <TabView.Item style={{ width: '100%' }} >
+                {pageType=='update' && navigationRoute &&
+                    <TabView.Item style={{ width: '100%' }} >
                     <View style={styles.itineraryInfosItem}>
                         {/*<Text h3>{navigationRoute.name}</Text>*/}
                         {/*<Text h4>{navigationRoute.description}</Text>*/}
                     </View>
-                </TabView.Item>
+                </TabView.Item>}
             </TabView>
             <View style={styles.saveTripButton}>
-                { tabIndex == 0 && <Portal>
+                { pageType == "create" && <FloatingButton icon="plus" text="Créer l'itinéraire" onPress={createButtonHandler} /> }
+                { tabIndex == 0 && pageType == "update" && <Portal>
                     <FAB.Group onStateChange={({ open }) => setOpenRouteFab(open)} actions={[
-                        {label: 'Exporter en .GPX (indisponible en beta)', icon:'crosshairs-gps', onPress:saveGpx},
-                        {label: 'Ouvrir dans Maps (10 points max)', icon: 'google-maps', onPress:openInMaps},
+                        {label: 'Exporter en .GPX', icon:'crosshairs-gps', onPress:saveGpx},
+                        {label: 'Ouvrir dans Maps (max 10 points)', icon: 'google-maps', onPress:openInMaps},
 
                     ]} icon={openRouteFab ? 'close' : 'directions'} open={openRouteFab} visible={true} />
                 </Portal> }

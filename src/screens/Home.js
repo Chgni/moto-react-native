@@ -3,7 +3,7 @@ import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {useUser} from "../guards/WithAuthGuard";
 import {Header, Tab, TabView} from "@rneui/base";
 import {useIsFocused} from "@react-navigation/native";
-import RouteService, { getTripsJoined, getTripsOwned} from "../services/RouteService";
+import RouteService from "../services/RouteService";
 import {Button, Icon} from '@rneui/themed';
 import RouteCard from "../components/route/RouteCard";
 import FloatingButton from "../components/common/FloatingButton";
@@ -16,7 +16,7 @@ const HomeScreen = ({ navigation }) => {
     const routeService = new RouteService()
 
     const goToCreatePage = () => {
-        navigation.navigate('CreateTrip');
+        navigation.navigate('Route');
     }
     const getRoutesOwned = async () => {
         return await routeService.getRoutes(true, false)

@@ -13,8 +13,6 @@ import LogoutScreen from './src/screens/Logout';
 import RegisterScreen from './src/screens/Register';
 import HomeScreen from "./src/screens/Home";
 import FriendsScreen from "./src/screens/Friends";
-import CreateTripScreen from "./src/screens/CreateTrip";
-import UpdateTripScreen from "./src/screens/UpdateTrip";
 
 import { Ionicons } from '@expo/vector-icons';
 import withAuthGuard from "./src/guards/WithAuthGuard";
@@ -30,8 +28,7 @@ const Tab = createBottomTabNavigator();
 const ProtectedLogin = withAuthGuard(LoginScreen);
 const ProtectedHome = withAuthGuard(HomeScreen);
 const ProtectedFriends = withAuthGuard(FriendsScreen);
-const ProtectedCreateTrip = withAuthGuard(CreateTripScreen);
-const ProtectedUpdateTrip = withAuthGuard(UpdateTripScreen);
+
 const ProtectedRoute = withAuthGuard(RouteScreen)
 const MainTabs = () => {
     return (
@@ -107,8 +104,6 @@ export default function App() {
                 <Stack.Screen name="Deconnexion" component={LogoutScreen} />
                 <Stack.Screen name="Inscription" component={RegisterScreen} />
                 <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="CreateTrip" component={ProtectedCreateTrip} options={{ headerShown: false }} />
-                <Stack.Screen name="UpdateTrip" component={ProtectedUpdateTrip} options={{ headerShown: false }} />
                 <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
             </Stack.Navigator>
           </NavigationContainer>
