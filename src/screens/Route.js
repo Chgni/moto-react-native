@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {View, StyleSheet, Image, Linking} from 'react-native';
-import WaypointsList from '../components/StepsComponent';
+import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
 
 import {

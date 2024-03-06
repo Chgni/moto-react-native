@@ -3,7 +3,7 @@ import {Divider, IconButton, Surface} from 'react-native-paper';
 import {useEffect, useState} from "react";
 import Geocoder from 'react-native-geocoding';
 
-const StepsComponent = ({ steps, deleteStep, allowDelete}) => {
+const WaypointsList = ({ steps, deleteStep, allowDelete}) => {
     Geocoder.init("AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs");
 
     useEffect(() => {
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default StepsComponent;
+export default WaypointsList;
