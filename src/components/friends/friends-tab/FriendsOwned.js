@@ -18,10 +18,6 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
         update: () => loadFriends()
     }));
 
-    const toggleAddFriendDialog = () => {
-        console.log(visibleDialog)
-        setVisibleDialog(!visibleDialog);
-    };
     const toggleAddFriendDialogAndRefresh = () => {
         setVisibleDialog(!visibleDialog);
         loadFriends()
@@ -71,11 +67,12 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
                 </ScrollView>
 
             <View style={styles.addFriendButton}>
-                <FloatingButton icon={"plus"} text="Ajouter un ami" onPress={toggleAddFriendDialog} />
+                <FloatingButton icon={"plus"} text="Ajouter un ami" onPress={() => setVisibleDialog(true)} />
             </View>
             <Dialog
+                onDismiss={() => setVisibleDialog(false)}
                 visible={visibleDialog}
-                onBackdropPress={toggleAddFriendDialog}>
+                >
                 <Dialog.Content style={{padding: 10}}>
                     <SearchFriend onAdd={toggleAddFriendDialogAndRefresh} ></SearchFriend>
                 </Dialog.Content>
