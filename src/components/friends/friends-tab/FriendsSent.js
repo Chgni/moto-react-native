@@ -1,8 +1,10 @@
-import {ScrollView} from "react-native";
+import {ScrollView, View} from "react-native";
 import FriendItem from "../../FriendItem";
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FriendsService from "../../../services/FriendsService";
 import {useIsFocused} from "@react-navigation/native";
+import FriendCard from "../FriendCard";
+import {Divider} from "react-native-paper";
 
 const FriendsSent = forwardRef(({updateAll}, ref) => {
     const isFocused = useIsFocused()
@@ -30,10 +32,13 @@ const FriendsSent = forwardRef(({updateAll}, ref) => {
         }
     }, [isFocused]);
     return (
-        <ScrollView style={{ padding: 10}}>
+        <ScrollView >
+            <Divider />
             {friendsSent.map(friend => (
-                <FriendItem key={friend.id} friend={friend} type={"sent"} onUpdate={loadFriendsSent} />
-            )) }
+                <View key={friend.id}>
+                    <FriendCard friend={friend}    />
+                    <Divider/>
+                </View>            )) }
         </ScrollView>
     )
 })

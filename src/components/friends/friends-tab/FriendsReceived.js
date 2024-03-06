@@ -1,8 +1,10 @@
-import {ScrollView} from "react-native";
+import {ScrollView, View} from "react-native";
 import FriendItem from "../../FriendItem";
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FriendsService from "../../../services/FriendsService";
 import {useIsFocused} from "@react-navigation/native";
+import {Divider} from "react-native-paper";
+import FriendCard from "../FriendCard";
 
 const FriendsReceived = forwardRef(({updateAll}, ref) => {
     const isFocused = useIsFocused()
@@ -25,6 +27,24 @@ const FriendsReceived = forwardRef(({updateAll}, ref) => {
             }
         )
     }
+    const acceptUserFriend = async (friend) => {
+        try {
+            await friendsService.acceptFriend(friend, "received")
+            updateAll()
+        } catch (e) {
+            // TODO error handling
+
+        }
+    }
+    const denyUserFriend = async (friend) => {
+        try {
+            await friendsService.deleteFriend(friend, "received")
+            updateAll()
+        } catch (e) {
+            // TODO error handling
+
+        }
+    }
     useEffect(() => {
         if (isFocused == true) {
             loadFriendsReceived()
@@ -32,9 +52,15 @@ const FriendsReceived = forwardRef(({updateAll}, ref) => {
         }
     }, [isFocused]);
     return (
-        <ScrollView style={{ padding: 10}}>
+        <ScrollView>
+            <Divider />
             {friendsReceived.map(friend => (
-                <FriendItem key={friend.id} friend={friend} type={"received"} onUpdate={updateAll} />
+                <View key={friend.id}>
+                    <FriendCard friend={friend}
+                                acceptFriend={() => acceptUserFriend(friend)}
+                                denyFriend={() => denyUserFriend(friend)}   />
+                    <Divider/>
+                </View>
             )) }
         </ScrollView>
     )

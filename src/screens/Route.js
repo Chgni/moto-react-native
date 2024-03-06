@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, StyleSheet, Image, Linking} from 'react-native';
+import {View, StyleSheet, Image, Linking, BackHandler} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
 
@@ -259,7 +259,12 @@ const RouteScreen = ({ route, navigation }) => {
         }
 
     }, [user, token]);
-
+    const handleBackButtonClick = () => {
+        navigation.navigate("Home")
+    }
+    useEffect(() => {
+        BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    }, []);
     return(
 
         <View style={styles.container}>

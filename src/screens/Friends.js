@@ -5,6 +5,9 @@ import {Tab, TabView} from "@rneui/base";
 import FriendsOwned from "../components/friends/friends-tab/FriendsOwned";
 import FriendsSent from "../components/friends/friends-tab/FriendsSent";
 import FriendsReceived from "../components/friends/friends-tab/FriendsReceived";
+import {Appbar, PaperProvider, Text} from "react-native-paper";
+import FloatingButton from "../components/common/FloatingButton";
+import FriendsService from "../services/FriendsService";
 
 const FriendsScreen = () => {
     const [index, setIndex] = React.useState(0);
@@ -18,25 +21,28 @@ const FriendsScreen = () => {
     }
     return (
         <View style={styles.container}>
-            <Tab value={index} onChange={setIndex} dense>
-                <Tab.Item>Amis</Tab.Item>
-                <Tab.Item>Invitations envoyées</Tab.Item>
-                <Tab.Item>Invitations reçues</Tab.Item>
-            </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
-                <TabView.Item style={{ width: '100%' }}>
-                    <FriendsOwned updateAll={updateAllTabs} ref={friendsOwnedRef} />
-                </TabView.Item>
-                <TabView.Item style={{ width: '100%' }}>
-                    <FriendsSent ref={friendsSentRef} updateAll={updateAllTabs} />
+            <Appbar.Header>
+                <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
+            </Appbar.Header>
+            <PaperProvider>
+                <Tab value={index} onChange={setIndex} dense>
+                    <Tab.Item>Amis</Tab.Item>
+                    <Tab.Item>Invitations envoyées</Tab.Item>
+                    <Tab.Item>Invitations reçues</Tab.Item>
+                </Tab>
+                <TabView value={index} onChange={setIndex} animationType="spring">
+                    <TabView.Item style={{ width: '100%' }}>
+                        <FriendsOwned updateAll={updateAllTabs} ref={friendsOwnedRef} />
+                    </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <FriendsSent ref={friendsSentRef} updateAll={updateAllTabs} />
 
-                </TabView.Item>
-                <TabView.Item style={{width: '100%' }}>
-                    <FriendsReceived updateAll={updateAllTabs} ref={friendsReceivedRef} />
-                </TabView.Item>
-            </TabView>
-
-
+                    </TabView.Item>
+                    <TabView.Item style={{width: '100%' }}>
+                        <FriendsReceived updateAll={updateAllTabs} ref={friendsReceivedRef} />
+                    </TabView.Item>
+                </TabView>
+            </PaperProvider>
         </View>
 
     );
