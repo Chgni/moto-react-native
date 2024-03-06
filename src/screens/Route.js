@@ -250,7 +250,6 @@ const RouteScreen = ({ route, navigation }) => {
                         const msg = JSON.parse(e.data);
                         console.log(msg);
                         if (msg["route-uuid"]) {
-                            console.log("trigger update");
                             const { routeId } = route.params;
                             if(routeId) {
                                 loadData(routeId)
