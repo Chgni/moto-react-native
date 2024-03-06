@@ -1,13 +1,11 @@
 import {ScrollView, StyleSheet, View} from "react-native";
-import {Button, Dialog} from "@rneui/themed";
-import FriendItem from "../../FriendItem";
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
 import FriendsService from "../../../services/FriendsService";
 import SearchFriend from "../SearchFriend";
 import FloatingButton from "../../common/FloatingButton";
 import FriendCard from "../FriendCard";
-import {Divider, PaperProvider, Text} from "react-native-paper";
+import {Divider, Dialog, Text} from "react-native-paper";
 
 const FriendsOwned = forwardRef(({updateAll}, ref) => {
     const [friends, setFriends] = useState([]);
@@ -21,6 +19,7 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
     }));
 
     const toggleAddFriendDialog = () => {
+        console.log(visibleDialog)
         setVisibleDialog(!visibleDialog);
     };
     const toggleAddFriendDialogAndRefresh = () => {
@@ -75,9 +74,11 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
                 <FloatingButton icon={"plus"} text="Ajouter un ami" onPress={toggleAddFriendDialog} />
             </View>
             <Dialog
-                isVisible={visibleDialog}
+                visible={visibleDialog}
                 onBackdropPress={toggleAddFriendDialog}>
-                <SearchFriend onAdd={toggleAddFriendDialogAndRefresh} ></SearchFriend>
+                <Dialog.Content style={{padding: 10}}>
+                    <SearchFriend onAdd={toggleAddFriendDialogAndRefresh} ></SearchFriend>
+                </Dialog.Content>
             </Dialog>
         </>
 
