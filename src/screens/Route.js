@@ -35,7 +35,7 @@ const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
     const [openRouteFab, setOpenRouteFab] = useState(false)
-    const { user, token } = useUser();
+    const { user, token, socket } = useUser();
     const [navigationRoute, setNavigationRoute] = useState(null);
     const [friends, setFriends] = useState([]);
     const [waypoints, setWaypoints] = useState([])
@@ -245,6 +245,21 @@ const RouteScreen = ({ route, navigation }) => {
             setNavigationRoute(navigationRoute)
         } else {
             if (user && route.params != undefined) {
+                if (socket) {
+                    socket.onmessage = (e) => {
+                        const msg = JSON.parse(e.data);
+                        console.log(msg);
+                        if (msg["route-uuid"]) {
+                            console.log("trigger update");
+                            const { routeId } = route.params;
+                            if(routeId) {
+                                loadData(routeId)
+                            } else {
+                                setLoading(false)
+                            }
+                        }
+                    };
+                }
 
                 const { routeId } = route.params;
                 if(routeId) {
@@ -271,7 +286,7 @@ const RouteScreen = ({ route, navigation }) => {
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
                 <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} ><Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
-                {pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />}
+                {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <PaperProvider>
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
