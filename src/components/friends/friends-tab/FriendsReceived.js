@@ -1,5 +1,4 @@
 import {ScrollView, View} from "react-native";
-import FriendItem from "../../FriendItem";
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FriendsService from "../../../services/FriendsService";
 import {useIsFocused} from "@react-navigation/native";
