@@ -340,6 +340,7 @@ const RouteScreen = ({ route, navigation }) => {
                                 </Marker>
                             ))}
                             { route && waypoints.length >= 2 && <MapViewDirections
+                                precision="high"
                                 origin={getOrigin()}
                                 destination={getDestination()}
                                 waypoints={getMapsWaypoints()}
