@@ -6,7 +6,6 @@ import {useIsFocused} from "@react-navigation/native";
 
 const FriendsReceived = forwardRef(({updateAll}, ref) => {
     const isFocused = useIsFocused()
-    const [loadingFriendsReceived, setLoadingFriendsReceived] = useState(true); // add friend dialog visible
     const friendsService = new FriendsService()
     const [friendsReceived, setFriendsReceived] = useState([]);
 
@@ -18,7 +17,6 @@ const FriendsReceived = forwardRef(({updateAll}, ref) => {
         friendsService.getFriendsRequestsReceived().then(
             (response) => {
                 setFriendsReceived(response);
-                setLoadingFriendsReceived(false);
             }
         ).catch(
             (error) => {
@@ -29,7 +27,6 @@ const FriendsReceived = forwardRef(({updateAll}, ref) => {
     }
     useEffect(() => {
         if (isFocused == true) {
-            setLoadingFriendsReceived(true)
             loadFriendsReceived()
 
         }

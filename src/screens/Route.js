@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {View, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Linking} from 'react-native';
+import {View, StyleSheet, Image, Linking} from 'react-native';
 import WaypointsList from '../components/StepsComponent';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
-import * as DocumentPicker from 'expo-document-picker'
 
 import {
     Button,
     Text,
     Divider,
-    IconButton,
-    MD3Colors,
-    Chip,
-    Avatar,
     Appbar,
     Portal,
     Modal,
@@ -26,13 +21,12 @@ import { useUser } from '../guards/WithAuthGuard';
 import { useIsFocused } from '@react-navigation/native';
 import FriendsService from '../services/FriendsService';
 import SearchFriendTrip from '../components/SeachFriendTrip';
-import axios from 'axios';
 import {Tab, TabView} from "@rneui/base";
 import FloatingButton from "../components/common/FloatingButton";
 import MemberCard from "../components/route/MemberCard";
 import ContentLoader from "react-native-easy-content-loader";
 import Toast from "react-native-simple-toast";
-const { Point, Route } = GarminBuilder.MODELS;
+const { Point } = GarminBuilder.MODELS;
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import RouteModel from "../models/RouteModel";
@@ -42,17 +36,13 @@ const RouteScreen = ({ route, navigation }) => {
     const friendsService = new FriendsService()
     const [openRouteFab, setOpenRouteFab] = useState(false)
     const { user, token } = useUser();
-    const isFocused = useIsFocused();
-    const [visible, setVisible] = useState(false);
     const [navigationRoute, setNavigationRoute] = useState(null);
-    const [ableToUpdate, setAbleToUpdate] = useState(false);
     const [friends, setFriends] = useState([]);
     const [waypoints, setWaypoints] = useState([])
     const [visibleMemberModal, setVisibleMemberModal] = useState(false); // add friend dialog visible
     const [visibleNameModal, setVisibleNameModal] = useState(false)
     const [visibleWaypointDialog, setvisibleWaypointDialog] = useState(false); // add friend dialog visible
     const [tabIndex, setTabIndex] = React.useState(0);
-    const [editing, setEditing] = useState(false)
     const [pageType, setPageType] = useState(route.params ? "update" : "create") // create / update
     const [loading, setLoading] = useState(true)
     const mapRef = React.createRef();
@@ -81,7 +71,6 @@ const RouteScreen = ({ route, navigation }) => {
                 routeId: newNavigationRoute.id
             })
             Toast.show('Vous pouvez maintenant partager ce trajet !', Toast.SHORT)
-
         } catch (e) {
             //TODO error handling
         }
@@ -164,13 +153,11 @@ const RouteScreen = ({ route, navigation }) => {
             routeService.update(update_route).then(
                 () => {
                     setWaypoints(new_waypoints)
-                    setVisible(true);
                 }).catch(error => {
                 // TODO error handling
             })
         } else {
             setWaypoints(new_waypoints)
-            setVisible(true);
 
         }
 
@@ -201,9 +188,7 @@ const RouteScreen = ({ route, navigation }) => {
             const navigationRoute = await routeService.getRouteById(routeId)
             setNavigationRoute(navigationRoute)
             setWaypoints(navigationRoute.waypoints)
-            if (navigationRoute.owner_id === user.id) {
-                setAbleToUpdate(true);
-            }
+
         } catch (e) {
             // TODO handle error
         }
@@ -286,7 +271,7 @@ const RouteScreen = ({ route, navigation }) => {
                 {user && navigationRoute &&
                     <TabView.Item style={{ width: '100%' }} >
                     <View style={{ width: '100%', height: '100%' }}>
-                        <WaypointsList steps={waypoints} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={true}/>
+                        <WaypointsList steps={waypoints} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={waypoints.length <= 2 ? false: true}/>
 
                         <MapView
                                 ref={mapRef}

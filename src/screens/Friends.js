@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
+import React, {useRef} from 'react';
+import {View, StyleSheet} from 'react-native';
 
 import {Tab, TabView} from "@rneui/base";
 import FriendsOwned from "../components/friends/friends-tab/FriendsOwned";

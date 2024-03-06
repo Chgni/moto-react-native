@@ -1,8 +1,6 @@
-import React, {forwardRef, useEffect, useRef, useState} from 'react';
-import {ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
-import {Text, Button} from 'react-native-paper';
-import axios from "axios";
-import {useUser} from "../guards/WithAuthGuard";
+import React, {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
 import MemberCard from "./route/MemberCard";
 
 const SearchFriendTrip = ({ currentFriends, members, onClick }) => {

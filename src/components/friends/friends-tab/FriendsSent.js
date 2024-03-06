@@ -6,7 +6,6 @@ import {useIsFocused} from "@react-navigation/native";
 
 const FriendsSent = forwardRef(({updateAll}, ref) => {
     const isFocused = useIsFocused()
-    const [loadingFriendsSent, setLoadingFriendsSent] = useState(true); // add friend dialog visible
     const friendsService = new FriendsService()
     const [friendsSent, setFriendsSent] = useState([]);
     // ça sert a mettre, grace au forwardRef, la fonction a disposition du composant parent
@@ -17,7 +16,6 @@ const FriendsSent = forwardRef(({updateAll}, ref) => {
         friendsService.getFriendsRequestsSent().then(
             (response) => {
                 setFriendsSent(response);
-                setLoadingFriendsSent(false);
             }
         ).catch(
             (error) => {
@@ -27,7 +25,6 @@ const FriendsSent = forwardRef(({updateAll}, ref) => {
     }
     useEffect(() => {
         if (isFocused == true) {
-            setLoadingFriendsSent(true)
             loadFriendsSent()
 
         }

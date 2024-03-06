@@ -1,8 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {Text, ScrollView, StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Button, SearchBar} from '@rneui/themed';
-import axios from "axios";
-import {useUser} from "../../guards/WithAuthGuard";
 import UserService from "../../services/UserService";
 import FriendsService from "../../services/FriendsService";
 

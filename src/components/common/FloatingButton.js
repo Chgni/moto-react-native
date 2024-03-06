@@ -1,16 +1,18 @@
 import {Button, Icon} from "@rneui/themed";
 import React from "react";
-import {FAB} from "react-native-paper";
+import {FAB, Portal} from "react-native-paper";
 
 
-const FloatingButton = ({onPress = () => {}, icon, color='#fff', disabled = false, text = null}) => {
+const FloatingButton = ({onPress = () => {}, icon, disabled = false, text = null}) => {
     return (
-        <FAB
-            disabled={disabled}
-            onPress={onPress} buttonStyle={{borderRadius: 50, width: 75, height: 75}}
-            icon={icon}
-            label={text}
-        />
+        <Portal>
+            <FAB
+                disabled={disabled}
+                onPress={onPress}
+                icon={icon}
+                label={text}
+            />
+        </Portal>
     )
 }
 export default FloatingButton

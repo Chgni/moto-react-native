@@ -10,7 +10,6 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
     const [friends, setFriends] = useState([]);
     const isFocused = useIsFocused()
     const friendsService = new FriendsService()
-    const [loadingFriends, setLoadingFriends] = useState(true); // add friend dialog visible
     const [visibleDialog, setVisibleDialog] = useState(false); // add friend dialog visible
 
     // ça sert a mettre, grace au forwardRef, la fonction a disposition du composant parent
@@ -30,7 +29,6 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
         friendsService.getFriends().then(
             (response) => {
                 setFriends(response);
-                setLoadingFriends(false);
             }
         ).catch(
             (error) => {
@@ -41,7 +39,6 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
 
     useEffect(() => {
         if (isFocused == true) {
-            setLoadingFriends(true)
             loadFriends()
 
         }

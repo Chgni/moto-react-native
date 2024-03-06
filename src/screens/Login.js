@@ -1,9 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, ActivityIndicator, ToastAndroid} from 'react-native';
-import axios, {create} from 'axios';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import qs from 'qs';
-import {Snackbar} from "react-native-paper";
+import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import {useIsFocused} from "@react-navigation/native";
 import AuthService from "../services/AuthService";
 import {UnauthorizedError} from "../errors/ApiCallError";
@@ -14,7 +10,6 @@ const LoginScreen = ({ navigation, route }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [visible, setVisible] = React.useState(false);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false)
 
@@ -62,9 +57,6 @@ const LoginScreen = ({ navigation, route }) => {
                 setLoading(false)
                 if(error.name == "UnauthorizedError") {
                     Toast.show('Identifiants incorrect', Toast.LONG)
-                } else {
-                    Toast.show('Une erreur est survenue.', Toast.LONG)
-
                 }
             }
         }

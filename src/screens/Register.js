@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
-import axios from "axios";
-import {Snackbar} from "react-native-paper";
 import Toast from "react-native-simple-toast";
 import AuthService from "../services/AuthService";
 
@@ -23,8 +21,10 @@ const RegisterScreen = ({ navigation }) => {
     const handleSignIn = async () => {
         if (email && password && username) {
             try {
-                const user = await authService.create(username, email, password)
+                setLoading(true)
+                await authService.create(username, email, password)
                 Toast.show('Votre compte a été créé', Toast.SHORT)
+                setLoading(false)
                 navigation.navigate('Connexion', {
                     created_email: email,
                     created_password: password
@@ -33,6 +33,7 @@ const RegisterScreen = ({ navigation }) => {
                 alert(error);
             }
         } else {
+            setLoading(false)
             alert('Merci de remplir tout les champs');
             return;
         }

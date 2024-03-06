@@ -1,4 +1,4 @@
-import RouteCard from "../RouteCard";
+import RouteCard from "./RouteCard";
 import {ScrollView} from "react-native";
 import React, {useEffect, useState} from "react";
 import {useIsFocused, useNavigation} from "@react-navigation/native";

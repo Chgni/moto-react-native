@@ -1,15 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
-import {useUser} from "../guards/WithAuthGuard";
-import {Header, Tab, TabView} from "@rneui/base";
-import {useIsFocused} from "@react-navigation/native";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import {Tab, TabView} from "@rneui/base";
 import RouteService from "../services/RouteService";
-import {Button, Icon} from '@rneui/themed';
-import RouteCard from "../components/route/RouteCard";
 import FloatingButton from "../components/common/FloatingButton";
-import RoutesList from "../components/route/home-tab/RoutesList";
-import RoutesJoined from "../components/route/home-tab/RoutesJoined";
-import {Appbar, Badge, Text} from "react-native-paper";
+import RoutesList from "../components/route/RoutesList";
+import {Appbar, Text} from "react-native-paper";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);

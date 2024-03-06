@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, TouchableOpacity, BackHandler, Alert} from 'react-native';
-import { Card, Button, BottomSheet } from '@rneui/themed';
+import { BottomSheet } from '@rneui/themed';
 import {ListItem} from "@rneui/base";
-import {useUser} from "../guards/WithAuthGuard";
 import FriendsService from "../services/FriendsService";
 
 const FriendItem = ({ friend, type, onUpdate }) => {
