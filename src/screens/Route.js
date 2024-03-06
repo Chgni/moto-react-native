@@ -209,13 +209,18 @@ const RouteScreen = ({ route, navigation }) => {
         const step = waypoints[waypoints.length - 1];
         return {latitude: step.latitude, longitude: step.longitude};
     }
-    const removeMember = () => {
-        // TODO
+    const removeMember = async (memberId) => {
+        try {
+            await routeService.removeMember(navigationRoute.id, memberId)
+            loadData(navigationRoute.id)
+        } catch (e) {
+            //TODO: error handling
+        }
     }
     const addMember = async (user_to_add) => {
         try {
             await routeService.addMember(navigationRoute.id, user_to_add.id)
-            loadRoute(navigationRoute.id)
+            loadData(navigationRoute.id)
             toggleAddFriendModal()
 
         } catch (error) {
@@ -223,6 +228,16 @@ const RouteScreen = ({ route, navigation }) => {
                 // TODO error handling
             }
         }
+    }
+    const loadData = (routeId) => {
+        loadRoute(routeId).then(() => {
+
+            setLoading(false)
+            loadFriendsOfCurrentUser().then(() => {
+
+            })
+
+        })
     }
     useEffect(() => {
         if (pageType == "create" && user) {
@@ -233,14 +248,7 @@ const RouteScreen = ({ route, navigation }) => {
 
                 const { routeId } = route.params;
                 if(routeId) {
-                    loadRoute(routeId).then(() => {
-
-                        setLoading(false)
-                        loadFriendsOfCurrentUser().then(() => {
-
-                        })
-
-                    })
+                    loadData(routeId)
                 } else {
                     setLoading(false)
                 }
@@ -352,7 +360,7 @@ const RouteScreen = ({ route, navigation }) => {
                                         return (
                                             <View key={member.id}>
                                                     <Divider />
-                                                    <MemberCard user={member}  removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(navigationRoute.id, member.id) : null} />
+                                                    <MemberCard user={member}  removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
                                             </View>
                                         )
                                     }

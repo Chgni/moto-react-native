@@ -33,6 +33,14 @@ export default class RouteService {
         route.waypoints = data
         return route;
     };
+    async removeMember(routeId, memberId) {
+        console.log(memberId)
+        await this.#api.delete(`/routes/${routeId}/members`, {
+            data:  {
+                id: memberId
+            }
+        })
+    }
     async addMember(route_id, member_to_add_id) {
         await this.#api.post(`/routes/${route_id}/members`, {
             id: member_to_add_id
@@ -52,43 +60,3 @@ export default class RouteService {
         return response.data
     }
 }
-
-const createTrip = async (name, description, token, steps) => {
-    const filteredSteps = [];
-    for (let step of steps) {
-        const filtered = {latitude: parseFloat(step.latitude.toFixed(5)),
-            longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step"};
-        filteredSteps.push(filtered);
-    }
-        try {
-            const response = await axios.post(`${process.env.API_URL}/${process.env.API_VERSION}/routes/`, {
-                name: name,
-                description: description,
-                waypoints: filteredSteps
-            }, {headers: {
-                    Authorization: `Bearer ${token}`
-                }});
-
-            if (response.status === 422) {
-                alert('Erreur de champs');
-            }
-
-            if (response.status === 500) {
-                alert('Erreur de base de données');
-            }
-
-            if (response.status === 201) {
-                return response.data;
-                //OK, create snack bar ?
-            }
-        } catch (error) {
-            if( error.response ){
-                console.log(error.response.data); // => the response payload
-            }
-        }
-
-};
-
-
-
-export {createTrip};

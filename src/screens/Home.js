@@ -37,7 +37,7 @@ const HomeScreen = ({ navigation }) => {
                 </TabView.Item>
             </TabView>
             <View style={styles.addTripButton}>
-                <FloatingButton onPress={goToCreatePage} icon={"plus"} />
+                <FloatingButton onPress={goToCreatePage} icon={"plus"} text="Créer un trajet" />
             </View>
         </View>
     );

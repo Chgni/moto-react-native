@@ -30,6 +30,9 @@ axios.interceptors.response.use(function (response) {
 
             return Promise.reject(UnauthorizedError)
         }
+        if (error.response.status === 404) {
+            console.log(error.response.data.detail)
+        }
         if (error.response.status === 422) {
             console.log("caca2")
             let _error = new UnprocessableEntityError()

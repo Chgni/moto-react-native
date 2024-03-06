@@ -1,10 +1,10 @@
-import {View} from "react-native";
+import {TouchableOpacity, View} from "react-native";
 import {Avatar, Chip, IconButton, MD3Colors, Text} from "react-native-paper";
 import React from "react";
 
 const MemberCard = ({user, removeMember = null, role = null, addMember}) => {
     return (
-        <View style={{
+        <TouchableOpacity style={{
             paddingStart: 15,
             flexDirection: "row",
             justifyContent: "space-between",
@@ -30,7 +30,7 @@ const MemberCard = ({user, removeMember = null, role = null, addMember}) => {
             { addMember && <IconButton icon={"plus"} size={30}   iconColor={MD3Colors.secondary50}
 
                 onPress={addMember} >Ajouter</IconButton> }
-        </View>
+        </TouchableOpacity>
     )
 }
 export default MemberCard

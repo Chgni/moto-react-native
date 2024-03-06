@@ -31,7 +31,7 @@ const RoutesList = ({loadData}) => {
         }
     }, [isFocused]);
     return (
-        <ScrollView style={{ padding: 10}}>
+        <ScrollView >
             {routes && !loadingTrips && !loadingTrips && routes.map(route => (
                 <RouteCard key={route.id} route={route} onPress={() => goToTripPage(route.id)} />
             ))}
