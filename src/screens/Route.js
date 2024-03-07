@@ -45,6 +45,8 @@ const RouteScreen = ({ route, navigation }) => {
     const [tabIndex, setTabIndex] = React.useState(0);
     const [pageType, setPageType] = useState(route.params ? "update" : "create") // create / update
     const [loading, setLoading] = useState(true)
+    const [totalDistance, setTotalDistance] = useState(null);
+    const [totalTime, setTotalTime] = useState(null);
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
     const createButtonHandler = () => {
@@ -229,6 +231,17 @@ const RouteScreen = ({ route, navigation }) => {
             }
         }
     }
+
+    const convertMinsToTime = (mins) => {
+        if (mins < 60) {
+            return `${mins} mins`;
+        }
+        let hours = Math.floor(mins / 60);
+        let minutes = mins % 60;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        return `${hours}h${minutes}`;
+    }
+
     const loadData = (routeId) => {
         loadRoute(routeId).then(() => {
 
@@ -344,6 +357,10 @@ const RouteScreen = ({ route, navigation }) => {
                                 origin={getOrigin()}
                                 destination={getDestination()}
                                 waypoints={getMapsWaypoints()}
+                                onReady={result => {
+                                    setTotalDistance(result.distance);
+                                    setTotalTime(result.duration);
+                                }}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
                                 apikey={process.env.GOOGLE_MAPS_API_KEY}
@@ -434,6 +451,12 @@ const RouteScreen = ({ route, navigation }) => {
                 ) }
 
             </View>
+                <View style={styles.totalsInfosRouteContainer}>
+                    {totalTime && totalDistance && <View style={styles.totalInfosRoute}>
+                        <Text>Distance: {totalDistance.toFixed()} Kms</Text>
+                        <Text>Temps: {convertMinsToTime(totalTime.toFixed())}</Text>
+                    </View>}
+                </View>
                 <Portal>
                     <Dialog visible={visibleWaypointDialog} onDismiss={() => {setvisibleWaypointDialog(false)}}>
                         <Dialog.Title>Désolé</Dialog.Title>
@@ -476,6 +499,18 @@ const styles = StyleSheet.create({
         right: 10,
         bottom: 20,
         borderRadius: 50,
+    },
+    totalsInfosRouteContainer: {
+        position: 'absolute',
+        left: 10,
+        bottom: 20,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        padding: 5
+    },
+    totalsInfosRouteInfos: {
+        display: 'flex',
+        flexDirection: 'column',
     },
     customMarker: {
         position: "absolute",
