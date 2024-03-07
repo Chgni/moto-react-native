@@ -6,11 +6,12 @@ import FloatingButton from "../components/common/FloatingButton";
 import RoutesList from "../components/route/RoutesList";
 import {Appbar, Text} from "react-native-paper";
 import StorageService from "../services/storageService"
+import AuthService from "../services/AuthService";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
     const routeService = new RouteService()
-
+    const authService = new AuthService()
     const goToCreatePage = () => {
         navigation.navigate('Route');
     }
@@ -24,6 +25,11 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
+                <Appbar.Action icon="logout" onPress={() => {
+                    authService.disconnect();
+                    navigation.replace("Connexion")
+                }} />
+
             </Appbar.Header>
             <Tab value={index} onChange={setIndex} dense>
                 <Tab.Item>Mes trajets</Tab.Item>
