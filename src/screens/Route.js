@@ -77,6 +77,14 @@ const RouteScreen = ({ route, navigation }) => {
             //TODO error handling
         }
     }
+
+    const routePatch = async (route, distance, duration) => { //patch total time and distance
+        try {
+            const newNavigationRoute = await routeService.patch(route, distance, duration)
+        } catch (e) {
+            //TODO error handling
+        }
+    }
     const openInMaps = () => {
         let formattedString = '';
         for(let waypoint of waypoints) {
@@ -359,6 +367,9 @@ const RouteScreen = ({ route, navigation }) => {
                                 onReady={result => {
                                     setTotalDistance(result.distance);
                                     setTotalTime(result.duration);
+                                    if (getMapsWaypoints().length >= 2 && pageType == "update") {
+                                        //routePatch(route.params.routeId, result.distance.toFixed(), result.duration.toFixed());
+                                    }
                                 }}
                                 strokeWidth={3}
                                 strokeColor={"blue"}

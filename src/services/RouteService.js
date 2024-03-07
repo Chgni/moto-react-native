@@ -52,6 +52,14 @@ export default class RouteService {
             route.waypoints
         )
     }
+    async patch(route, distance, duration)  {
+
+        await this.#api.patch(`/routes/${route.id}/`, {
+                distance: distance,
+                time: duration
+            }
+        )
+    }
     async create(name, waypoints) {
         const response = await this.#api.post('/routes', {
             name: name,
