@@ -9,16 +9,28 @@
     },
     "preview": {
       "distribution": "internal",
-      "android": {
+      "android":{
         "buildType": "apk"
-      }
+      },
+    "env": {
+      "API_URL": "http://82.65.153.125:8888/api",
+      "API_VERSION": "v0.1",
+      "GOOGLE_MAPS_API_KEY": "AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"
+    }
     },
     "preview2": {
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
     },
-    "production": {}
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "API_URL": "http://82.65.153.125:8888/api",
+        "API_VERSION": "v0.1",
+        "GOOGLE_MAPS_API_KEY": "AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"
+      }
+    }
   },
   "submit": {
     "production": {}

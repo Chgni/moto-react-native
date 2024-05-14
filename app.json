@@ -22,23 +22,21 @@
         "foregroundImage": "./src/assets/logomoto.png",
         "backgroundColor": "#ffffff"
       },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBFDUJ7l1k8uusWP-zOVgfBkD3jZwfz8jc"
-        }
-      },
-      "package": "com.chgni.motoesimproj"
+      "config": {},
+      "package": "com.chgni.motoesimproj",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
+        "projectId": "7c48796b-7fc2-4e23-a8ff-2caaf8aa382e"
       }
     },
     "plugins": [
       [
-      "expo-build-properties",
+        "expo-build-properties",
         {
           "android": {
             "usesCleartextTraffic": true

@@ -373,7 +373,7 @@ const RouteScreen = ({ route, navigation }) => {
                                 }}
                                 strokeWidth={3}
                                 strokeColor={"blue"}
-                                apikey={process.env.GOOGLE_MAPS_API_KEY}
+                                apikey={"AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"}
                             />}
                         </MapView>
                         <Portal>
