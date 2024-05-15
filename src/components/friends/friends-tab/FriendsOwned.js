@@ -26,7 +26,9 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
 
         friendsService.getFriends().then(
             (response) => {
-                setFriends(response)
+                if (response !== friends) {
+                    setFriends(response)
+                }
             }
         ).catch(
             (error) => {
@@ -62,7 +64,6 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
                             </View>
                         )) }
                     </>}
-                    {friends.length==0 && <Text>Vous n'avez pas encore d'ami</Text>}
 
                 </ScrollView>
 

@@ -17,7 +17,9 @@ const FriendsReceived = forwardRef(({updateAll}, ref) => {
     const loadFriendsReceived = () => {
         friendsService.getFriendsRequestsReceived().then(
             (response) => {
-                setFriendsReceived(response);
+                if (friendsReceived !== response) {
+                    setFriendsReceived(response);
+                }
             }
         ).catch(
             (error) => {

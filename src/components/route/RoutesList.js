@@ -6,15 +6,12 @@ import {useIsFocused, useNavigation} from "@react-navigation/native";
 const RoutesList = ({loadData}) => {
     const isFocused = useIsFocused();
     const navigation = useNavigation()
-    const [loadingTrips, setLoadingTrips] = useState(true);
     const [routes, setRoutes] = useState([]);
 
     const loadRoute = () => {
-        setLoadingTrips(true);
-        loadData().then((routes) => {
-            setRoutes(routes)
-            setLoadingTrips(false);
-
+        console.log(routes)
+        loadData().then((new_routes) => {
+                setRoutes(new_routes)
         }).catch((e) => {
             //TODO handle error
         })
@@ -32,7 +29,7 @@ const RoutesList = ({loadData}) => {
     }, [isFocused]);
     return (
         <ScrollView >
-            {routes && !loadingTrips && !loadingTrips && routes.map(route => (
+            {routes && routes.map(route => (
                 <RouteCard key={route.id} route={route} onPress={() => goToTripPage(route.id)} />
             ))}
         </ScrollView>

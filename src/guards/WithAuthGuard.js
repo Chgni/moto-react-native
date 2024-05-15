@@ -54,9 +54,6 @@ const withAuthGuard = (WrappedComponent) => {
             checkAuth();
         }, [navigation]);
 
-        if (isLoading) {
-            return <Text>Loading ...</Text>;
-        }
 
         return (
             <UserContext.Provider value={authInfo}>
