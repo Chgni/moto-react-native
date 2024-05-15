@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {View, StyleSheet, Image, Linking, BackHandler} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
-
 import {
     Button,
     Text,
@@ -31,6 +30,10 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import RouteModel from "../models/RouteModel";
 import {Input} from "@rneui/themed";
+import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import {faMugSaucer} from "@fortawesome/free-solid-svg-icons/faMugSaucer";
+import {faLocation} from "@fortawesome/free-solid-svg-icons/faLocation";
+import {faLocationDot} from "@fortawesome/free-solid-svg-icons/faLocationDot";
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
@@ -352,7 +355,7 @@ const RouteScreen = ({ route, navigation }) => {
                                     coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                                 >
                                     <View>
-                                        <Image source={require('../assets/mapmarker.png')} style={{height: 35, width:35 }} />
+                                        <FontAwesomeIcon icon={faLocationDot} size={35} color={"red"}/>
                                         <View style={styles.customMarker}>
                                             <Text style={styles.markerText}>{marker.order}</Text>
                                         </View>
@@ -372,7 +375,7 @@ const RouteScreen = ({ route, navigation }) => {
                                     }
                                 }}
                                 strokeWidth={3}
-                                strokeColor={"blue"}
+                                strokeColor={"#34a4eb"}
                                 apikey={"AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"}
                             />}
                         </MapView>
@@ -532,7 +535,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderStyle: "solid",
         borderWidth: 1,
-        borderColor: "#000",
+        borderColor: "red",
         display: "flex",
         alignItems: "center"
     },
