@@ -5,7 +5,6 @@ import {Avatar, Divider, Text} from "react-native-paper";
 const RouteCard = ({route, onPress}) => {
     return (
         <View  >
-            <Divider />
 
             <TouchableOpacity onPress={onPress} style={styles.tripCard}>
                 <Text variant="titleLarge" h4>{route.name}</Text>
@@ -15,7 +14,6 @@ const RouteCard = ({route, onPress}) => {
 
                 </View>
             </TouchableOpacity>
-            <Divider />
 
         </View>
     )
