@@ -26,9 +26,7 @@ const FriendsOwned = forwardRef(({updateAll}, ref) => {
 
         friendsService.getFriends().then(
             (response) => {
-                if (response !== friends) {
-                    setFriends(response)
-                }
+                setFriends(response)
             }
         ).catch(
             (error) => {
