@@ -9,7 +9,6 @@ const RoutesList = ({loadData}) => {
     const [routes, setRoutes] = useState([]);
 
     const loadRoute = () => {
-        console.log(routes)
         loadData().then((new_routes) => {
                 setRoutes(new_routes)
         }).catch((e) => {
