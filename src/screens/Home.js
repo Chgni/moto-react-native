@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
                     <FloatingButton onPress={goToCreatePage} icon={"plus"} text="Créer un trajet" />
                 </View>
                 <Portal>
-                    {user != null && <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.welcomeModal}>
+                    {user != null && <Modal  visible={visible} onDismiss={hideModal} contentContainerStyle={styles.welcomeModal}>
                         <WelcomeScreen username={user.username}/>
                     </Modal>}
                 </Portal>
@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
         maxHeight: "90%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start"
+        justifyContent: "flex-start",
+        borderRadius: 15
     }
 });
 export default HomeScreen;

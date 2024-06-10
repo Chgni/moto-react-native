@@ -1,4 +1,4 @@
-import {Image, View} from "react-native";
+import {Image, StyleSheet, View} from "react-native";
 import {Button, Text} from "react-native-paper";
 import {ROUTE_66, SPEED_TRIPLE_IMAGE, VFR_800_F, VITPILEN_401} from "../assets";
 import {useState} from "react";
@@ -72,8 +72,8 @@ const WelcomeScreen = ({ navigation, username }) => {
             </View>
             <View
                 style={{flexDirection:"row", justifyContent:"space-around", marginTop: 20}}>
-                <Button mode="contained" onPress={previousPage} disabled={displayPage==0 ? true: false}>Précédent</Button>
-                <Button mode="contained" onPress={nextPage} disabled={displayPage==content.length-1 ? true: false}>Suivant</Button>
+                {displayPage !== 0 && <Button mode="outlined" onPress={previousPage} >Précédent</Button>}
+                {displayPage < content.length-1 && <Button mode="contained" onPress={nextPage} >Suivant</Button>}
             </View>
 
 
