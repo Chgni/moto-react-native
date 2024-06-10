@@ -39,13 +39,14 @@ const WelcomeScreen = ({ navigation, username }) => {
         {
             key: 4,
             title: "Créés et partages tes balades !",
-            image: ROUTE_66,
             text: "Dans la page d'accueil de CommuMoto, cliques sur le bouton \"Créer un trajet\" pour commencer à planifier ta prochaine balade. " +
                 "Tu pourras ensuite placer les points de passage que tu souhaites emprunter. Après avoir sauvegardé, tu peux inviter tes amis à rejoindre ta balade.\n"
         },
         {
             key: 5,
+            title: "Lance ton GPS",
             subtitle: "Il est temps de monter en selle",
+            image: ROUTE_66,
             text: "Lorsque tout est prêt, utilise l'icone en bas a droite de la carte pour ouvrir ton trajet dans Google Maps ou exporter un fichier pour ton GPS !",
             actionText: "Créer ton premier trajet",
             action: () => {
