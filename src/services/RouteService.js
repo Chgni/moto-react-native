@@ -34,7 +34,6 @@ export default class RouteService {
         return route;
     };
     async removeMember(routeId, memberId) {
-        console.log(memberId)
         await this.#api.delete(`/routes/${routeId}/members`, {
             data:  {
                 id: memberId

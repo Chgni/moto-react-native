@@ -115,7 +115,6 @@ const RouteScreen = ({ route, navigation }) => {
         formattedString = formattedString.replace(/[^\w\-]+/g, '');
         try {
             const filePath = FileSystem.documentDirectory + `/${formattedString}.gpx`;
-            console.log(filePath)
             await FileSystem.writeAsStringAsync(filePath, gpxXml, { encoding: FileSystem.EncodingType.UTF8 });
             await Sharing.shareAsync(filePath);
             Toast.show('Fichier GPX sauvegardé dans: ' + filePath, Toast.LONG);
@@ -315,7 +314,6 @@ const RouteScreen = ({ route, navigation }) => {
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
                 <Tab.Item>Itinéraires</Tab.Item>
                 {pageType=='update' && <Tab.Item >Participants</Tab.Item>}
-                {pageType=='update' && <Tab.Item>Détails</Tab.Item>}
             </Tab>
             <TabView value={tabIndex} onChange={setTabIndex} disableSwipe={tabIndex == 0 ? true : false} >
                 {/*page map*/}
@@ -438,15 +436,6 @@ const RouteScreen = ({ route, navigation }) => {
                     </View>
 
 
-                </TabView.Item>}
-                {/*page details*/}
-
-                {pageType=='update' && navigationRoute &&
-                    <TabView.Item style={{ width: '100%' }} >
-                    <View style={styles.itineraryInfosItem}>
-                        {/*<Text h3>{navigationRoute.name}</Text>*/}
-                        {/*<Text h4>{navigationRoute.description}</Text>*/}
-                    </View>
                 </TabView.Item>}
             </TabView>
             <View style={styles.saveTripButton}>
