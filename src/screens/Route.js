@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {View, StyleSheet, Image, Linking, BackHandler} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
     Button,
     Text,
@@ -52,6 +53,30 @@ const RouteScreen = ({ route, navigation }) => {
     const [totalTime, setTotalTime] = useState(null);
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
+    const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate;
+        setShow(false);
+        setDate(currentDate);
+    };
+
+    const showMode = (currentMode) => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
+
+    const showTimepicker = () => {
+        showMode('time');
+    };
+
+
     const createButtonHandler = () => {
         if (waypoints.length < 2) {
             Toast.show("Veuillez placer au moins 2 points", Toast.SHORT)
@@ -307,7 +332,27 @@ const RouteScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
-                <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} ><Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
+                <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} >
+                    <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
+                    <View>
+                        <View>
+                            <Text style={styles.textBlack} onPress={showDatepicker}>Date picker</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.textBlack} onPress={showTimepicker}>Time picker</Text>
+                        </View>
+                        {show && (
+                            <DateTimePicker
+                                testID="dateTimePicker"
+                                value={date}
+                                mode={mode}
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChange}
+                            />
+                        )}
+                    </View>
+                </ContentLoader>} />
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <PaperProvider>
@@ -530,6 +575,10 @@ const styles = StyleSheet.create({
     },
     markerText: {
         color: '#fff',
+        fontWeight: 'bold',
+    },
+    textBlack: {
+        color: '#000',
         fontWeight: 'bold',
     },
     modal: {
