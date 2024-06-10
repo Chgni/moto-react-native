@@ -58,10 +58,22 @@ const RouteScreen = ({ route, navigation }) => {
     const [show, setShow] = useState(false);
 
     const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setShow(false);
-        setDate(currentDate);
+        if (event.type == 'set') {
+            const currentDate = selectedDate;
+            setShow(false);
+            if (mode == 'date') {
+                setDate(currentDate);
+                showTimepicker();
+            } else {
+                setDate(currentDate);
+                navigationRoute.date_creation = selectedDate;
+                setNavigationRoute(navigationRoute);
+                //appel api update date
+                Toast.show("Date mise à jour !", Toast.SHORT)
+            }
+        }
     };
+
 
     const showMode = (currentMode) => {
         setShow(true);
@@ -332,27 +344,42 @@ const RouteScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
-                <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} >
-                    <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
-                    <View>
-                        <View>
-                            <Text style={styles.textBlack} onPress={showDatepicker}>Date picker</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.textBlack} onPress={showTimepicker}>Time picker</Text>
-                        </View>
-                        {show && (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={date}
-                                mode={mode}
-                                is24Hour={true}
-                                display="default"
-                                onChange={onChange}
-                            />
-                        )}
-                    </View>
-                </ContentLoader>} />
+                <Appbar.Content
+                    title={pageType == "create" ?
+                        <ContentLoader loading={loading} pRows={0} >
+                            <Text variant="headlineMedium">Nouvel itinéraire </Text>
+                            <View>
+                                {show && (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={date}
+                                        mode={mode}
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChange}
+                                    />
+                                )}
+                            </View>
+                        </ContentLoader>
+                        :
+                        <ContentLoader loading={loading} pRows={0} >
+                            <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
+                            <View>
+                                {show && (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={date}
+                                        mode={mode}
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChange}
+                                    />
+                                )}
+                            </View>
+                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'UTC' })} </Text>}
+                        </ContentLoader>}
+                />
+                <Appbar.Action icon="magnify" onPress={showDatepicker} />
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <PaperProvider>
@@ -580,6 +607,11 @@ const styles = StyleSheet.create({
     textBlack: {
         color: '#000',
         fontWeight: 'bold',
+    },
+    date: {
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: 16
     },
     modal: {
         backgroundColor: 'white',
