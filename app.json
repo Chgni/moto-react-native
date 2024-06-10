@@ -22,9 +22,13 @@
         "foregroundImage": "./src/assets/logomoto.png",
         "backgroundColor": "#ffffff"
       },
-      "config": {},
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDOgfh5J__i5OSXv4XAmIAEKIU6Milw9hQ"
+        }
+      },
       "package": "com.chgni.motoesimproj",
-      "versionCode": 2
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/favicon.png"
