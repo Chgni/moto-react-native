@@ -9,7 +9,6 @@ import {
     Appbar,
     Portal,
     Modal,
-    PaperProvider,
     Dialog, FAB,
     TextInput
 } from 'react-native-paper'
@@ -310,7 +309,6 @@ const RouteScreen = ({ route, navigation }) => {
                 <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} ><Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
-            <PaperProvider>
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
                 <Tab.Item>Itinéraires</Tab.Item>
                 {pageType=='update' && <Tab.Item >Participants</Tab.Item>}
@@ -470,7 +468,6 @@ const RouteScreen = ({ route, navigation }) => {
                         </Dialog.Actions>
                     </Dialog>
                 </Portal>
-            </PaperProvider>
         </View>
 
     )
