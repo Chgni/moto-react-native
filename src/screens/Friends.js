@@ -18,6 +18,8 @@ const FriendsScreen = () => {
         friendsOwnedRef.current.update()
         friendsReceivedRef.current.update()
         friendsSentRef.current.update()
+
+        console.log(friendsReceivedRef);
     }
     return (
         <View style={styles.container}>

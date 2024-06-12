@@ -56,28 +56,44 @@ const RouteScreen = ({ route, navigation }) => {
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+    const [showTime, setShowTime] = useState(false);
 
     const onChange = (event, selectedDate) => {
-        if (event.type == 'set') {
-            const currentDate = selectedDate;
+        if (event.type == 'dismissed'){
             setShow(false);
-            if (mode == 'date') {
-                setDate(currentDate);
-                showTimepicker();
-            } else {
-                setDate(currentDate);
-                navigationRoute.date_creation = selectedDate;
+        }
+        if (event.type == 'set') {
+            const currentDate = new Date(event.nativeEvent.timestamp);
+            setDate(currentDate);
+            setShow(false);
+            setShowTime(true);
+        }
+    };
+
+    const onChangeTime = (event, selectedDate) => {
+        //console.log(event);
+        if (event.type == 'set') {
+                setShowTime(false);
+                const dateConcat = date
+                console.log(date);
+                dateConcat.setHours(selectedDate.getHours());
+                dateConcat.setMinutes(selectedDate.getMinutes());
+                setDate(dateConcat);
+                navigationRoute.date_creation = date;
                 setNavigationRoute(navigationRoute);
+                console.log(navigationRoute);
                 //appel api update date
                 Toast.show("Date mise à jour !", Toast.SHORT)
-            }
+
+        } else {
+            setShowTime(false);
         }
     };
 
 
     const showMode = (currentMode) => {
         setShow(true);
-        setMode(currentMode);
+        //setMode(currentMode);
     };
 
     const showDatepicker = () => {
@@ -301,7 +317,7 @@ const RouteScreen = ({ route, navigation }) => {
     }
     useEffect(() => {
         if (pageType == "create" && user) {
-            const navigationRoute = new RouteModel(null, null, null, null, null, null, [])
+            const navigationRoute = new RouteModel(null, null, null, null, null, null, [], null)
             setNavigationRoute(navigationRoute)
         } else {
             if (user && route.params != undefined) {
@@ -352,11 +368,21 @@ const RouteScreen = ({ route, navigation }) => {
                                 {show && (
                                     <DateTimePicker
                                         testID="dateTimePicker"
-                                        value={date}
-                                        mode={mode}
+                                        value={new Date()}
+                                        mode={'date'}
                                         is24Hour={true}
                                         display="default"
                                         onChange={onChange}
+                                    />
+                                )}
+                                {showTime && (
+                                    <DateTimePicker
+                                        testID="timePicker"
+                                        value={new Date()}
+                                        mode={'time'}
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChangeTime}
                                     />
                                 )}
                             </View>
@@ -368,15 +394,25 @@ const RouteScreen = ({ route, navigation }) => {
                                 {show && (
                                     <DateTimePicker
                                         testID="dateTimePicker"
-                                        value={date}
-                                        mode={mode}
+                                        value={new Date()}
+                                        mode={'date'}
                                         is24Hour={true}
                                         display="default"
                                         onChange={onChange}
                                     />
                                 )}
+                                {showTime && (
+                                    <DateTimePicker
+                                        testID="timePicker"
+                                        value={new Date()}
+                                        mode={'time'}
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChangeTime}
+                                    />
+                                )}
                             </View>
-                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'UTC' })} </Text>}
+                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })} </Text>}
                         </ContentLoader>}
                 />
                 <Appbar.Action icon="magnify" onPress={showDatepicker} />
