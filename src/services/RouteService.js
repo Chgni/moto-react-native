@@ -52,17 +52,11 @@ export default class RouteService {
         )
     }
 
-    async update(route)  {
+    async updateDate(route, date)  {
 
-        await this.#api.put(`/routes/${route.id}/waypoints/`,
-            route.waypoints
-        )
-    }
-
-    async updateDate(route)  {
-
-        await this.#api.put(`/routes/${route.id}/date/`,
-            route.date_creation
+        await this.#api.put(`/routes/${route.id}`, {
+            date: date
+            }
         )
     }
 

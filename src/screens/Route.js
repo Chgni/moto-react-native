@@ -70,7 +70,8 @@ const RouteScreen = ({ route, navigation }) => {
 
                 setNavigationRoute(updatedNavigationRoute);
                 //appel api update date
-                Toast.show("Date mise à jour !", Toast.SHORT)
+                updateDate(navigationRoute, selectedDate);
+                // Toast.show("Date mise à jour !", Toast.SHORT)
             }
         }
     };
@@ -281,6 +282,21 @@ const RouteScreen = ({ route, navigation }) => {
         }
     }
 
+    const updateDate = async (route, date) => {
+        try {
+            console.log(date);
+            await routeService.updateDate(route, date).then(
+                () => {
+                    Toast.show("Date mise à jour !", Toast.SHORT)
+                }
+            )
+        } catch (error) {
+            if( error.response ){
+                Toast.show("Date non mise à jour !", Toast.SHORT)
+            }
+        }
+    }
+
     const convertMinsToTime = (mins) => {
         if (mins < 60) {
             return `${mins} mins`;
@@ -378,10 +394,10 @@ const RouteScreen = ({ route, navigation }) => {
                                     />
                                 )}
                             </View>
-                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'UTC' })} </Text>}
+                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} </Text>}
                         </ContentLoader>}
                 />
-                <Appbar.Action icon="magnify" onPress={showDatepicker} />
+                <Appbar.Action icon="calendar" onPress={showDatepicker} />
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <PaperProvider>
