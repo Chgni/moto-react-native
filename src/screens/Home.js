@@ -1,17 +1,35 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { View, StyleSheet } from 'react-native';
 import {Tab, TabView} from "@rneui/base";
 import RouteService from "../services/RouteService";
 import FloatingButton from "../components/common/FloatingButton";
 import RoutesList from "../components/route/RoutesList";
-import {Appbar, Text} from "react-native-paper";
+import {Appbar, Modal, PaperProvider, Portal, Text} from "react-native-paper";
 import StorageService from "../services/storageService"
 import AuthService from "../services/AuthService";
+import WelcomeScreen from "./Welcome";
+import {useUser} from "../guards/WithAuthGuard";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
-    const routeService = new RouteService()
-    const authService = new AuthService()
+    const routeService = new RouteService();
+    const authService = new AuthService();
+    const storageService = new StorageService();
+    const [visible, setVisible] = React.useState(false);
+    const {user} = useUser();
+    const hideModal = () => {
+        setVisible(false);
+    }
+    useEffect(() => {
+        storageService.getHideWelcomeMessage().then((hideWelcomeMessage) => {
+            if (!hideWelcomeMessage) {
+                console.log("yoo")
+                console.log(user)
+                setVisible(true)
+            }
+        })
+    }, []);
+
     const goToCreatePage = () => {
         navigation.navigate('Route');
     }
@@ -22,31 +40,37 @@ const HomeScreen = ({ navigation }) => {
         return await routeService.getRoutes(false, true)
     }
     return (
-        <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
-                <Appbar.Action icon="logout" onPress={() => {
-                    authService.disconnect();
-                    navigation.replace("Connexion")
-                }} />
+            <View style={styles.container}>
+                <Appbar.Header>
+                    <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
+                    <Appbar.Action icon="logout" onPress={() => {
+                        authService.disconnect();
+                        navigation.replace("Connexion")
+                    }} />
 
-            </Appbar.Header>
-            <Tab value={index} onChange={setIndex} dense>
-                <Tab.Item>Mes trajets</Tab.Item>
-                <Tab.Item>Trajets rejoints</Tab.Item>
-            </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
-                <TabView.Item style={{ width: '100%' }}>
-                    <RoutesList loadData={getRoutesOwned} />
-                </TabView.Item>
-                <TabView.Item style={{ width: '100%' }}>
-                    <RoutesList loadData={getRoutesJoined} />
-                </TabView.Item>
-            </TabView>
-            <View style={styles.addTripButton}>
-                <FloatingButton onPress={goToCreatePage} icon={"plus"} text="Créer un trajet" />
+                </Appbar.Header>
+                <Tab value={index} onChange={setIndex} dense>
+                    <Tab.Item>Mes trajets</Tab.Item>
+                    <Tab.Item>Trajets rejoints</Tab.Item>
+                </Tab>
+                <TabView value={index} onChange={setIndex} animationType="spring">
+                    <TabView.Item style={{ width: '100%' }}>
+                        <RoutesList loadData={getRoutesOwned} />
+                    </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <RoutesList loadData={getRoutesJoined} />
+                    </TabView.Item>
+                </TabView>
+                <View style={styles.addTripButton}>
+                    <FloatingButton onPress={goToCreatePage} icon={"plus"} text="Créer un trajet" />
+                </View>
+                <Portal>
+                    {user != null && <Modal  visible={visible} onDismiss={hideModal} contentContainerStyle={styles.welcomeModal}>
+                        <WelcomeScreen username={user.username}/>
+                    </Modal>}
+                </Portal>
             </View>
-        </View>
+
     );
 };
 
@@ -95,6 +119,17 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         marginBottom: 20,
+    },
+    welcomeModal: {
+        backgroundColor: 'white',
+        padding: 20,
+        marginStart: "5%",
+        marginEnd: "5%",
+        maxHeight: "90%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        borderRadius: 15
     }
 });
 export default HomeScreen;

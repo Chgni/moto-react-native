@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 
 import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, BottomNavigation } from 'react-native-paper';
+import {Text, BottomNavigation, PaperProvider} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, {useEffect} from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
@@ -98,6 +98,8 @@ const MainTabs = () => {
 export default function App() {
 
     return (
+        <PaperProvider>
+
           <NavigationContainer>
             <Stack.Navigator initialRouteName="Connexion">
                 <Stack.Screen name="Connexion" component={ProtectedLogin} />
@@ -107,5 +109,7 @@ export default function App() {
                 <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
             </Stack.Navigator>
           </NavigationContainer>
+        </PaperProvider>
+
       );
 }

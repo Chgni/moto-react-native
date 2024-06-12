@@ -12,4 +12,12 @@ export default class StorageService {
         return await AsyncStorage.removeItem('userToken');
 
     }
+
+    async getHideWelcomeMessage() {
+        const hide = await AsyncStorage.getItem('hideWelcome');
+        return hide == "true"
+    }
+    async doHideWelcomeMessage() {
+        await AsyncStorage.setItem('hideWelcome', "true");
+    }
 }
