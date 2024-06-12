@@ -54,20 +54,21 @@ const RouteScreen = ({ route, navigation }) => {
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
     const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
+    const [datePickerMode, setDatePickerMode] = useState('date');
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const onChange = (event, selectedDate) => {
         if (event.type == 'set') {
-            const currentDate = selectedDate;
-            setShow(false);
-            if (mode == 'date') {
-                setDate(currentDate);
+            setShowDatePicker(false);
+            if (datePickerMode == 'date') {
+                setDate(selectedDate);
                 showTimepicker();
             } else {
-                setDate(currentDate);
-                navigationRoute.date_creation = selectedDate;
-                setNavigationRoute(navigationRoute);
+                setDate(selectedDate);
+                const updatedNavigationRoute = { ...navigationRoute, date_creation: selectedDate };
+                updatedNavigationRoute.date_creation = selectedDate
+
+                setNavigationRoute(updatedNavigationRoute);
                 //appel api update date
                 Toast.show("Date mise à jour !", Toast.SHORT)
             }
@@ -76,8 +77,9 @@ const RouteScreen = ({ route, navigation }) => {
 
 
     const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
+        setDatePickerMode(currentMode);
+        setShowDatePicker(true);
+
     };
 
     const showDatepicker = () => {
@@ -349,11 +351,11 @@ const RouteScreen = ({ route, navigation }) => {
                         <ContentLoader loading={loading} pRows={0} >
                             <Text variant="headlineMedium">Nouvel itinéraire </Text>
                             <View>
-                                {show && (
+                                {showDatePicker && (
                                     <DateTimePicker
                                         testID="dateTimePicker"
                                         value={date}
-                                        mode={mode}
+                                        mode={datePickerMode}
                                         is24Hour={true}
                                         display="default"
                                         onChange={onChange}
@@ -365,11 +367,11 @@ const RouteScreen = ({ route, navigation }) => {
                         <ContentLoader loading={loading} pRows={0} >
                             <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
                             <View>
-                                {show && (
+                                {showDatePicker && (
                                     <DateTimePicker
                                         testID="dateTimePicker"
                                         value={date}
-                                        mode={mode}
+                                        mode={datePickerMode}
                                         is24Hour={true}
                                         display="default"
                                         onChange={onChange}
