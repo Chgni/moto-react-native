@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 
 import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {Text, BottomNavigation, PaperProvider} from 'react-native-paper';
+import {Text, BottomNavigation, PaperProvider, Badge} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, {useEffect} from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
@@ -88,7 +88,12 @@ const MainTabs = () => {
             <Tab.Screen name="Friends" component={ProtectedFriends} options={{ title: 'Amis', headerShown: false,
                 tabBarLabel: 'Amis',
                 tabBarIcon: ({ color, size }) => {
-                    return <Icon name="account-group" size={size} color={color} />;
+                    return <View>
+                        <Text>
+                            <Icon name="account-group" size={size} color={color} />
+                        </Text>
+                        <Badge style={{position: "absolute", top: -5, right: -12.5}}>3</Badge>
+                    </View>
                 },
             }} />
         </Tab.Navigator>
