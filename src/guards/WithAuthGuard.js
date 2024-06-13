@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
 import StorageService from "../services/storageService";
+import Api from "../services/Api";
 
 // Context to hold and provide user data
 const UserContext = createContext({user: null, token: null});
@@ -29,7 +30,7 @@ const withAuthGuard = (WrappedComponent) => {
                         setLoading(false);
                         try {
 
-                            const response = await axios.get(`http://${process.env.API_URL}/api/${process.env.API_VERSION}/auth/me`);
+                            const response = await Api.get(`/auth/me`);
                             if (response.status === 401) {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
