@@ -56,7 +56,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.container}>
                 <Appbar.Header>
                     <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
-                    <Appbar.Action icon="question" onPress={() => openURL('https://forms.gle/ZYtryWpYZ2FpJx7Z7')} />
+                    <Appbar.Action icon="comment-question-outline" onPress={() => openURL('https://forms.gle/ZYtryWpYZ2FpJx7Z7')} />
                     <Appbar.Action icon="logout" onPress={() => {
                         authService.disconnect();
                         navigation.replace("Connexion")
