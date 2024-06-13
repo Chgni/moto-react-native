@@ -1,11 +1,13 @@
 import {ScrollView, View} from "react-native";
-import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useContext, useEffect, useImperativeHandle, useState} from "react";
 import FriendsService from "../../../services/FriendsService";
 import {useIsFocused} from "@react-navigation/native";
 import {Divider} from "react-native-paper";
 import FriendCard from "../FriendCard";
+import {FriendRequestReceivedContext} from "../../../contexts/FriendRequestReceivedContext";
 
 const FriendsReceived = forwardRef(({updateAll}, ref) => {
+
     const isFocused = useIsFocused()
     const friendsService = new FriendsService()
     const [friendsReceived, setFriendsReceived] = useState([]);

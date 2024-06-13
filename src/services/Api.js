@@ -5,7 +5,7 @@ import StorageService from "./storageService";
 import Toast from "react-native-simple-toast";
 import {ToastAndroid} from "react-native";
 
-export const BASE_URL = `${process.env.API_URL}/${process.env.API_VERSION}`;
+export const BASE_URL = `http://${process.env.API_URL}/api/${process.env.API_VERSION}`;
 axios.defaults.baseURL = BASE_URL
 axios.defaults.timeout = 5000
 axios.interceptors.request.use(

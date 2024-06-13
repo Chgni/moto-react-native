@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
 import { View, StyleSheet, Linking } from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import { View, StyleSheet } from 'react-native';
 import {Tab, TabView} from "@rneui/base";
 import RouteService from "../services/RouteService";
 import FloatingButton from "../components/common/FloatingButton";
@@ -9,22 +10,25 @@ import StorageService from "../services/storageService"
 import AuthService from "../services/AuthService";
 import WelcomeScreen from "./Welcome";
 import {useUser} from "../guards/WithAuthGuard";
+import {WebSocketContext} from "../contexts/WebSocketContext";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
+    const {openWebSocket} = useContext(WebSocketContext)
     const routeService = new RouteService();
     const authService = new AuthService();
     const storageService = new StorageService();
     const [visible, setVisible] = React.useState(false);
     const {user} = useUser();
+    useEffect(() => {
+        openWebSocket()
+    }, []);
     const hideModal = () => {
         setVisible(false);
     }
     useEffect(() => {
         storageService.getHideWelcomeMessage().then((hideWelcomeMessage) => {
             if (!hideWelcomeMessage) {
-                console.log("yoo")
-                console.log(user)
                 setVisible(true)
             }
         })

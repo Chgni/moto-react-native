@@ -8,34 +8,22 @@ const RegisterScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const authService = new AuthService()
-    let registerButtonLabel = "S'enregistrer"
-    if (loading == true) {
-        registerButtonLabel = "Enregistrement..."
-    }
-    let connectionButtonDisabled = false
-    if (loading == true || email == '' || password == '' || password == '') {
-        connectionButtonDisabled = true
-    }
     const handleSignIn = async () => {
         if (email && password && username) {
             try {
-                setLoading(true)
+                setIsSubmitting(true)
                 await authService.create(username, email, password)
                 Toast.show('Votre compte a été créé', Toast.SHORT)
-                setLoading(false)
                 navigation.navigate('Connexion', {
                     created_email: email,
                     created_password: password
                 });
             } catch (error) {
-                alert(error);
+                Toast.show('Une erreur est survenue. Veuillez rééssayer plus tard', Toast.LONG)
             }
-        } else {
-            setLoading(false)
-            alert('Merci de remplir tout les champs');
-            return;
+            setIsSubmitting(false)
         }
 
     };
@@ -60,7 +48,8 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={setPassword}
             />
             <Button
-                disabled={connectionButtonDisabled}
+                title={isSubmitting ? "Enregistrement..." : "S'enregistrer"}
+                disabled={!email || !username || !password || isSubmitting}
                 title={registerButtonLabel}
                 onPress={handleSignIn}
             />

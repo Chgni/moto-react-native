@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {View, StyleSheet} from 'react-native';
 
 import {Tab, TabView} from "@rneui/base";
@@ -8,19 +8,31 @@ import FriendsReceived from "../components/friends/friends-tab/FriendsReceived";
 import {Appbar, Text} from "react-native-paper";
 import FloatingButton from "../components/common/FloatingButton";
 import FriendsService from "../services/FriendsService";
+import {FriendRequestReceivedContext} from "../contexts/FriendRequestReceivedContext";
 
 const FriendsScreen = () => {
     const [index, setIndex] = React.useState(0);
     const friendsOwnedRef = useRef()
     const friendsReceivedRef = useRef()
     const friendsSentRef = useRef()
+    const { fetchFriendRequests } = useContext(FriendRequestReceivedContext);
+
     const updateAllTabs = () => {
-        friendsOwnedRef.current.update()
         friendsReceivedRef.current.update()
+        fetchFriendRequests()
+        friendsOwnedRef.current.update()
         friendsSentRef.current.update()
 
         console.log(friendsReceivedRef);
     }
+
+    useEffect(() => {
+        fetchFriendRequests();
+
+        const interval = setInterval(friendsReceivedRef.current.update, 5000); // Mise à jour toutes les 5 secondes
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <View style={styles.container}>
             <Appbar.Header>

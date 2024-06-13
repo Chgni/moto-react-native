@@ -5,7 +5,7 @@ import axios from "axios";
 import StorageService from "../services/storageService";
 
 // Context to hold and provide user data
-const UserContext = createContext({user: null, token: null, socket: null});
+const UserContext = createContext({user: null, token: null});
 
 export const useUser = () => useContext(UserContext);
 
@@ -13,8 +13,7 @@ const withAuthGuard = (WrappedComponent) => {
     return (props) => {
         const [isLoading, setLoading] = useState(true);
         //const [user, setUser] = useState(null);
-        const [authInfo, setAuthInfo] = useState({ user: null, token: null, socket: null });
-        const [socketInfo, setSocketInfo] = useState({ socket: null });
+        const [authInfo, setAuthInfo] = useState({ user: null, token: null});
         const navigation = useNavigation();
         const jwtService = new StorageService()
         useEffect(() => {
@@ -33,11 +32,7 @@ const withAuthGuard = (WrappedComponent) => {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
                             if (response.status === 200) {
-                                const url = encodeURI(`ws://82.65.153.125:8888/ws?token=Bearer ${jwt}`);
-
-                                const socketInfos = new WebSocket(url);
-
-                                setAuthInfo({ user: response.data, token: jwt, socket: socketInfos });
+                                setAuthInfo({ user: response.data, token: jwt });
                             }
                         } catch (error) {
                             if( error.response ){
