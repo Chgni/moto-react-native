@@ -64,8 +64,8 @@ const RouteScreen = ({ route, navigation }) => {
                 showTimepicker();
             } else {
                 setDate(selectedDate);
-                const updatedNavigationRoute = { ...navigationRoute, date_creation: selectedDate };
-                updatedNavigationRoute.date_creation = selectedDate
+                const updatedNavigationRoute = { ...navigationRoute, date: selectedDate };
+                updatedNavigationRoute.date = selectedDate
 
                 setNavigationRoute(updatedNavigationRoute);
                 //appel api update date
@@ -234,12 +234,28 @@ const RouteScreen = ({ route, navigation }) => {
         updateWaypoints([...waypoints, newMarker]);
     };
 
+    const formatFrenchDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris',
+            day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+         });
+    };
+
     const loadRoute = async (routeId) => {
         try {
             const navigationRoute = await routeService.getRouteById(routeId)
             setNavigationRoute(navigationRoute)
+            if (navigationRoute.date != null) {
+                const date = formatFrenchDate(navigationRoute.date);
+                navigationRoute.date = date;
+                setNavigationRoute(navigationRoute)
+            }
             setWaypoints(navigationRoute.waypoints)
-
+            console.log(navigationRoute);
         } catch (e) {
             // TODO handle error
         }
@@ -363,21 +379,21 @@ const RouteScreen = ({ route, navigation }) => {
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
                 <Appbar.Content
                     title={pageType == "create" ?
-                        <ContentLoader loading={loading} pRows={0} >
+                        <>
                             <Text variant="headlineMedium">Nouvel itinéraire </Text>
-                            <View>
-                                {showDatePicker && (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={date}
-                                        mode={datePickerMode}
-                                        is24Hour={true}
-                                        display="default"
-                                        onChange={onChange}
-                                    />
-                                )}
-                            </View>
-                        </ContentLoader>
+                            {/*<View>*/}
+                            {/*    {showDatePicker && (*/}
+                            {/*        <DateTimePicker*/}
+                            {/*            testID="dateTimePicker"*/}
+                            {/*            value={date}*/}
+                            {/*            mode={datePickerMode}*/}
+                            {/*            is24Hour={true}*/}
+                            {/*            display="default"*/}
+                            {/*            onChange={onChange}*/}
+                            {/*        />*/}
+                            {/*    )}*/}
+                            {/*</View>*/}
+                        </>
                         :
                         <ContentLoader loading={loading} pRows={0} >
                             <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
@@ -393,10 +409,10 @@ const RouteScreen = ({ route, navigation }) => {
                                     />
                                 )}
                             </View>
-                            {navigationRoute && navigationRoute.date_creation && <Text style={styles.date} variant="headlineMedium">Le {navigationRoute.date_creation.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} </Text>}
+                            {navigationRoute && navigationRoute.date && <Text style={styles.date} variant="headlineMedium"> {navigationRoute.date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} </Text>}
                         </ContentLoader>}
                 />
-                <Appbar.Action icon="calendar" onPress={showDatepicker} />
+                { pageType == 'update' && < Appbar.Action icon="calendar" onPress={showDatepicker} /> }
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
@@ -624,9 +640,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     date: {
-        color: '#000',
+        color: 'grey',
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
     },
     modal: {
         backgroundColor: 'white',
