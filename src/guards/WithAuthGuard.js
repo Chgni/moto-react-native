@@ -25,13 +25,17 @@ const withAuthGuard = (WrappedComponent) => {
                         setLoading(false);
                         navigation.navigate('Connexion');
                     } else {
+
                         setLoading(false);
                         try {
-                            const response = await axios.get(`${process.env.API_URL}/${process.env.API_VERSION}/auth/me`);
+
+                            const response = await axios.get(`http://${process.env.API_URL}/api/${process.env.API_VERSION}/auth/me`);
                             if (response.status === 401) {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
+
                             if (response.status === 200) {
+
                                 setAuthInfo({ user: response.data, token: jwt });
                             }
                         } catch (error) {

@@ -50,7 +50,6 @@ const RegisterScreen = ({ navigation }) => {
             <Button
                 title={isSubmitting ? "Enregistrement..." : "S'enregistrer"}
                 disabled={!email || !username || !password || isSubmitting}
-                title={registerButtonLabel}
                 onPress={handleSignIn}
             />
             <Text
