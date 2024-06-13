@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation, route }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const isFocused = useIsFocused();
-    const [loading, setLoading] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const jwtService = new StorageService()
     const authService = new AuthService()
@@ -27,9 +27,9 @@ const LoginScreen = ({ navigation, route }) => {
         }
     }, [isFocused]);
     useEffect(  () => {
-        handleConnectionState();
+        handleAutoConnection(); //auto connexion au lancement de l'appli
     }, [] );
-    const handleConnectionState = async () => {
+    const handleAutoConnection = async () => {
         const jwt = await jwtService.getJwt()
         if(jwt) {
             try {
@@ -44,17 +44,17 @@ const LoginScreen = ({ navigation, route }) => {
     };
 
 
-
+    // preset_email sert a gerer la connexion automatique lorsqu'on vient de créer un compte
     const handleSignIn = async (preset_email = null, preset_password = null) => {
         if ((email && password) || (preset_email && preset_password)) {
             try {
-                setLoading(true)
+                setIsSubmitting(true)
                 let data = await authService.login(preset_email ?? email, preset_password ?? password)
-                setLoading(false)
+                setIsSubmitting(false)
                 await jwtService.setJwt(data['access_token'])
                 navigation.replace('Main')
             } catch (error) {
-                setLoading(false)
+                setIsSubmitting(false)
                 if(error.name == "UnauthorizedError") {
                     Toast.show('Identifiants incorrect', Toast.LONG)
                 }
@@ -62,14 +62,7 @@ const LoginScreen = ({ navigation, route }) => {
         }
 
     };
-    let connectionButtonLabel = "Se connecter"
-    if (loading == true) {
-        connectionButtonLabel = "Connexion..."
-    }
-    let connectionButtonDisabled = false
-    if (loading == true || email == '' || password == '') {
-        connectionButtonDisabled = true
-    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Se connecter</Text>
@@ -85,8 +78,8 @@ const LoginScreen = ({ navigation, route }) => {
                 onChangeText={setPassword}
             />
             <Button
-                disabled={connectionButtonDisabled}
-                title={connectionButtonLabel}
+                disabled={!email || !password || isSubmitting}
+                title={isSubmitting ? "Connexion..." : "Se connecter"}
                 onPress={() => handleSignIn(null, null)}
             />
             <Text
