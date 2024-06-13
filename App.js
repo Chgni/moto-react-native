@@ -4,7 +4,7 @@ import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {Text, BottomNavigation, PaperProvider, Badge} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {NavigationContainer, useNavigation, useRoute} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -22,6 +22,7 @@ import {ActivityIndicator, SafeAreaView} from "react-native";
 import StorageService from "./src/services/storageService";
 import AuthService from "./src/services/AuthService";
 import RouteScreen from "./src/screens/Route";
+import {FriendRequestProvider, FriendRequestReceivedContext} from "./src/contexts/FriendRequestReceivedContext";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +32,10 @@ const ProtectedFriends = withAuthGuard(FriendsScreen);
 
 const ProtectedRoute = withAuthGuard(RouteScreen)
 const MainTabs = () => {
+
+
+    const { friendRequests } = useContext(FriendRequestReceivedContext);
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -92,7 +97,7 @@ const MainTabs = () => {
                         <Text>
                             <Icon name="account-group" size={size} color={color} />
                         </Text>
-                        <Badge style={{position: "absolute", top: -5, right: -12.5}}>3</Badge>
+                        {friendRequests > 0 && <Badge style={{position: "absolute", top: -5, right: -12.5}}>{friendRequests}</Badge>}
                     </View>
                 },
             }} />
@@ -101,20 +106,20 @@ const MainTabs = () => {
 };
 
 export default function App() {
-
     return (
-        <PaperProvider>
-
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Connexion">
-                <Stack.Screen name="Connexion" component={ProtectedLogin} />
-                <Stack.Screen name="Deconnexion" component={LogoutScreen} />
-                <Stack.Screen name="Inscription" component={RegisterScreen} />
-                <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </PaperProvider>
+        <FriendRequestProvider>
+            <PaperProvider>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName="Connexion">
+                            <Stack.Screen name="Connexion" component={ProtectedLogin} />
+                            <Stack.Screen name="Deconnexion" component={LogoutScreen} />
+                            <Stack.Screen name="Inscription" component={RegisterScreen} />
+                            <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                            <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+            </PaperProvider>
+        </FriendRequestProvider>
 
       );
 }

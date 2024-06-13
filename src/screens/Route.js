@@ -270,7 +270,6 @@ const RouteScreen = ({ route, navigation }) => {
                 if (socket) {
                     socket.onmessage = (e) => {
                         const msg = JSON.parse(e.data);
-                        console.log(msg);
                         if (msg["route-uuid"]) {
                             const { routeId } = route.params;
                             if(routeId) {

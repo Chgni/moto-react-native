@@ -23,8 +23,6 @@ const HomeScreen = ({ navigation }) => {
     useEffect(() => {
         storageService.getHideWelcomeMessage().then((hideWelcomeMessage) => {
             if (!hideWelcomeMessage) {
-                console.log("yoo")
-                console.log(user)
                 setVisible(true)
             }
         })

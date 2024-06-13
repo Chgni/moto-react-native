@@ -33,7 +33,7 @@ const withAuthGuard = (WrappedComponent) => {
                                 alert('TODO CLEAR JWT AND REDIRECT TO LOGIN!');
                             }
                             if (response.status === 200) {
-                                const url = encodeURI(`ws://82.65.153.125:8888/ws?token=Bearer ${jwt}`);
+                                const url = encodeURI(`ws://${process.env.API_URL}/ws?token=Bearer ${jwt}`);
 
                                 const socketInfos = new WebSocket(url);
 
