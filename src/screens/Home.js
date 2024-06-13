@@ -1,6 +1,5 @@
 import { View, StyleSheet, Linking } from 'react-native';
 import React, {useContext, useEffect} from 'react';
-import { View, StyleSheet } from 'react-native';
 import {Tab, TabView} from "@rneui/base";
 import RouteService from "../services/RouteService";
 import FloatingButton from "../components/common/FloatingButton";
