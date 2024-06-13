@@ -65,6 +65,7 @@ const RouteScreen = ({ route, navigation }) => {
             } else {
                 setDate(selectedDate);
                 const updatedNavigationRoute = { ...navigationRoute, date: selectedDate };
+                selectedDate = formatFrenchDate(selectedDate);
                 updatedNavigationRoute.date = selectedDate
 
                 setNavigationRoute(updatedNavigationRoute);
