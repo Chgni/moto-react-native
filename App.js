@@ -107,6 +107,7 @@ const MainTabs = () => {
 
 export default function App() {
     return (
+
         <FriendRequestProvider>
             <PaperProvider>
                     <NavigationContainer>

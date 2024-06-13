@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, StyleSheet, Image, Linking, BackHandler} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
@@ -33,11 +33,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faMugSaucer} from "@fortawesome/free-solid-svg-icons/faMugSaucer";
 import {faLocation} from "@fortawesome/free-solid-svg-icons/faLocation";
 import {faLocationDot} from "@fortawesome/free-solid-svg-icons/faLocationDot";
+import {WebSocketContext} from "../contexts/WebSocketContext";
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
     const [openRouteFab, setOpenRouteFab] = useState(false)
-    const { user, token, socket } = useUser();
+    const { user, token} = useUser();
+    const { websocket } = useContext(WebSocketContext)
     const [navigationRoute, setNavigationRoute] = useState(null);
     const [friends, setFriends] = useState([]);
     const [waypoints, setWaypoints] = useState([])
@@ -267,8 +269,8 @@ const RouteScreen = ({ route, navigation }) => {
             setNavigationRoute(navigationRoute)
         } else {
             if (user && route.params != undefined) {
-                if (socket) {
-                    socket.onmessage = (e) => {
+                if (websocket) {
+                    websocket.onmessage = (e) => {
                         const msg = JSON.parse(e.data);
                         if (msg["route-uuid"]) {
                             const { routeId } = route.params;

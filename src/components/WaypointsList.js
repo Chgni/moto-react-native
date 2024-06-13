@@ -4,27 +4,7 @@ import {useEffect, useState} from "react";
 import Geocoder from 'react-native-geocoding';
 
 const WaypointsList = ({ steps, deleteStep, allowDelete}) => {
-    Geocoder.init("AIzaSyA8GbERy29dn5hEZKj3G1FG8SQoPC9Ocqs");
 
-    useEffect(() => {
-
-        steps.forEach((step, index) => {
-            // Check if the address is not already set
-            if (step.latitude && step.longitude && !step.address) {
-                getReverseGeocoding(step.latitude, step.longitude, index);
-            }
-        });
-
-    }, [steps]);
-
-    const getReverseGeocoding = (latitude, longitude, stepIndex) => { //commented for less google api calls
- /*       Geocoder.from(latitude, longitude)
-            .then(json => {
-                const address = json.results[0].formatted_address;
-                steps[stepIndex].address = address;
-            })
-            .catch(error => console.warn(error));*/
-    };
     if (steps.length == 0) {
         return null
     }
@@ -61,6 +41,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         width: 275,
+        height: 50
     },
     menuItem: {
         width: '100%',
