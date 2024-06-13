@@ -250,7 +250,10 @@ const RouteScreen = ({ route, navigation }) => {
 
     const loadRoute = async (routeId) => {
         try {
+            console.log("loading")
             const navigationRoute = await routeService.getRouteById(routeId)
+            console.log("loaded")
+
             setNavigationRoute(navigationRoute)
             if (navigationRoute.date != null) {
                 const date = formatFrenchDate(navigationRoute.date);
@@ -336,11 +339,15 @@ const RouteScreen = ({ route, navigation }) => {
         })
     }
     useEffect(() => {
+
         if (pageType == "create" && user) {
             const navigationRoute = new RouteModel(null, null, null, null, null, null, [])
             setNavigationRoute(navigationRoute)
         } else {
+            console.log(user)
             if (user && route.params != undefined) {
+                console.log('tyoo')
+
                 if (websocket) {
                     websocket.onmessage = (e) => {
                         const msg = JSON.parse(e.data);
