@@ -60,6 +60,11 @@ export default class RouteService {
         )
     }
 
+    async updateRight(route, member)  {
+        await this.#api.put(`/routes/rights/${route.id}/${member.id}`
+        )
+    }
+
     async patch(route, distance, duration)  {
 
         await this.#api.patch(`/routes/${route.id}/`, {

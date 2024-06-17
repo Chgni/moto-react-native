@@ -287,6 +287,18 @@ const RouteScreen = ({ route, navigation }) => {
             //TODO: error handling
         }
     }
+    const updateRight = async (route, member) => {
+        try {
+            console.log('test');
+            await routeService.updateRight(route, member).then(
+                () => {
+                    Toast.show("Droit modifié !", Toast.SHORT)
+                }
+            )
+        } catch (e) {
+            Toast.show("Erreur : droit non modifié !", Toast.SHORT)
+        }
+    }
     const addMember = async (user_to_add) => {
         try {
             await routeService.addMember(navigationRoute.id, user_to_add.id)
@@ -528,7 +540,9 @@ const RouteScreen = ({ route, navigation }) => {
                                         return (
                                             <View key={member.id}>
                                                     <Divider />
-                                                    <MemberCard user={member}  removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
+                                                    <MemberCard user={member} updateRight={() => updateRight(navigationRoute, member)}
+                                                                route={navigationRoute}
+                                                                removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
                                             </View>
                                         )
                                     }

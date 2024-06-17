@@ -1,8 +1,20 @@
 import {TouchableOpacity, View} from "react-native";
-import {Avatar, Chip, IconButton, MD3Colors, Text} from "react-native-paper";
+import {Avatar, Chip, IconButton, MD3Colors, Text, Switch} from "react-native-paper";
 import React from "react";
 
-const MemberCard = ({user, removeMember = null, role = null, addMember}) => {
+const MemberCard = ({user, removeMember = null, role = null, addMember, updateRight = null, route = null}) => {
+
+    const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+    //const [loading, setLoading] = React.useState(false);
+    //const [isSwitchOn, setIsSwitchOn] = React.useState(user.canUpdateRoute);
+
+    const onChange = () => {
+        setIsSwitchOn(!isSwitchOn);
+        if (updateRight) {
+            updateRight();
+        }
+    }
+
     return (
         <TouchableOpacity style={{
             paddingStart: 15,
@@ -20,10 +32,11 @@ const MemberCard = ({user, removeMember = null, role = null, addMember}) => {
 
                 <Text variant="titleLarge" style={{paddingEnd: 10}} h4>{user.username}</Text>
                 {role != null && <Chip style={{}} icon="information">Organisateur</Chip>}
-
-
+                {role == null && updateRight != null &&
+                    <Switch value={isSwitchOn} onValueChange={ onChange } />}
 
             </View>
+
 
             { removeMember && <IconButton icon={"close"} size={30}
                 onPress={removeMember} >Retirer</IconButton> }
