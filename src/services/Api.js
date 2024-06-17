@@ -14,6 +14,7 @@ axios.interceptors.request.use(
         if (storedToken) {
             config.headers.Authorization = `Bearer ${storedToken}`;
         }
+
         return config;
     },
     (error) => Promise.reject(error)
