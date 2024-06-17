@@ -1,5 +1,5 @@
+import { View, StyleSheet, Linking } from 'react-native';
 import React, {useContext, useEffect} from 'react';
-import { View, StyleSheet } from 'react-native';
 import {Tab, TabView} from "@rneui/base";
 import RouteService from "../services/RouteService";
 import FloatingButton from "../components/common/FloatingButton";
@@ -46,10 +46,24 @@ const HomeScreen = ({ navigation }) => {
     const getRoutesJoined = async () => {
         return await routeService.getRoutes(false, true)
     }
+
+    const openURL = (url) => {
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    return Linking.openURL(url);
+                } else {
+                    Alert.alert(`Don't know how to open this URL: ${url}`);
+                }
+            })
+            .catch((err) => console.error('An error occurred', err));
+    };
+
     return (
             <View style={styles.container}>
                 <Appbar.Header>
                     <Appbar.Content title={<Text variant='headlineMedium'>CommuMoto - Beta</Text>} />
+                    <Appbar.Action icon="comment-question-outline" onPress={() => openURL('https://forms.gle/ZYtryWpYZ2FpJx7Z7')} />
                     <Appbar.Action icon="logout" onPress={() => {
                         authService.disconnect();
                         navigation.replace("Connexion")

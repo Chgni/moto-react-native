@@ -23,6 +23,8 @@ const FriendsScreen = () => {
         fetchFriendRequests()
         friendsOwnedRef.current.update()
         friendsSentRef.current.update()
+
+        console.log(friendsReceivedRef);
     }
 
     useEffect(() => {
