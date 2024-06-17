@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, StyleSheet, Image, Linking, BackHandler} from 'react-native';
+import {View, StyleSheet, Image, Linking, BackHandler, ScrollView} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
 import {
@@ -10,7 +10,7 @@ import {
     Portal,
     Modal,
     Dialog, FAB,
-    TextInput
+    TextInput, Surface, IconButton
 } from 'react-native-paper'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -34,6 +34,9 @@ import {faMugSaucer} from "@fortawesome/free-solid-svg-icons/faMugSaucer";
 import {faLocation} from "@fortawesome/free-solid-svg-icons/faLocation";
 import {faLocationDot} from "@fortawesome/free-solid-svg-icons/faLocationDot";
 import webSocketService from "../services/WebSocketService";
+import Waypoint from "../components/route/Waypoint";
+import UserWaypoint from "../components/route/UserWaypoint";
+import waypoint from "../components/route/Waypoint";
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
@@ -52,6 +55,7 @@ const RouteScreen = ({ route, navigation }) => {
     const [totalTime, setTotalTime] = useState(null);
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
+    const [wayPointSelectionMode, setWayPointSelectionMode] = useState(false)
     const createButtonHandler = () => {
         if (waypoints.length < 2) {
             Toast.show("Veuillez placer au moins 2 points", Toast.SHORT)
@@ -90,7 +94,7 @@ const RouteScreen = ({ route, navigation }) => {
     }
     const openInMaps = () => {
         let formattedString = '';
-        for(let waypoint of waypoints) {
+        for(let waypoint of getRouteWaypoints()) {
             formattedString+=`/${waypoint.latitude},${waypoint.longitude}`
         }
         Linking.openURL(`https://www.google.co.in/maps/dir${formattedString}/?action=navigate`);
@@ -98,7 +102,7 @@ const RouteScreen = ({ route, navigation }) => {
 
     const saveGpx = async () => {
         const points = [];
-        for(let waypoint of waypoints) {
+        for(let waypoint of getRouteWaypoints()) {
             points.push(new Point(waypoint.latitude, waypoint.longitude, {
                 // ele: 314.715,
                 // time: new Date('2018-06-10T17:29:35Z'),
@@ -134,7 +138,7 @@ const RouteScreen = ({ route, navigation }) => {
         updateWaypoints(updatedSteps)
     };
     const getOrigin = () => {
-        return {latitude: waypoints[0].latitude, longitude: waypoints[0].longitude};
+        return {latitude: getRouteWaypoints()[0].latitude, longitude: getRouteWaypoints()[0].longitude};
     }
     const onMarkerDragEnd = async (e, index) => {
         const updatedSteps = waypoints.map((item, i) => {
@@ -174,25 +178,58 @@ const RouteScreen = ({ route, navigation }) => {
         }
 
     }
-    const getMapsWaypoints = () => {
+    const getRouteWaypoints = () => {
+        return waypoints.filter((waypoint) => waypoint.order != null)
+    }
+    const getMapsWaypointsExceptLastOne = () => {
+
         const mapsWaypoints = [];
-        waypoints.slice(1, waypoints.length - 1).map( (item) => {
-            mapsWaypoints.push({latitude: item.latitude, longitude: item.longitude});
+        getRouteWaypoints().slice(1, getRouteWaypoints().length - 1).map( (item) => {
+            mapsWaypoints.push({latitude: item.latitude, longitude: item.longitude, order: item.order});
         })
         return mapsWaypoints;
     }
     const handleMapPress = (e) => {
-        if (waypoints.length==10) {
-            return setvisibleWaypointDialog(true)
+        if (wayPointSelectionMode == true) {
+            const { latitude, longitude } = e.nativeEvent.coordinate;
+            let alreadyPlacedWaypoint =waypoints.find((waypoint) => waypoint.order == null) //TODO: change the condition after the api is changed for waypoint.user.id == user.id
+            if (alreadyPlacedWaypoint) {
+                const updated_waypoints = waypoints
+                const indexOfPlacedWaypoint = waypoints.findIndex((waypoint) => waypoint == alreadyPlacedWaypoint)
+                updated_waypoints.splice(indexOfPlacedWaypoint, 1)
+                const newMarker = {
+                    latitude: latitude,
+                    longitude: longitude,
+                    order: null,
+                    key: Math.random().toString()
+                };
+                updateWaypoints([...waypoints, newMarker]);
+
+            } else {
+                const newMarker = {
+                    latitude: latitude,
+                    longitude: longitude,
+                    order: null,
+                    key: Math.random().toString()
+                };
+                updateWaypoints([...waypoints, newMarker]);
+            }
+
+        } else {
+            if (waypoints.length==10) {
+                return setvisibleWaypointDialog(true)
+            }
+            const { latitude, longitude } = e.nativeEvent.coordinate;
+            const newMarker = {
+                latitude: latitude,
+                longitude: longitude,
+                order: getRouteWaypoints().length+1,
+                key: Math.random().toString()
+            };
+            updateWaypoints([...waypoints, newMarker]);
+
         }
-        const { latitude, longitude } = e.nativeEvent.coordinate;
-        const newMarker = {
-            latitude: latitude,
-            longitude: longitude,
-            order: waypoints.length+1,
-            key: Math.random().toString()
-        };
-        updateWaypoints([...waypoints, newMarker]);
+
     };
 
     const loadRoute = async (routeId) => {
@@ -201,7 +238,6 @@ const RouteScreen = ({ route, navigation }) => {
 
             setNavigationRoute(navigationRoute)
             setWaypoints(navigationRoute.waypoints)
-
         } catch (e) {
             // TODO handle error
         }
@@ -219,8 +255,10 @@ const RouteScreen = ({ route, navigation }) => {
         setVisibleMemberModal(!visibleMemberModal);
     }
     const getDestination = () => {
-        const step = waypoints[waypoints.length - 1];
-        return {latitude: step.latitude, longitude: step.longitude};
+        const step = getRouteWaypoints()[getRouteWaypoints().length - 1];
+        console.log("destination")
+        console.log(step)
+        return {latitude: step.latitude, longitude: step.longitude, order: step.order};
     }
     const removeMember = async (memberId) => {
         try {
@@ -270,7 +308,6 @@ const RouteScreen = ({ route, navigation }) => {
             setNavigationRoute(navigationRoute)
         } else {
             if (user && route.params != undefined) {
-                webSocketService.sendMessage({"ee": "oskdrksero"})
                 if (webSocketService.socket) {
                     webSocketService.socket.addEventListener('message', (e) => {
                         const msg = JSON.parse(e.data);
@@ -309,6 +346,13 @@ const RouteScreen = ({ route, navigation }) => {
         }
 
     }, [user, token]);
+    const enableSelectWayPointMode = () => {
+        setWayPointSelectionMode(true)
+
+    }
+    const cancelSelectWayPointMode = () => {
+        setWayPointSelectionMode(false)
+    }
     const handleBackButtonClick = () => {
         navigation.navigate("Home")
     }
@@ -332,63 +376,74 @@ const RouteScreen = ({ route, navigation }) => {
                 {user && navigationRoute &&
                     <TabView.Item style={{ width: '100%' }} >
                     <View style={{ width: '100%', height: '100%' }}>
-                        <WaypointsList steps={waypoints} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={waypoints.length <= 2 ? false: true}/>
+                        <Surface style={styles.surface} elevation={4}>
+                            {wayPointSelectionMode == false && <ScrollView style={styles.menu}>
+                                {pageType == "update" && wayPointSelectionMode == false && <View style={{marginStart: 10, marginEnd: 10, marginTop: 5}}>
+                                    <View><Text variant="bodySmall">Vous rejoignez en cours de route ?</Text></View>
+                                    <View><Button style={{margin: 0}} compact={true} onPress={()=>{enableSelectWayPointMode()}}>Selectionnez votre point de depart</Button></View>
 
-                        <MapView
+                                </View>}
+                                <WaypointsList steps={getRouteWaypoints()} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={getRouteWaypoints().length <= 2 ? false: true}/>
+                            </ScrollView>}
+
+                        </Surface>
+                        <View style={{height: "100%", width: "100%",
+                            borderColor: "#ff8700",
+                            borderWidth: wayPointSelectionMode == false ? 0: 5
+
+                        }}
+                        >
+
+                            <MapView
                                 ref={mapRef}
                                 style={styles.mapStyle}
-                                 onPress={handleMapPress}
-                                 provider={PROVIDER_GOOGLE}
-                                 initialRegion={{
-                                     latitude: 46.603354,
-                                     longitude: 1.888334,
-                                     latitudeDelta: 10,
-                                     longitudeDelta: 10,
-                                 }}
+                                onPress={handleMapPress}
+                                provider={PROVIDER_GOOGLE}
+                                initialRegion={{
+                                    latitude: 46.603354,
+                                    longitude: 1.888334,
+                                    latitudeDelta: 10,
+                                    longitudeDelta: 10,
+                                }}
                                 onMapReady={() => {
-                                    if (waypoints.length !== 0) {
+                                    if (getRouteWaypoints().length !== 0) {
                                         mapRef.current.animateToRegion({
-                                            latitude: waypoints[0].latitude,
-                                            longitude: waypoints[0].longitude,
+                                            latitude: getRouteWaypoints()[0].latitude,
+                                            longitude: getRouteWaypoints()[0].longitude,
                                             latitudeDelta: 0.1,
                                             longitudeDelta: 0.1
                                         })
                                     }
                                 }}
-                        >
-                            {waypoints.length != 0 && waypoints.map((marker, index) => (
-                                <Marker
-                                    draggable={true}
-                                    onDragEnd={(e) => onMarkerDragEnd(e, index)}
-                                    key={index}
-                                    tracksViewChanges={false}
-                                    coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-                                >
-                                    <View>
-                                        <FontAwesomeIcon icon={faLocationDot} size={35} color={"red"}/>
-                                        <View style={styles.customMarker}>
-                                            <Text style={styles.markerText}>{marker.order}</Text>
-                                        </View>
-                                    </View>
-                                </Marker>
-                            ))}
-                            { route && waypoints.length >= 2 && <MapViewDirections
-                                precision="high"
-                                origin={getOrigin()}
-                                destination={getDestination()}
-                                waypoints={getMapsWaypoints()}
-                                onReady={result => {
-                                    setTotalDistance(result.distance);
-                                    setTotalTime(result.duration);
-                                    if (getMapsWaypoints().length >= 2 && pageType == "update") {
-                                        //routePatch(route.params.routeId, result.distance.toFixed(), result.duration.toFixed());
+                            >
+                                {getRouteWaypoints().length != 0 && waypoints.map((marker, index) => {
+                                    if (marker.order == null) {
+                                        return (<UserWaypoint key={index} marker={marker} index={index} onMarkerDragEnd={onMarkerDragEnd} /> )
                                     }
-                                }}
-                                strokeWidth={3}
-                                strokeColor={"#34a4eb"}
-                                apikey={process.env.GOOGLE_MAPS_API_KEY}
-                            />}
-                        </MapView>
+                                    return ( <Waypoint key={index} marker={marker} index={index} onMarkerDragEnd={onMarkerDragEnd} />
+                                        )
+                                })}
+                                { route && getRouteWaypoints().length >= 2 && <MapViewDirections
+                                    precision="high"
+                                    origin={getOrigin()}
+                                    destination={getDestination()}
+                                    waypoints={getMapsWaypointsExceptLastOne()}
+                                    onReady={result => {
+                                        setTotalDistance(result.distance);
+                                        setTotalTime(result.duration);
+                                        if (getMapsWaypointsExceptLastOne().length >= 2 && pageType == "update") {
+                                            //routePatch(route.params.routeId, result.distance.toFixed(), result.duration.toFixed());
+                                        }
+                                    }}
+                                    strokeWidth={3}
+                                    strokeColor={"#34a4eb"}
+                                    apikey={process.env.GOOGLE_MAPS_API_KEY}
+                                />}
+                            </MapView>
+                            {wayPointSelectionMode == true && <View style={{position: "absolute", top: 0, right: 0}}><IconButton mode="contained" icon="close" onPress={cancelSelectWayPointMode} /></View>}
+
+                        </View>
+
                         <Portal>
                             <Dialog visible={visibleNameModal} onDismiss={() => setVisibleNameModal(false)}>
                                 <Dialog.Content>
@@ -465,23 +520,23 @@ const RouteScreen = ({ route, navigation }) => {
                 ) }
 
             </View>
-                <View style={styles.totalsInfosRouteContainer}>
-                    {totalTime && totalDistance && <View style={styles.totalInfosRoute}>
-                        <Text>Distance: {totalDistance.toFixed()} Kms</Text>
-                        <Text>Temps: {convertMinsToTime(totalTime.toFixed())}</Text>
-                    </View>}
-                </View>
-                <Portal>
-                    <Dialog visible={visibleWaypointDialog} onDismiss={() => {setvisibleWaypointDialog(false)}}>
-                        <Dialog.Title>Désolé</Dialog.Title>
-                        <Dialog.Content>
-                            <Text variant="bodyMedium">La version béta de l'application ne permet pas d'ajouter plus de 9 points</Text>
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                            <Button onPress={() => {setvisibleWaypointDialog(false)}}>OK</Button>
-                        </Dialog.Actions>
-                    </Dialog>
-                </Portal>
+            <View style={styles.totalsInfosRouteContainer}>
+                {totalTime && totalDistance && <View style={styles.totalInfosRoute}>
+                    <Text>Distance: {totalDistance.toFixed()} Kms</Text>
+                    <Text>Temps: {convertMinsToTime(totalTime.toFixed())}</Text>
+                </View>}
+            </View>
+            <Portal>
+                <Dialog visible={visibleWaypointDialog} onDismiss={() => {setvisibleWaypointDialog(false)}}>
+                    <Dialog.Title>Désolé</Dialog.Title>
+                    <Dialog.Content>
+                        <Text variant="bodyMedium">La version béta de l'application ne permet pas d'ajouter plus de 9 points</Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => {setvisibleWaypointDialog(false)}}>OK</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </View>
 
     )
@@ -489,6 +544,12 @@ const RouteScreen = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    menu: {
+
+        backgroundColor: 'white',
+        borderRadius: 5,
+
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -521,32 +582,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 5
     },
+
     totalsInfosRouteInfos: {
         display: 'flex',
         flexDirection: 'column',
-    },
-    customMarker: {
-        position: "absolute",
-        top: 0,
-        left: 5,
-        backgroundColor: "red",
-        padding: 2,
-        width: 25,
-        borderRadius: 20,
-        borderStyle: "solid",
-        borderWidth: 1,
-        borderColor: "red",
-        display: "flex",
-        alignItems: "center"
-    },
-    markerText: {
-        color: '#fff',
-        fontWeight: 'bold',
     },
     modal: {
         backgroundColor: 'white',
         padding: 20,
         margin: 10
+    },
+    surface: {
+        position: 'absolute',
+        top: 30,
+        left: 30,
+        right: 30,
+        maxHeight: 157,
+        zIndex: 10,
     },
 });
 const containerStyle = {backgroundColor: 'white', padding: 20};

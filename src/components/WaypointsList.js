@@ -8,9 +8,7 @@ const WaypointsList = ({ steps, deleteStep, allowDelete}) => {
     if (steps.length == 0) {
         return null
     }
-    return (
-            <Surface style={styles.surface} elevation={4}>
-                <ScrollView style={styles.menu}>
+    return ( <>
                     {steps.map((step, index) => (
                         <View key={index} style={styles.menuItem}>
                             <View style={styles.menuItemWrapper} >
@@ -23,19 +21,12 @@ const WaypointsList = ({ steps, deleteStep, allowDelete}) => {
                             <Divider style={{marginStart:25, marginEnd: 35}} />
                         </View>
                     ))}
-                </ScrollView>
-            </Surface>
-
+        </>
     );
 };
 
 const styles = StyleSheet.create({
-    menu: {
 
-        backgroundColor: 'white',
-        borderRadius: 5,
-
-    },
     menuItemWrapper: {
         display: "flex",
         flexDirection: "row",
@@ -54,14 +45,7 @@ const styles = StyleSheet.create({
     removeStep: {
         borderRadius: 50,
     },
-    surface: {
-        position: 'absolute',
-        top: 30,
-        left: 30,
-        right: 30,
-        maxHeight: 157,
-        zIndex: 10,
-    },
+
 
 
 });

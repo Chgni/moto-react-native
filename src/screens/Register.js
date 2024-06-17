@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import Toast from "react-native-simple-toast";
 import AuthService from "../services/AuthService";
+import {Button, TextInput, Text} from "react-native-paper";
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -10,7 +11,7 @@ const RegisterScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false)
     const authService = new AuthService()
-    const handleSignIn = async () => {
+    const handleSignUp = async () => {
         if (email && password && username) {
             try {
                 setIsSubmitting(true)
@@ -50,8 +51,10 @@ const RegisterScreen = ({ navigation }) => {
             <Button
                 title={isSubmitting ? "Enregistrement..." : "S'enregistrer"}
                 disabled={!email || !username || !password || isSubmitting}
-                onPress={handleSignIn}
-            />
+                loading={isSubmitting}
+                mode="contained"
+                onPress={handleSignUp}
+            >{isSubmitting ? "Enregistrement..." : "S'enregistrer"} </Button>
             <Text
                 style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Connexion')}

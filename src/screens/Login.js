@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {useIsFocused} from "@react-navigation/native";
 import AuthService from "../services/AuthService";
 import {UnauthorizedError} from "../errors/ApiCallError";
 import StorageService from "../services/storageService";
 import Toast from 'react-native-simple-toast';
+import {TextInput, Text, Button} from "react-native-paper";
 
 const LoginScreen = ({ navigation, route }) => {
 
@@ -79,9 +80,10 @@ const LoginScreen = ({ navigation, route }) => {
             />
             <Button
                 disabled={!email || !password || isSubmitting}
-                title={isSubmitting ? "Connexion..." : "Se connecter"}
+                loading={isSubmitting}
+                mode="contained"
                 onPress={() => handleSignIn(null, null)}
-            />
+            >{isSubmitting ? "Connexion..." : "Se connecter"}</Button>
             <Text
                 style={{color: 'blue', fontWeight: 'bold', textDecorationLine: 'underline', marginTop: 20}}
                 onPress={() => navigation.navigate('Inscription')}
