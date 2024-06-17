@@ -34,13 +34,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faMugSaucer} from "@fortawesome/free-solid-svg-icons/faMugSaucer";
 import {faLocation} from "@fortawesome/free-solid-svg-icons/faLocation";
 import {faLocationDot} from "@fortawesome/free-solid-svg-icons/faLocationDot";
-import {WebSocketContext} from "../contexts/WebSocketContext";
+import webSocketService from "../services/WebSocketService";
 const RouteScreen = ({ route, navigation }) => {
     const routeService = new RouteService()
     const friendsService = new FriendsService()
     const [openRouteFab, setOpenRouteFab] = useState(false)
     const { user, token} = useUser();
-    const { websocket } = useContext(WebSocketContext)
     const [navigationRoute, setNavigationRoute] = useState(null);
     const [friends, setFriends] = useState([]);
     const [waypoints, setWaypoints] = useState([])
@@ -250,9 +249,7 @@ const RouteScreen = ({ route, navigation }) => {
 
     const loadRoute = async (routeId) => {
         try {
-            console.log("loading")
             const navigationRoute = await routeService.getRouteById(routeId)
-            console.log("loaded")
 
             setNavigationRoute(navigationRoute)
             if (navigationRoute.date != null) {
@@ -344,12 +341,10 @@ const RouteScreen = ({ route, navigation }) => {
             const navigationRoute = new RouteModel(null, null, null, null, null, null, [])
             setNavigationRoute(navigationRoute)
         } else {
-            console.log(user)
             if (user && route.params != undefined) {
-                console.log('tyoo')
-
-                if (websocket) {
-                    websocket.onmessage = (e) => {
+                webSocketService.sendMessage({"ee": "oskdrksero"})
+                if (webSocketService.socket) {
+                    webSocketService.socket.addEventListener('message', (e) => {
                         const msg = JSON.parse(e.data);
                         if (msg["route-uuid"]) {
                             const { routeId } = route.params;
@@ -359,7 +354,18 @@ const RouteScreen = ({ route, navigation }) => {
                                 setLoading(false)
                             }
                         }
-                    };
+                    })
+                    // websocket.onmessage = (e) => {
+                    //     const msg = JSON.parse(e.data);
+                    //     if (msg["route-uuid"]) {
+                    //         const { routeId } = route.params;
+                    //         if(routeId) {
+                    //             loadData(routeId)
+                    //         } else {
+                    //             setLoading(false)
+                    //         }
+                    //     }
+                    // };
                 }
 
                 const { routeId } = route.params;

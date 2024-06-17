@@ -9,18 +9,22 @@ import StorageService from "../services/storageService"
 import AuthService from "../services/AuthService";
 import WelcomeScreen from "./Welcome";
 import {useUser} from "../guards/WithAuthGuard";
-import {WebSocketContext} from "../contexts/WebSocketContext";
+import webSocketService from "../services/WebSocketService";
 
 const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
-    const {openWebSocket} = useContext(WebSocketContext)
     const routeService = new RouteService();
     const authService = new AuthService();
-    const storageService = new StorageService();
     const [visible, setVisible] = React.useState(false);
+    const storageService = new StorageService()
     const {user} = useUser();
     useEffect(() => {
-        openWebSocket()
+        storageService.getJwt().then(jwt => {
+            const url = encodeURI(`ws://${process.env.API_URL}/ws?token=Bearer ${jwt}`);
+            webSocketService.initializeSocket(url)
+        })
+
+
     }, []);
     const hideModal = () => {
         setVisible(false);

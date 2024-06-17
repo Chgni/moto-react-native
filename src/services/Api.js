@@ -31,6 +31,7 @@ axios.interceptors.response.use(function (response) {
             return Promise.reject(UnauthorizedError)
         }
         if (error.response.status === 404) {
+            console.log(error.request.responseURL)
             console.log(error.response.data.detail)
         }
         if (error.response.status === 422) {

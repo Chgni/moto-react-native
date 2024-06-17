@@ -23,6 +23,7 @@ import StorageService from "./src/services/storageService";
 import AuthService from "./src/services/AuthService";
 import RouteScreen from "./src/screens/Route";
 import {FriendRequestProvider, FriendRequestReceivedContext} from "./src/contexts/FriendRequestReceivedContext";
+import webSocketService from "./src/services/WebSocketService";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -107,20 +108,20 @@ const MainTabs = () => {
 
 export default function App() {
     return (
-
         <FriendRequestProvider>
             <PaperProvider>
-                    <NavigationContainer>
-                        <Stack.Navigator initialRouteName="Connexion">
-                            <Stack.Screen name="Connexion" component={ProtectedLogin} />
-                            <Stack.Screen name="Deconnexion" component={LogoutScreen} />
-                            <Stack.Screen name="Inscription" component={RegisterScreen} />
-                            <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                            <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
-                        </Stack.Navigator>
-                    </NavigationContainer>
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Connexion">
+                        <Stack.Screen name="Connexion" component={ProtectedLogin} />
+                        <Stack.Screen name="Deconnexion" component={LogoutScreen} />
+                        <Stack.Screen name="Inscription" component={RegisterScreen} />
+                        <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                        <Stack.Screen name="Route" component={ProtectedRoute} options={{ headerShown: false }} />
+                    </Stack.Navigator>
+                </NavigationContainer>
             </PaperProvider>
         </FriendRequestProvider>
+
 
       );
 }
