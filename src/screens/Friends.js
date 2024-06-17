@@ -5,7 +5,7 @@ import {Tab, TabView} from "@rneui/base";
 import FriendsOwned from "../components/friends/friends-tab/FriendsOwned";
 import FriendsSent from "../components/friends/friends-tab/FriendsSent";
 import FriendsReceived from "../components/friends/friends-tab/FriendsReceived";
-import {Appbar, Text} from "react-native-paper";
+import {Appbar, Badge, Text} from "react-native-paper";
 import FloatingButton from "../components/common/FloatingButton";
 import FriendsService from "../services/FriendsService";
 import {FriendRequestReceivedContext} from "../contexts/FriendRequestReceivedContext";
@@ -16,6 +16,7 @@ const FriendsScreen = () => {
     const friendsReceivedRef = useRef()
     const friendsSentRef = useRef()
     const { fetchFriendRequests } = useContext(FriendRequestReceivedContext);
+    const { friendRequests } = useContext(FriendRequestReceivedContext);
 
     const updateAllTabs = () => {
         friendsReceivedRef.current.update()
@@ -41,7 +42,10 @@ const FriendsScreen = () => {
                 <Tab value={index} onChange={setIndex} dense>
                     <Tab.Item>Amis</Tab.Item>
                     <Tab.Item>Invitations envoyées</Tab.Item>
-                    <Tab.Item>Invitations reçues</Tab.Item>
+                    <Tab.Item>
+                            Invitations reçues
+                            {friendRequests > 0 &&<Badge style={{position: "absolute", top: 0, right: 15}}>{friendRequests}</Badge>}
+                    </Tab.Item>
                 </Tab>
                 <TabView value={index} onChange={setIndex} animationType="spring">
                     <TabView.Item style={{ width: '100%' }}>
