@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {View, StyleSheet, Image, Linking, BackHandler, ScrollView} from 'react-native';
 import WaypointsList from '../components/WaypointsList';
 import { buildGPX, GarminBuilder } from 'gpx-builder';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
     Button,
     Text,
@@ -56,6 +57,46 @@ const RouteScreen = ({ route, navigation }) => {
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
     const [wayPointSelectionMode, setWayPointSelectionMode] = useState(false)
+    const [date, setDate] = useState(new Date());
+    const [datePickerMode, setDatePickerMode] = useState('date');
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const onChange = (event, selectedDate) => {
+        if (event.type == 'set') {
+            setShowDatePicker(false);
+            if (datePickerMode == 'date') {
+                setDate(selectedDate);
+                showTimepicker();
+            } else {
+                setDate(selectedDate);
+                const updatedNavigationRoute = { ...navigationRoute, date: selectedDate };
+                selectedDate = formatFrenchDate(selectedDate);
+                updatedNavigationRoute.date = selectedDate
+
+                setNavigationRoute(updatedNavigationRoute);
+                //appel api update date
+                updateDate(navigationRoute, selectedDate);
+                // Toast.show("Date mise à jour !", Toast.SHORT)
+            }
+        }
+    };
+
+
+    const showMode = (currentMode) => {
+        setDatePickerMode(currentMode);
+        setShowDatePicker(true);
+
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
+
+    const showTimepicker = () => {
+        showMode('time');
+    };
+
+
     const createButtonHandler = () => {
         if (waypoints.length < 2) {
             Toast.show("Veuillez placer au moins 2 points", Toast.SHORT)
@@ -232,11 +273,27 @@ const RouteScreen = ({ route, navigation }) => {
 
     };
 
+    const formatFrenchDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris',
+            day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+         });
+    };
+
     const loadRoute = async (routeId) => {
         try {
             const navigationRoute = await routeService.getRouteById(routeId)
 
             setNavigationRoute(navigationRoute)
+            if (navigationRoute.date != null) {
+                const date = formatFrenchDate(navigationRoute.date);
+                navigationRoute.date = date;
+                setNavigationRoute(navigationRoute)
+            }
             setWaypoints(navigationRoute.waypoints)
         } catch (e) {
             // TODO handle error
@@ -268,6 +325,18 @@ const RouteScreen = ({ route, navigation }) => {
             //TODO: error handling
         }
     }
+    const updateRight = async (route, member) => {
+        try {
+            console.log('test');
+            await routeService.updateRight(route, member).then(
+                () => {
+                    Toast.show("Droit modifié !", Toast.SHORT)
+                }
+            )
+        } catch (e) {
+            Toast.show("Erreur : droit non modifié !", Toast.SHORT)
+        }
+    }
     const addMember = async (user_to_add) => {
         try {
             await routeService.addMember(navigationRoute.id, user_to_add.id)
@@ -277,6 +346,21 @@ const RouteScreen = ({ route, navigation }) => {
         } catch (error) {
             if( error.response ){
                 // TODO error handling
+            }
+        }
+    }
+
+    const updateDate = async (route, date) => {
+        try {
+            console.log(date);
+            await routeService.updateDate(route, date).then(
+                () => {
+                    Toast.show("Date mise à jour !", Toast.SHORT)
+                }
+            )
+        } catch (error) {
+            if( error.response ){
+                Toast.show("Date non mise à jour !", Toast.SHORT)
             }
         }
     }
@@ -364,7 +448,42 @@ const RouteScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => {navigation.goBack()}} />
-                <Appbar.Content title={pageType == "create" ? <Text variant="headlineMedium">Nouvel itinéraire</Text> : <ContentLoader loading={loading} pRows={0} ><Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text></ContentLoader>} />
+                <Appbar.Content
+                    title={pageType == "create" ?
+                        <>
+                            <Text variant="headlineMedium">Nouvel itinéraire </Text>
+                            {/*<View>*/}
+                            {/*    {showDatePicker && (*/}
+                            {/*        <DateTimePicker*/}
+                            {/*            testID="dateTimePicker"*/}
+                            {/*            value={date}*/}
+                            {/*            mode={datePickerMode}*/}
+                            {/*            is24Hour={true}*/}
+                            {/*            display="default"*/}
+                            {/*            onChange={onChange}*/}
+                            {/*        />*/}
+                            {/*    )}*/}
+                            {/*</View>*/}
+                        </>
+                        :
+                        <ContentLoader loading={loading} pRows={0} >
+                            <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
+                            <View>
+                                {showDatePicker && (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={date}
+                                        mode={datePickerMode}
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChange}
+                                    />
+                                )}
+                            </View>
+                            {navigationRoute && navigationRoute.date && <Text style={styles.date} variant="headlineMedium"> {navigationRoute.date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} </Text>}
+                        </ContentLoader>}
+                />
+                { pageType == 'update' && < Appbar.Action icon="calendar" onPress={showDatepicker} /> }
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
@@ -476,7 +595,9 @@ const RouteScreen = ({ route, navigation }) => {
                                         return (
                                             <View key={member.id}>
                                                     <Divider />
-                                                    <MemberCard user={member}  removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
+                                                    <MemberCard user={member} updateRight={() => updateRight(navigationRoute, member)}
+                                                                route={navigationRoute}
+                                                                removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
                                             </View>
                                         )
                                     }
