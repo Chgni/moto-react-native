@@ -57,23 +57,18 @@ const RouteScreen = ({ route, navigation }) => {
     const mapRef = React.createRef();
     const [createName, onChangeCreateName] = useState('')
     const [wayPointSelectionMode, setWayPointSelectionMode] = useState(false)
-    const [date, setDate] = useState(new Date());
+    const [datePickerDate, setDatePickerDate] = useState(new Date());
     const [datePickerMode, setDatePickerMode] = useState('date');
     const [showDatePicker, setShowDatePicker] = useState(false);
-
     const onChange = (event, selectedDate) => {
         if (event.type == 'set') {
             setShowDatePicker(false);
             if (datePickerMode == 'date') {
-                setDate(selectedDate);
+                setDatePickerDate(selectedDate);
                 showTimepicker();
             } else {
-                setDate(selectedDate);
-                const updatedNavigationRoute = { ...navigationRoute, date: selectedDate };
-                selectedDate = formatFrenchDate(selectedDate);
-                updatedNavigationRoute.date = selectedDate
+                setDatePickerDate(selectedDate);
 
-                setNavigationRoute(updatedNavigationRoute);
                 //appel api update date
                 updateDate(navigationRoute, selectedDate);
                 // Toast.show("Date mise à jour !", Toast.SHORT)
@@ -197,7 +192,6 @@ const RouteScreen = ({ route, navigation }) => {
         updateWaypoints(updatedSteps)
     }
     const updateWaypoints = (new_waypoints) => {
-
         const parsedWaypoints = [];
         for (let step of new_waypoints) {
             const filtered = {latitude: parseFloat(step.latitude.toFixed(5)),
@@ -233,8 +227,15 @@ const RouteScreen = ({ route, navigation }) => {
     const handleMapPress = (e) => {
         if (wayPointSelectionMode == true) {
             const { latitude, longitude } = e.nativeEvent.coordinate;
-            let alreadyPlacedWaypoint =waypoints.find((waypoint) => waypoint.order == null) //TODO: change the condition after the api is changed for waypoint.user.id == user.id
+            let alreadyPlacedWaypoint =waypoints.find((waypoint) => {
+                if (!waypoint.user) {
+                    return false;
+                }
+                return waypoint.user.id == user.id
+
+            } )
             if (alreadyPlacedWaypoint) {
+                //replace the previous one
                 const updated_waypoints = waypoints
                 const indexOfPlacedWaypoint = waypoints.findIndex((waypoint) => waypoint == alreadyPlacedWaypoint)
                 updated_waypoints.splice(indexOfPlacedWaypoint, 1)
@@ -242,7 +243,8 @@ const RouteScreen = ({ route, navigation }) => {
                     latitude: latitude,
                     longitude: longitude,
                     order: null,
-                    key: Math.random().toString()
+                    key: Math.random().toString(),
+                    user_id: user.id
                 };
                 updateWaypoints([...waypoints, newMarker]);
 
@@ -251,7 +253,8 @@ const RouteScreen = ({ route, navigation }) => {
                     latitude: latitude,
                     longitude: longitude,
                     order: null,
-                    key: Math.random().toString()
+                    key: Math.random().toString(),
+                    user_id: user.id
                 };
                 updateWaypoints([...waypoints, newMarker]);
             }
@@ -274,14 +277,31 @@ const RouteScreen = ({ route, navigation }) => {
     };
 
     const formatFrenchDate = (dateString) => {
+// Supposons que navigationRoute.date est un objet Date valide
         const date = new Date(dateString);
-        return date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris',
-            day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-         });
+
+// Utilisez Intl.DateTimeFormat pour formater la date avec le fuseau horaire Europe/Paris
+        const options = {
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Paris'
+        };
+
+        const formatter = new Intl.DateTimeFormat('fr-FR', options);
+        const formattedParts = formatter.formatToParts(date);
+
+// Extraire les parties formatées
+        const dateParts = {};
+        formattedParts.forEach(({ type, value }) => {
+            dateParts[type] = value;
+        });
+
+// Construire la date formatée dans le format souhaité
+        const dateFormatee = `${dateParts.day}/${dateParts.month}/${dateParts.year} ${dateParts.hour}h${dateParts.minute}`;
+        return dateFormatee
     };
 
     const loadRoute = async (routeId) => {
@@ -290,8 +310,6 @@ const RouteScreen = ({ route, navigation }) => {
 
             setNavigationRoute(navigationRoute)
             if (navigationRoute.date != null) {
-                const date = formatFrenchDate(navigationRoute.date);
-                navigationRoute.date = date;
                 setNavigationRoute(navigationRoute)
             }
             setWaypoints(navigationRoute.waypoints)
@@ -313,8 +331,6 @@ const RouteScreen = ({ route, navigation }) => {
     }
     const getDestination = () => {
         const step = getRouteWaypoints()[getRouteWaypoints().length - 1];
-        console.log("destination")
-        console.log(step)
         return {latitude: step.latitude, longitude: step.longitude, order: step.order};
     }
     const removeMember = async (memberId) => {
@@ -327,7 +343,6 @@ const RouteScreen = ({ route, navigation }) => {
     }
     const updateRight = async (route, member) => {
         try {
-            console.log('test');
             await routeService.updateRight(route, member).then(
                 () => {
                     Toast.show("Droit modifié !", Toast.SHORT)
@@ -350,10 +365,13 @@ const RouteScreen = ({ route, navigation }) => {
         }
     }
 
-    const updateDate = async (route, date) => {
+    const updateDate = async (route_to_update, date) => {
+        const updatedNavigationRoute = { ...navigationRoute, date: date };
+        updatedNavigationRoute.date = date.toISOString()
+
+        setNavigationRoute(updatedNavigationRoute);
         try {
-            console.log(date);
-            await routeService.updateDate(route, date).then(
+            await routeService.updateDate(route_to_update, date).then(
                 () => {
                     Toast.show("Date mise à jour !", Toast.SHORT)
                 }
@@ -467,12 +485,12 @@ const RouteScreen = ({ route, navigation }) => {
                         </>
                         :
                         <ContentLoader loading={loading} pRows={0} >
-                            <Text variant="headlineMedium">{navigationRoute != null && navigationRoute.name}</Text>
+                            <Text variant="headlineMedium" numberOfLines={1}>{navigationRoute != null && navigationRoute.name}</Text>
                             <View>
                                 {showDatePicker && (
                                     <DateTimePicker
                                         testID="dateTimePicker"
-                                        value={date}
+                                        value={datePickerDate}
                                         mode={datePickerMode}
                                         is24Hour={true}
                                         display="default"
@@ -480,10 +498,12 @@ const RouteScreen = ({ route, navigation }) => {
                                     />
                                 )}
                             </View>
-                            {navigationRoute && navigationRoute.date && <Text style={styles.date} variant="headlineMedium"> {navigationRoute.date.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })} </Text>}
                         </ContentLoader>}
                 />
-                { pageType == 'update' && < Appbar.Action icon="calendar" onPress={showDatepicker} /> }
+                { pageType == 'update' && <View style={{flexDirection: "row", alignItems: "center"}}>
+                    {navigationRoute && navigationRoute.date && <Text style={styles.date} variant="headlineMedium"> {formatFrenchDate(navigationRoute.date)} </Text>}
+                    < Appbar.Action icon="calendar" onPress={showDatepicker} />
+                </View> }
                 {/*pageType == 'update' && <Appbar.Action icon="calendar" onPress={() => {}} />*/}
             </Appbar.Header>
             <Tab value={tabIndex} onChange={setTabIndex} dense style={{display: pageType=='update' ? 'flex' : 'none'}}>
@@ -707,6 +727,14 @@ const styles = StyleSheet.create({
     totalsInfosRouteInfos: {
         display: 'flex',
         flexDirection: 'column',
+    },
+    date: {
+        marginRight: -10,
+        color: 'grey',
+        fontWeight: 'bold',
+        fontSize: 16,
+        height: 30,
+        lineHeight: 30,
     },
     modal: {
         backgroundColor: 'white',

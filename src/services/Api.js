@@ -24,6 +24,7 @@ axios.interceptors.response.use(function (response) {
     // Optional: Do something with response data
     return response;
 }, function (error) {
+    console.log(error)
     // Do whatever you want with the response error here:
     if(error.response) {
         if (error.response.status === 401) {
@@ -31,8 +32,6 @@ axios.interceptors.response.use(function (response) {
             return Promise.reject(UnauthorizedError)
         }
         if (error.response.status === 404) {
-            console.log(error.request.responseURL)
-            console.log(error.response.data.detail)
         }
         if (error.response.status === 422) {
             let _error = new UnprocessableEntityError()
