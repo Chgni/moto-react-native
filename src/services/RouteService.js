@@ -61,7 +61,11 @@ export default class RouteService {
     }
 
     async updateRight(route, member)  {
-        await this.#api.put(`/routes/rights/${route.id}/${member.id}`
+        console.log(route.id)
+        await this.#api.put(`/routes/${route.id}/update_edition`, {
+                user_id : member.id,
+                edition : member.edition ? false : true
+            }
         )
     }
 

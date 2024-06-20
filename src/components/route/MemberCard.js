@@ -4,10 +4,7 @@ import React from "react";
 
 const MemberCard = ({user, removeMember = null, role = null, addMember, updateRight = null, route = null}) => {
 
-    const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-    //const [loading, setLoading] = React.useState(false);
-    //const [isSwitchOn, setIsSwitchOn] = React.useState(user.canUpdateRoute);
-
+    const [isSwitchOn, setIsSwitchOn] = React.useState(user.edition);
     const onChange = () => {
         setIsSwitchOn(!isSwitchOn);
         if (updateRight) {
@@ -32,7 +29,7 @@ const MemberCard = ({user, removeMember = null, role = null, addMember, updateRi
 
                 <Text variant="titleLarge" style={{paddingEnd: 10}} h4>{user.username}</Text>
                 {role != null && <Chip style={{}} icon="information">Organisateur</Chip>}
-                {role == null && updateRight != null &&
+                {updateRight != null &&
                     <Switch value={isSwitchOn} onValueChange={ onChange } />}
 
             </View>

@@ -205,7 +205,7 @@ const RouteScreen = ({ route, navigation }) => {
                 () => {
                     setWaypoints(new_waypoints)
                 }).catch(error => {
-                // TODO error handling
+                Toast.show("Modification des points non autorisée.", Toast.SHORT)
             })
         } else {
             setWaypoints(new_waypoints)
@@ -615,7 +615,7 @@ const RouteScreen = ({ route, navigation }) => {
                                         return (
                                             <View key={member.id}>
                                                     <Divider />
-                                                    <MemberCard user={member} updateRight={() => updateRight(navigationRoute, member)}
+                                                    <MemberCard user={member} updateRight={ navigationRoute.owner_id === user.id ? () => updateRight(navigationRoute, member) : null}
                                                                 route={navigationRoute}
                                                                 removeMember={ navigationRoute.owner_id === user.id ? () => removeMember(member.id) : null} />
                                             </View>
