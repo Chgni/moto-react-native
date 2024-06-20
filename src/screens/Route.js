@@ -514,7 +514,7 @@ const RouteScreen = ({ route, navigation }) => {
                         <Surface style={styles.surface} elevation={4}>
                             {wayPointSelectionMode == false && <ScrollView style={styles.menu}>
                                 {pageType == "update" && wayPointSelectionMode == false && <View style={{marginStart: 10, marginEnd: 10, marginTop: 5}}>
-                                    <View><Text variant="bodySmall">Vous rejoignez en cours de route ?</Text></View>
+                                    <View><Text variant="bodySmall" style={{textAlign: "center"}}>Vous rejoignez en cours de route ?</Text></View>
                                     <View><Button style={{margin: 0}} compact={true} onPress={()=>{enableSelectWayPointMode()}}>Selectionnez votre point de depart</Button></View>
 
                                 </View>}
