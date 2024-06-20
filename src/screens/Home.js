@@ -77,7 +77,7 @@ const HomeScreen = ({ navigation }) => {
                 </Tab>
                 <TabView value={index} onChange={setIndex} animationType="spring">
                     <TabView.Item style={{ width: '100%' }}>
-                        <RoutesList loadData={getRoutesOwned} />
+                        <RoutesList loadData={getRoutesOwned} routeDeletable={true}/>
                     </TabView.Item>
                     <TabView.Item style={{ width: '100%' }}>
                         <RoutesList loadData={getRoutesJoined} />

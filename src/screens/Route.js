@@ -112,6 +112,7 @@ const RouteScreen = ({ route, navigation }) => {
         }
         try {
             const newNavigationRoute = await routeService.create(createName, filteredWaypoints)
+            setVisibleNameModal(false)
             navigation.replace('Route', {
                 routeId: newNavigationRoute.id
             })
@@ -261,9 +262,7 @@ const RouteScreen = ({ route, navigation }) => {
             }
 
         } else {
-            if (waypoints.length==10) {
-                return setvisibleWaypointDialog(true)
-            }
+
             const { latitude, longitude } = e.nativeEvent.coordinate;
             const newMarker = {
                 latitude: latitude,
@@ -559,7 +558,7 @@ const RouteScreen = ({ route, navigation }) => {
                                         )
                                 })}
                                 { route && getRouteWaypoints().length >= 2 && <MapViewDirections
-                                    precision="high"
+                                    precision={getRouteWaypoints().length<11 ? "high": "low"}
                                     origin={getOrigin()}
                                     destination={getDestination()}
                                     waypoints={getMapsWaypointsExceptLastOne()}
@@ -647,7 +646,7 @@ const RouteScreen = ({ route, navigation }) => {
                 { tabIndex == 0 && pageType == "update" && <Portal>
                     <FAB.Group onStateChange={({ open }) => setOpenRouteFab(open)} actions={[
                         {label: 'Exporter en .GPX', icon:'crosshairs-gps', onPress:saveGpx},
-                        {label: 'Ouvrir dans Maps (max 10 points)', icon: 'google-maps', onPress:openInMaps},
+                        {label: 'Ouvrir dans Google Maps', icon: 'google-maps', onPress:openInMaps},
 
                     ]} icon={openRouteFab ? 'close' : 'directions'} open={openRouteFab} visible={true} />
                 </Portal> }
@@ -663,17 +662,6 @@ const RouteScreen = ({ route, navigation }) => {
                     <Text>Temps: {convertMinsToTime(totalTime.toFixed())}</Text>
                 </View>}
             </View>
-            <Portal>
-                <Dialog visible={visibleWaypointDialog} onDismiss={() => {setvisibleWaypointDialog(false)}}>
-                    <Dialog.Title>Désolé</Dialog.Title>
-                    <Dialog.Content>
-                        <Text variant="bodyMedium">La version béta de l'application ne permet pas d'ajouter plus de 9 points</Text>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={() => {setvisibleWaypointDialog(false)}}>OK</Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
         </View>
 
     )

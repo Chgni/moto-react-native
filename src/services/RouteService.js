@@ -5,7 +5,7 @@ import RouteModel from "../models/RouteModel";
 export default class RouteService {
     #api = Api
     async getRoutes(owned, joined) {
-        const response = await this.#api.get(`/routes?owned=${owned}&joined=${joined}`)
+        const response = await this.#api.get(`/routes/?owned=${owned}&joined=${joined}`)
         const routesData = response.data;
         const routes = routesData.map(route => {
             return new RouteModel(
@@ -41,7 +41,7 @@ export default class RouteService {
         })
     }
     async addMember(route_id, member_to_add_id) {
-        await this.#api.post(`/routes/${route_id}/members`, {
+        await this.#api.post(`/routes/${route_id}/members/`, {
             id: member_to_add_id
         });
     }
@@ -51,7 +51,11 @@ export default class RouteService {
             route.waypoints
         )
     }
-
+    async delete(route)  {
+        await this.#api.delete(`/routes/${route.id}/`,
+            route.waypoints
+        )
+    }
     async updateDate(route, date)  {
 
         await this.#api.put(`/routes/${route.id}`, {
@@ -61,7 +65,6 @@ export default class RouteService {
     }
 
     async updateRight(route, member)  {
-        console.log(route.id)
         await this.#api.put(`/routes/${route.id}/update_edition`, {
                 user_id : member.id,
                 edition : member.edition ? false : true
