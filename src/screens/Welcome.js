@@ -1,16 +1,16 @@
 import {Image, StyleSheet, View} from "react-native";
 import {Button, Text} from "react-native-paper";
-import {ROUTE_66, SPEED_TRIPLE_IMAGE, VFR_800_F, VITPILEN_401} from "../assets";
+import {BALADE_MOTO, ROUTE_66, SPEED_TRIPLE_IMAGE, VFR_800_F, VITPILEN_401} from "../assets";
 import {useState} from "react";
 import WelcomePage from "../components/welcome/WelcomePage";
 
-const WelcomeScreen = ({ navigation, username }) => {
-    const [displayPage, setDisplayPage] = useState(0)
+const WelcomeScreen = ({ username, goToCreatePage}) => {
+    const [displayPageIndex, setDisplayPageIndex] = useState(0)
     const previousPage = () => {
-        setDisplayPage(displayPage - 1)
+        setDisplayPageIndex(displayPageIndex - 1)
     }
     const nextPage = () => {
-        setDisplayPage(displayPage + 1)
+        setDisplayPageIndex(displayPageIndex + 1)
     }
     const content = [
         {
@@ -33,34 +33,33 @@ const WelcomeScreen = ({ navigation, username }) => {
             title: "Ajoute tes amis !️",
             subtitle: "Une balade, c'est (presque) toujours mieux à plusieurs",
             image: VITPILEN_401,
-            text: "Après avoir invité tes amis à télécharger CommuMoto, tu pourras les ajouter à ta liste d'ami" +
-                "dans la séction \"Amis\"."
+            text: "Après avoir invité tes amis à télécharger CommuMoto, tu pourras les ajouter à ta liste d'amis" +
+                "dans la section \"Amis\"."
         },
         {
             key: 4,
-            title: "Créés et partages tes balades !",
-            text: "Dans la page d'accueil de CommuMoto, cliques sur le bouton \"Créer un trajet\" pour commencer à planifier ta prochaine balade. " +
-                "Tu pourras ensuite placer les points de passage que tu souhaites emprunter. Après avoir sauvegardé, tu peux inviter tes amis à rejoindre ta balade.\n"
+            title: "Créés et partage tes balades !",
+            image: BALADE_MOTO,
+            text: "Dans la page d'accueil de CommuMoto, clique sur le bouton \"Créer un trajet\" pour commencer à planifier ta prochaine balade. " +
+                "Tu pourras ensuite placer les points de passage que tu souhaites emprunter. Après avoir sauvegardé, tu peux inviter tes amis à rejoindre ta balade.\n" +
+                "Pour ceux qui rejoindront en cours de route, ils peuvent ajouter leur point de départ qui apparaîtra en orange.\n"
         },
         {
             key: 5,
             title: "Lance ton GPS",
             subtitle: "Il est temps de monter en selle",
             image: ROUTE_66,
-            text: "Lorsque tout est prêt, utilise l'icone en bas a droite de la carte pour ouvrir ton trajet dans Google Maps ou exporter un fichier pour ton GPS !",
-            actionText: "Créer ton premier trajet",
-            action: () => {
-
-            }
+            text: "Lorsque tout est prêt, utilise l'icône en bas à droite de la carte pour ouvrir ton trajet dans Google Maps ou exporter un fichier pour ton GPS !",
         }
     ]
+    const lastPageIndex = content.length - 1;
     return (
         <View>
             <View>
                 {content.map((page, index) => {
                     return (
                         <View key={page.key}>
-                            {displayPage == index && <WelcomePage
+                            {displayPageIndex == index && <WelcomePage
                                 title={page.title}
                                 subtitle={page.subtitle}
                                 image={page.image}
@@ -72,8 +71,9 @@ const WelcomeScreen = ({ navigation, username }) => {
             </View>
             <View
                 style={{flexDirection:"row", justifyContent:"space-around", marginTop: 20}}>
-                {displayPage !== 0 && <Button mode="outlined" onPress={previousPage} >Précédent</Button>}
-                {displayPage < content.length-1 && <Button mode="contained" onPress={nextPage} >Suivant</Button>}
+                {displayPageIndex !== 0 && <Button mode="outlined" onPress={previousPage} >Précédent</Button>}
+                {displayPageIndex < content.length-1 && <Button mode="contained" onPress={nextPage} >Suivant</Button>}
+                {lastPageIndex == displayPageIndex &&  <Button mode="contained" onPress={goToCreatePage} >Créer mon premier trajet</Button>}
             </View>
 
 

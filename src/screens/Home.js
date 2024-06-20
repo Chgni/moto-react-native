@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
     const [index, setIndex] = React.useState(0);
     const routeService = new RouteService();
     const authService = new AuthService();
-    const [visible, setVisible] = React.useState(false);
+    const [welcomeModalVisible, setWelcomeModalVisible] = React.useState(false);
     const storageService = new StorageService()
     const {user} = useUser();
     useEffect(() => {
@@ -27,17 +27,18 @@ const HomeScreen = ({ navigation }) => {
 
     }, []);
     const hideModal = () => {
-        setVisible(false);
+        setWelcomeModalVisible(false);
     }
     useEffect(() => {
         storageService.getHideWelcomeMessage().then((hideWelcomeMessage) => {
             if (!hideWelcomeMessage) {
-                setVisible(true)
+                setWelcomeModalVisible(true)
             }
         })
     }, []);
 
     const goToCreatePage = () => {
+        setWelcomeModalVisible(false)
         navigation.navigate('Route');
     }
     const getRoutesOwned = async () => {
@@ -86,8 +87,8 @@ const HomeScreen = ({ navigation }) => {
                     <FloatingButton onPress={goToCreatePage} icon={"plus"} text="Créer un trajet" />
                 </View>
                 <Portal>
-                    {user != null && <Modal  visible={visible} onDismiss={hideModal} contentContainerStyle={styles.welcomeModal}>
-                        <WelcomeScreen username={user.username}/>
+                    {user != null && <Modal  visible={welcomeModalVisible} onDismiss={hideModal} contentContainerStyle={styles.welcomeModal}>
+                        <WelcomeScreen username={user.username} goToCreatePage={goToCreatePage}/>
                     </Modal>}
                 </Portal>
             </View>
