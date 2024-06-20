@@ -195,7 +195,7 @@ const RouteScreen = ({ route, navigation }) => {
         const parsedWaypoints = [];
         for (let step of new_waypoints) {
             const filtered = {latitude: parseFloat(step.latitude.toFixed(5)),
-                longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step"};
+                longitude: parseFloat(step.longitude.toFixed(5)), order: step.order, name: "step", user_id: step.user_id ?? null};
             parsedWaypoints.push(filtered);
         }
         if (pageType=="update") {
@@ -246,6 +246,7 @@ const RouteScreen = ({ route, navigation }) => {
                     key: Math.random().toString(),
                     user_id: user.id
                 };
+                console.log(newMarker)
                 updateWaypoints([...waypoints, newMarker]);
 
             } else {
@@ -455,12 +456,7 @@ const RouteScreen = ({ route, navigation }) => {
     const cancelSelectWayPointMode = () => {
         setWayPointSelectionMode(false)
     }
-    const handleBackButtonClick = () => {
-        navigation.navigate("Home")
-    }
-    useEffect(() => {
-        BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
-    }, []);
+
     return(
 
         <View style={styles.container}>

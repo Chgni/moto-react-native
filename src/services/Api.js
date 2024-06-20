@@ -28,7 +28,6 @@ axios.interceptors.response.use(function (response) {
     // Do whatever you want with the response error here:
     if(error.response) {
         if (error.response.status === 401) {
-
             return Promise.reject(UnauthorizedError)
         }
         if (error.response.status === 404) {
