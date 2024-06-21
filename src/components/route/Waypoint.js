@@ -5,10 +5,10 @@ import {Text} from "react-native-paper";
 import {Marker} from "react-native-maps";
 import React from "react";
 
-const Waypoint = ({marker, index, onMarkerDragEnd}) => {
+const Waypoint = ({marker, index, onMarkerDragEnd, editable}) => {
     return (
         <Marker
-            draggable={true}
+            draggable={editable}
             onDragEnd={(e) => onMarkerDragEnd(e, index)}
             key={index}
             tracksViewChanges={false}

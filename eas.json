@@ -12,11 +12,11 @@
       "android":{
         "buildType": "apk"
       },
-    "env": {
-      "API_URL": "82.65.153.125:8888",
-      "API_VERSION": "v0.1",
-      "GOOGLE_MAPS_API_KEY": "AIzaSyCniPGFyyg7JqaAqch3slOophP0uyklth4"
-    }
+      "env": {
+        "API_URL": "82.65.153.125:8888",
+        "API_VERSION": "v0.1",
+        "GOOGLE_MAPS_API_KEY": "AIzaSyCniPGFyyg7JqaAqch3slOophP0uyklth4"
+      }
     },
     "preview2": {
       "android": {

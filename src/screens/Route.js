@@ -60,6 +60,7 @@ const RouteScreen = ({ route, navigation }) => {
     const [datePickerDate, setDatePickerDate] = useState(new Date());
     const [datePickerMode, setDatePickerMode] = useState('date');
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [editionAllowed, setEditionAllowed] = useState(true);
     const onChange = (event, selectedDate) => {
         if (event.type == 'set') {
             setShowDatePicker(false);
@@ -206,7 +207,8 @@ const RouteScreen = ({ route, navigation }) => {
                 () => {
                     setWaypoints(new_waypoints)
                 }).catch(error => {
-                Toast.show("Modification des points non autorisée.", Toast.SHORT)
+                    loadRoute(navigationRoute.id)
+                    Toast.show("Modification des points non autorisée par l'organisateur.", Toast.SHORT)
             })
         } else {
             setWaypoints(new_waypoints)
@@ -245,7 +247,11 @@ const RouteScreen = ({ route, navigation }) => {
                     longitude: longitude,
                     order: null,
                     key: Math.random().toString(),
-                    user_id: user.id
+                    user_id: user.id,
+                    user: {
+                        user_id: user.id,
+                        username: user.username
+                    }
                 };
                 console.log(newMarker)
                 updateWaypoints([...waypoints, newMarker]);
@@ -256,7 +262,11 @@ const RouteScreen = ({ route, navigation }) => {
                     longitude: longitude,
                     order: null,
                     key: Math.random().toString(),
-                    user_id: user.id
+                    user_id: user.id,
+                    user: {
+                        user_id: user.id,
+                        username: user.username
+                    }
                 };
                 updateWaypoints([...waypoints, newMarker]);
             }
@@ -307,7 +317,19 @@ const RouteScreen = ({ route, navigation }) => {
     const loadRoute = async (routeId) => {
         try {
             const navigationRoute = await routeService.getRouteById(routeId)
-
+            if (navigationRoute.owner_id !== user.id) {
+                for (const member of navigationRoute.members) {
+                    if (member.id == user.id) {
+                        if (member.edition == false) {
+                            setEditionAllowed(false)
+                        } else {
+                            setEditionAllowed(true)
+                        }
+                    }
+                }
+            } else {
+                setEditionAllowed(true)
+            }
             setNavigationRoute(navigationRoute)
             if (navigationRoute.date != null) {
                 setNavigationRoute(navigationRoute)
@@ -517,7 +539,7 @@ const RouteScreen = ({ route, navigation }) => {
                                     <View><Button style={{margin: 0}} compact={true} onPress={()=>{enableSelectWayPointMode()}}>Selectionnez votre point de depart</Button></View>
 
                                 </View>}
-                                <WaypointsList steps={getRouteWaypoints()} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={getRouteWaypoints().length <= 2 ? false: true}/>
+                                <WaypointsList steps={getRouteWaypoints()} tripOwner={route.owner_id} currentUser={user.id} deleteStep={deleteWaypoint} allowDelete={getRouteWaypoints().length <= 2 || editionAllowed==false ? false: true} />
                             </ScrollView>}
 
                         </Surface>
@@ -554,7 +576,7 @@ const RouteScreen = ({ route, navigation }) => {
                                     if (marker.order == null) {
                                         return (<UserWaypoint key={index} marker={marker} index={index} onMarkerDragEnd={onMarkerDragEnd} /> )
                                     }
-                                    return ( <Waypoint key={index} marker={marker} index={index} onMarkerDragEnd={onMarkerDragEnd} />
+                                    return ( <Waypoint key={index} marker={marker} index={index} onMarkerDragEnd={onMarkerDragEnd} editable={editionAllowed} />
                                         )
                                 })}
                                 { route && getRouteWaypoints().length >= 2 && <MapViewDirections
@@ -662,6 +684,12 @@ const RouteScreen = ({ route, navigation }) => {
                     <Text>Temps: {convertMinsToTime(totalTime.toFixed())}</Text>
                 </View>}
             </View>
+            {editionAllowed == false && <View style={styles.autorisation}>
+                 <View style={styles.totalInfosRoute}>
+                    <Text>Vous n'êtes pas</Text>
+                    <Text> autorisé à modifier</Text>
+                </View>
+            </View>}
         </View>
 
     )
@@ -707,7 +735,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 5
     },
-
+    autorisation: {
+        position: 'absolute',
+        left: 150,
+        bottom: 20,
+        marginRight: 5,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        padding: 5
+    },
     totalsInfosRouteInfos: {
         display: 'flex',
         flexDirection: 'column',

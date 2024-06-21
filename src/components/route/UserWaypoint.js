@@ -6,12 +6,9 @@ import React from "react";
 import {Icon, MD3Colors, Avatar, Text, Tooltip} from 'react-native-paper';
 import {useUser} from "../../guards/WithAuthGuard";
 const UserWaypoint = ({marker, index, onMarkerDragEnd}) => {
-
-    marker.user = {username: "Richard", id: "04e51c5a-dcc8-49b5-95a1-be002eef10a1"} //TODO a supprimer quand l'API sera modifiée
-
     const { user} = useUser();
     let draggable = false;
-    if (user.id = marker.user.id) {
+    if (user.id == marker.user.id) {
         draggable = true
     }
     return (
